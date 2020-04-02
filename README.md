@@ -5,8 +5,10 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/finnlindgren/multiprobit.svg?branch=master)](https://travis-ci.org/finnlindgren/multiprobit)
+[![Travis build status of devel
+branch](https://travis-ci.org/finnlindgren/multiprobit.svg?branch=devel)](https://travis-ci.org/finnlindgren/multiprobit)
+[![Codecov test
+coverage](https://codecov.io/gh/finnlindgren/multiprobit/branch/master/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=master)
 <!-- badges: end -->
 
 The goal of multiprobit is to perform fast Bayesian inference for

@@ -1,3 +1,7 @@
+#' @import stats
+#'
+#' @export
+
 latent_to_wishart <- function(x, LV, df) {
   d <- nrow(LV)
   L <- diag(sqrt(qchisq(pnorm(x[seq_len(d)]), df = df - seq_len(d) + 1)))
@@ -6,6 +10,8 @@ latent_to_wishart <- function(x, LV, df) {
   LC <- LV %*% L
   list(LC = LC, L = L)
 }
+
+#' @export
 
 latent_from_wishart <- function(LC, LV, df) {
   d <- nrow(LC)
@@ -16,6 +22,7 @@ latent_from_wishart <- function(LC, LV, df) {
   list(x = x, L = L)
 }
 
+#' @export
 
 latent_to_nwishart <- function(x, LV, df) {
   d <- nrow(LV)
@@ -46,6 +53,8 @@ latent_to_nwishart <- function(x, LV, df) {
   }
   list(LC = LC, s = s_vec, L = L)
 }
+
+#' @export
 
 latent_from_nwishart <- function(LC, LV, df) {
   d <- nrow(LC)
