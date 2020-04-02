@@ -7,9 +7,9 @@
 latent_to_wishart(x, LV, df)
 }
 \arguments{
-\item{x}{A vector of latent variables, length $d(d+1)/2$}
+\item{x}{A vector of latent variables, length \eqn{d(d+1)/2}}
 
-\item{LV}{The lower Cholesky factor of the Wishart $V$ parameter}
+\item{LV}{The lower Cholesky factor of the Wishart \eqn{V} parameter}
 
 \item{df}{The Wishart degrees of freedom}
 }
@@ -17,7 +17,7 @@ latent_to_wishart(x, LV, df)
 A list
 }
 \description{
-Transforms latent iid $N(0,1)$ to Wishart matrices
+Transforms latent iid \eqn{N(0,1)} to Wishart matrices
 }
 \examples{
 \dontrun{

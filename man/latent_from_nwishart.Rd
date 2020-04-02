@@ -9,7 +9,7 @@ latent_from_nwishart(LC, LV, df)
 \arguments{
 \item{LC}{The lower Cholesky factor of the Normalised Wishart matrix}
 
-\item{LV}{The lower Cholesky factor of the Wishart $V$ parameter}
+\item{LV}{The lower Cholesky factor of the Wishart \eqn{V} parameter}
 
 \item{df}{The Wishart degrees of freedom}
 }
@@ -18,7 +18,7 @@ A list
 }
 \description{
 Transform a Normalised Wishart matrix to latent iid
-$N(0,1)$ variables
+\eqn{N(0,1)} variables
 }
 \examples{
 \dontrun{

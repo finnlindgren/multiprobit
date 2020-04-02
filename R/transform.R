@@ -1,9 +1,9 @@
 #' @import stats
 
 #' @title Transform latent variables to Wishart
-#' @description Transforms latent iid $N(0,1)$ to Wishart matrices
-#' @param x A vector of latent variables, length $d(d+1)/2$
-#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @description Transforms latent iid \eqn{N(0,1)} to Wishart matrices
+#' @param x A vector of latent variables, length \eqn{d(d+1)/2}
+#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
 #' @return A list
 #' @author Finn Lindgren
@@ -26,9 +26,9 @@ latent_to_wishart <- function(x, LV, df) {
 }
 
 #' @title Transform Wishart to latent variables
-#' @description Transforms a Wishart matrix to latent iid $N(0,1)$ variables
+#' @description Transforms a Wishart matrix to latent iid \eqn{N(0,1)} variables
 #' @param LC The lower Cholesky factor of the Wishart matrix
-#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
 #' @return A list
 #' @author Finn Lindgren
@@ -51,9 +51,9 @@ latent_from_wishart <- function(LC, LV, df) {
 }
 
 #' @title Transform latent variables to Normalised Wishart
-#' @description Transforms latent iid $N(0,1)$ to Normalised Wishart matrices
-#' @param x A vector of latent variables, length $d(d-1)/2$
-#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @description Transforms latent iid \eqn{N(0,1)} to Normalised Wishart matrices
+#' @param x A vector of latent variables, length \eqn{d(d-1)/2}
+#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
 #' @return A list
 #' @author Finn Lindgren
@@ -98,9 +98,9 @@ latent_to_nwishart <- function(x, LV, df) {
 
 #' @title Transform Normalised Wishart to latent variables
 #' @description Transform a Normalised Wishart matrix to latent iid
-#' $N(0,1)$ variables
+#' \eqn{N(0,1)} variables
 #' @param LC The lower Cholesky factor of the Normalised Wishart matrix
-#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
 #' @return A list
 #' @author Finn Lindgren
