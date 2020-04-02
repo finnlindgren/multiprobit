@@ -1,6 +1,20 @@
 #' @import stats
-#'
+
+#' @title Transform latent variables to Wishart
+#' @description Transforms latent iid $N(0,1)$ to Wishart matrices
+#' @param x A vector of latent variables, length $d(d+1)/2$
+#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @param df The Wishart degrees of freedom
+#' @return A list
+#' @author Finn Lindgren
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
 #' @export
+#' @rdname latent_to_wishart
 
 latent_to_wishart <- function(x, LV, df) {
   d <- nrow(LV)
@@ -11,7 +25,21 @@ latent_to_wishart <- function(x, LV, df) {
   list(LC = LC, L = L)
 }
 
+#' @title Transform Wishart to latent variables
+#' @description Transforms a Wishart matrix to latent iid $N(0,1)$ variables
+#' @param LC The lower Cholesky factor of the Wishart matrix
+#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @param df The Wishart degrees of freedom
+#' @return A list
+#' @author Finn Lindgren
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
 #' @export
+#' @rdname latent_from_wishart
 
 latent_from_wishart <- function(LC, LV, df) {
   d <- nrow(LC)
@@ -22,7 +50,21 @@ latent_from_wishart <- function(LC, LV, df) {
   list(x = x, L = L)
 }
 
+#' @title Transform latent variables to Normalised Wishart
+#' @description Transforms latent iid $N(0,1)$ to Normalised Wishart matrices
+#' @param x A vector of latent variables, length $d(d-1)/2$
+#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @param df The Wishart degrees of freedom
+#' @return A list
+#' @author Finn Lindgren
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
 #' @export
+#' @rdname latent_to_nwishart
 
 latent_to_nwishart <- function(x, LV, df) {
   d <- nrow(LV)
@@ -54,7 +96,22 @@ latent_to_nwishart <- function(x, LV, df) {
   list(LC = LC, s = s_vec, L = L)
 }
 
+#' @title Transform Normalised Wishart to latent variables
+#' @description Transform a Normalised Wishart matrix to latent iid
+#' $N(0,1)$ variables
+#' @param LC The lower Cholesky factor of the Normalised Wishart matrix
+#' @param LV The lower Cholesky factor of the Wishart $V$ parameter
+#' @param df The Wishart degrees of freedom
+#' @return A list
+#' @author Finn Lindgren
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
 #' @export
+#' @rdname latent_from_nwishart
 
 latent_from_nwishart <- function(LC, LV, df) {
   d <- nrow(LC)
