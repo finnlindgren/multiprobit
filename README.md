@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.com/finnlindgren/multiprobit.svg?branch=master)](https://travis-ci.com/finnlindgren/multiprobit)
+status](https://travis-ci.org/finnlindgren/multiprobit.svg?branch=master)](https://travis-ci.org/finnlindgren/multiprobit)
 <!-- badges: end -->
 
 The goal of multiprobit is to perform fast Bayesian inference for

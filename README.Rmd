@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # multiprobit
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/finnlindgren/multiprobit.svg?branch=master)](https://travis-ci.com/finnlindgren/multiprobit)
+[![Travis build status](https://travis-ci.org/finnlindgren/multiprobit.svg?branch=master)](https://travis-ci.org/finnlindgren/multiprobit)
 <!-- badges: end -->
 
 The goal of multiprobit is to perform fast Bayesian inference for multivariate probit models. The method uses a latent Gaussian variable parameterisation of the correlation matrix, and numerical optimisation and integration to find the posterior distributions of the model coefficients and correlation matrix.
