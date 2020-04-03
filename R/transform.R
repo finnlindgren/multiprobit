@@ -51,7 +51,8 @@ latent_from_wishart <- function(LC, LV, df) {
 }
 
 #' @title Transform latent variables to Normalised Wishart
-#' @description Transforms latent iid \eqn{N(0,1)} to Normalised Wishart matrices
+#' @description Transforms latent iid \eqn{N(0,1)} to Normalised Wishart
+#'   matrices
 #' @param x A vector of latent variables, length \eqn{d(d-1)/2}
 #' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom

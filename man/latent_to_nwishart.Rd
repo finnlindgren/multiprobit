@@ -17,7 +17,8 @@ latent_to_nwishart(x, LV, df)
 A list
 }
 \description{
-Transforms latent iid \eqn{N(0,1)} to Normalised Wishart matrices
+Transforms latent iid \eqn{N(0,1)} to Normalised Wishart
+  matrices
 }
 \examples{
 \dontrun{
