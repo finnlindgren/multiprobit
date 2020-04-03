@@ -2,10 +2,17 @@
 
 #' @title Transform latent variables to Wishart
 #' @description Transforms latent iid \eqn{N(0,1)} to Wishart matrices
-#' @param x A vector of latent variables, length \eqn{d(d+1)/2}
-#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
+#' @param x A vector of latent variables identifying the Wishart matrix,
+#' length \eqn{d(d+1)/2}
+#' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @return A list
+#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
+#'   (default = \code{FALSE})
+#' @return A list with components
+#'   \item{S_chol}{The Cholesky factor of the Wishart matrix}
+#'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
+#' When \code{lower_chol} is \code{FALSE}, \code{S_chol} is
+#' \code{B_chol \%*\% V_chol}, otherwise \code{V_chol \%*\% B_chol}.
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -16,21 +23,30 @@
 #' @export
 #' @rdname latent_to_wishart
 
-latent_to_wishart <- function(x, LV, df) {
-  d <- nrow(LV)
-  L <- diag(sqrt(qchisq(pnorm(x[seq_len(d)]), df = df - seq_len(d) + 1)))
-  L[upper.tri(L)] <- x[d + seq_len(d * (d-1) / 2)]
-  L <- t(L)
-  LC <- LV %*% L
-  list(LC = LC, L = L)
+latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
+  d <- nrow(V_chol)
+  R <- diag(sqrt(qchisq(pnorm(x[seq_len(d)]), df = df - seq_len(d) + 1)))
+  R[upper.tri(R)] <- x[d + seq_len(d * (d-1) / 2)]
+  if (lower_chol) {
+    S_chol <- V_chol %*% t(R)
+    list(S_chol = S_chol, B_chol = t(R))
+  } else {
+    S_chol <- R %*% V_chol
+    list(S_chol = S_chol, B_chol = R)
+  }
 }
 
 #' @title Transform Wishart to latent variables
 #' @description Transforms a Wishart matrix to latent iid \eqn{N(0,1)} variables
-#' @param LC The lower Cholesky factor of the Wishart matrix
-#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
+#' @param S_chol The Cholesky factor of the Wishart matrix
+#' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @return A list
+#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
+#'   (default = \code{FALSE})
+#' @return A list with components
+#'   \item{x}{A vector of latent variables identifying the Wishart matrix,
+#'   length \eqn{d(d+1)/2}}
+#'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -41,22 +57,41 @@ latent_to_wishart <- function(x, LV, df) {
 #' @export
 #' @rdname latent_from_wishart
 
-latent_from_wishart <- function(LC, LV, df) {
-  d <- nrow(LC)
-  L <- solve(LV, LC)
+latent_from_wishart <- function(S_chol, V_chol, df, lower_chol = FALSE) {
+  d <- nrow(V_chol)
+  if (!lower_chol) {
+    S_chol <- t(S_chol)
+    V_chol <- t(V_chol)
+  }
+  B_chol <- solve(V_chol, S_chol)
   x <- numeric(d * (d+1) / 2)
-  x[seq_len(d)] <- qnorm(pchisq(diag(L)^2, df = df - seq_len(d) + 1))
-  x[d + seq_len(d * (d-1) / 2)] <- t(L)[upper.tri(L)]
-  list(x = x, L = L)
+  x[seq_len(d)] <- qnorm(pchisq(diag(B_chol)^2, df = df - seq_len(d) + 1))
+  x[d + seq_len(d * (d-1) / 2)] <- t(B_chol)[upper.tri(B_chol)]
+  if (lower_chol) {
+    list(x = x, B_chol = B_chol)
+  } else {
+    list(x = x, B_chol = t(B_chol))
+  }
 }
 
 #' @title Transform latent variables to Normalised Wishart
 #' @description Transforms latent iid \eqn{N(0,1)} to Normalised Wishart
 #'   matrices
-#' @param x A vector of latent variables, length \eqn{d(d-1)/2}
-#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
+#' @param x A vector of latent variables identifying the Normalised Wishart
+#' matrix, length \eqn{d(d-1)/2}
+#' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @return A list
+#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
+#'   (default = \code{FALSE})
+#' @return A list with components
+#'   \item{C_chol}{The Cholesky factor of the Normalised Wishart matrix}
+#'   \item{s}{Vector of scaling values}
+#'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
+#' When \code{lower_chol} is \code{FALSE},
+#' \code{C_chol = (B_chol \%*\% V_chol) \%*\% diag(s)}.
+#'
+#' When \code{lower_chol} is \code{TRUE},
+#' \code{C_chol = s * (V_chol \%*\% B_chol)}.
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -67,16 +102,19 @@ latent_from_wishart <- function(LC, LV, df) {
 #' @export
 #' @rdname latent_to_nwishart
 
-latent_to_nwishart <- function(x, LV, df) {
-  d <- nrow(LV)
-  s_vec <- c(1 / LV[1, 1], numeric(d - 1))
-  L <- LC <- matrix(0, d, d)
-  L[1, 1] <- LC[1, 1] <- 1
+latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
+  d <- nrow(V_chol)
+  if (!lower_chol) {
+    V_chol <- t(V_chol)
+  }
+  s_vec <- c(1 / V_chol[1, 1], numeric(d - 1))
+  B_chol <- C_chol <- matrix(0, d, d)
+  B_chol[1, 1] <- C_chol[1, 1] <- 1
   prev_index <- cumsum(seq_len(d) - 1)
   for (k in seq_len(d - 1)) {
-    L[k + 1, seq_len(k)] <- u <- x[prev_index[k] + seq_len(k)]
-    lambda_vec <- (LV[k + 1, seq_len(k)] / LV[k + 1, k + 1]) %*%
-      L[seq_len(k), seq_len(k), drop = FALSE]
+    B_chol[k + 1, seq_len(k)] <- u <- x[prev_index[k] + seq_len(k)]
+    lambda_vec <- (V_chol[k + 1, seq_len(k)] / V_chol[k + 1, k + 1]) %*%
+      B_chol[seq_len(k), seq_len(k), drop = FALSE]
     uu <- lambda_vec + u
     uu_sq <- sum(uu^2)
     uu_norm <- sqrt(uu_sq)
@@ -89,21 +127,36 @@ latent_to_nwishart <- function(x, LV, df) {
         ncp = lambda
       )
     tmp <- sqrt(z) / uu_norm
-    s_vec[k + 1] <- tmp / LV[k + 1, k + 1]
-    L[k + 1, k + 1] <- sqrt(1 - z) / tmp
-    LC[k + 1, seq_len(k)] <- tmp * uu
-    LC[k + 1, k + 1] <- sqrt(1 - z)
+    s_vec[k + 1] <- tmp / V_chol[k + 1, k + 1]
+    B_chol[k + 1, k + 1] <- sqrt(1 - z) / tmp
+    C_chol[k + 1, seq_len(k)] <- tmp * uu
+    C_chol[k + 1, k + 1] <- sqrt(1 - z)
   }
-  list(LC = LC, s = s_vec, L = L)
+  if (lower_chol) {
+    list(C_chol = C_chol, s = s_vec, B_chol = B_chol)
+  } else {
+    list(C_chol = t(C_chol), s = s_vec, B_chol = t(B_chol))
+  }
 }
 
 #' @title Transform Normalised Wishart to latent variables
 #' @description Transform a Normalised Wishart matrix to latent iid
 #' \eqn{N(0,1)} variables
-#' @param LC The lower Cholesky factor of the Normalised Wishart matrix
-#' @param LV The lower Cholesky factor of the Wishart \eqn{V} parameter
+#' @param C_chol The lower Cholesky factor of the Normalised Wishart matrix
+#' @param V_chol The lower Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @return A list
+#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
+#'   (default = \code{FALSE})
+#' @return A list with components
+#'   \item{x}{A vector of latent variables identifying the Normalised Wishart
+#'   matrix, length \eqn{d(d-1)/2}}
+#'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
+#' When \code{lower_chol} is \code{FALSE},
+#' \code{C_chol = (B_chol \%*\% V_chol) \%*\% diag(s)}.
+#'
+#' When \code{lower_chol} is \code{TRUE},
+#' \code{C_chol = s * (V_chol \%*\% B_chol)}.
+#'
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -114,20 +167,24 @@ latent_to_nwishart <- function(x, LV, df) {
 #' @export
 #' @rdname latent_from_nwishart
 
-latent_from_nwishart <- function(LC, LV, df) {
-  d <- nrow(LC)
+latent_from_nwishart <- function(C_chol, V_chol, df, lower_chol = FALSE) {
+  d <- nrow(C_chol)
+  if (!lower_chol) {
+    C_chol <- t(C_chol)
+    V_chol <- t(V_chol)
+  }
   # Make sure the rows are normalised:
-  LC <- rowSums(LC^2)^0.5 * LC
-  s_vec <- c(1 / LV[1, 1], numeric(d - 1))
+  C_chol <- rowSums(C_chol^2)^0.5 * C_chol
+  s_vec <- c(1 / V_chol[1, 1], numeric(d - 1))
   x <- numeric(d * (d - 1) / 2)
-  L <- matrix(0, d, d)
-  L[1, 1] <- 1
+  B_chol <- matrix(0, d, d)
+  B_chol[1, 1] <- 1
   prev_index <- cumsum(seq_len(d) - 1)
   for (k in seq_len(d - 1)) {
-    z <- 1 - LC[k + 1, k + 1]^2
+    z <- 1 - C_chol[k + 1, k + 1]^2
     lambda_vec <-
-      (LV[k + 1, seq_len(k), drop = FALSE] / LV[k + 1, k + 1]) %*%
-      L[seq_len(k), seq_len(k), drop = FALSE]
+      (V_chol[k + 1, seq_len(k), drop = FALSE] / V_chol[k + 1, k + 1]) %*%
+      B_chol[seq_len(k), seq_len(k), drop = FALSE]
     lambda <- sum(lambda_vec^2)
     uu_norm <-
       sqrt(qchisq(
@@ -135,15 +192,19 @@ latent_from_nwishart <- function(LC, LV, df) {
         df = k,
         ncp = lambda
       ))
-    u <- (uu_norm / sqrt(z)) * LC[k + 1, seq_len(k), drop = FALSE] - lambda_vec
+    u <- (uu_norm / sqrt(z)) * C_chol[k + 1, seq_len(k), drop = FALSE] - lambda_vec
 
     # Store the latent variables
     x[prev_index[k] + seq_len(k)] <- u
-    L[k + 1, seq_len(k)] <- u
+    B_chol[k + 1, seq_len(k)] <- u
 
     tmp <- sqrt(z) / uu_norm
-    s_vec[k + 1] <- tmp / LV[k + 1, k + 1]
-    L[k + 1, k + 1] <- LC[k + 1, k + 1] / tmp
+    s_vec[k + 1] <- tmp / V_chol[k + 1, k + 1]
+    B_chol[k + 1, k + 1] <- C_chol[k + 1, k + 1] / tmp
   }
-  list(x = x, s = s_vec, L = L)
+  if (lower_chol) {
+    list(x = x, s = s_vec, B_chol = B_chol)
+  } else {
+    list(x = x, s = s_vec, B_chol = t(B_chol))
+  }
 }

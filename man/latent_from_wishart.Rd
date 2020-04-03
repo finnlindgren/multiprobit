@@ -4,17 +4,23 @@
 \alias{latent_from_wishart}
 \title{Transform Wishart to latent variables}
 \usage{
-latent_from_wishart(LC, LV, df)
+latent_from_wishart(S_chol, V_chol, df, lower_chol = FALSE)
 }
 \arguments{
-\item{LC}{The lower Cholesky factor of the Wishart matrix}
+\item{S_chol}{The Cholesky factor of the Wishart matrix}
 
-\item{LV}{The lower Cholesky factor of the Wishart \eqn{V} parameter}
+\item{V_chol}{The Cholesky factor of the Wishart \eqn{V} parameter}
 
 \item{df}{The Wishart degrees of freedom}
+
+\item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used
+(default = \code{FALSE})}
 }
 \value{
-A list
+A list with components
+  \item{x}{A vector of latent variables identifying the Wishart matrix,
+  length \eqn{d(d+1)/2}}
+  \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
 }
 \description{
 Transforms a Wishart matrix to latent iid \eqn{N(0,1)} variables
