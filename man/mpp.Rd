@@ -36,7 +36,7 @@ Default: FALSE}
 
 \item{seed}{The random seed for \code{excursions::gaussint}, Default: NULL}
 
-\item{...}{Further parameters, ignored.}
+\item{...}{Further parameters passed on to \code{excursions::gaussint}}
 }
 \value{
 A list with components

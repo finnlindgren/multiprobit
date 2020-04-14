@@ -15,7 +15,7 @@
 #' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
 #'   Default: FALSE
 #' @param seed The random seed for \code{excursions::gaussint}, Default: NULL
-#' @param ... Further parameters, ignored.
+#' @param ... Further parameters passed on to \code{excursions::gaussint}
 #' @return A list with components
 #' \describe{
 #' \item{P}{A vector of probabilities}
@@ -121,7 +121,8 @@ mpp <- function(y, mu,
           Q.chol = Q_chol,
           a = a[perm],
           b = b[perm],
-          seed = seed
+          seed = seed,
+          ...
         )
     } else {
       prob_ <-
@@ -130,7 +131,8 @@ mpp <- function(y, mu,
           Q.chol = Q_chol,
           a = a,
           b = b,
-          seed = seed
+          seed = seed,
+          ...
         )
     }
     prob$P[obs] <- prob_$P

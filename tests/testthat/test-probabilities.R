@@ -5,7 +5,8 @@ test_that("excursions::gaussint", {
                          Q.chol = diag(1, nrow = d),
                          a = rep(0, d),
                          b = rep(Inf, d),
-                         seed = 1L)
+                         seed = 1L,
+                         max.threads = 1)
   }
 
   for (d in c(1, 2, 10)) {
@@ -27,14 +28,16 @@ test_that("mpp (multivariate_probit_probability)", {
     mpp(y, mu,
         Q_chol = Q_chol,
         ...,
-        seed = 1L)
+        seed = 1L,
+        max.threads = 1)
   }
   independent_quadrant_sigma <- function(d, y, mu, ...) {
     Sigma_chol <- myident(d)
     mpp(y, mu,
         Sigma_chol = Sigma_chol,
         ...,
-        seed = 1L)
+        seed = 1L,
+        max.threads = 1)
   }
 
   for (d in c(1, 2, 10)) {
@@ -122,7 +125,8 @@ test_that("mpp (sum of all combinations)", {
   d <- 5
   prob <- mpp(
     y = (-1)^floor((.row(dim = c(2^d, d))-1) / 2^(.col(dim = c(2^d, d))-1)),
-    mu = rep(1, d))
+    mu = rep(1, d),
+    max.threads = 1)
   expect_equal(sum(prob$P), 1.0)
 })
 
@@ -150,13 +154,14 @@ test_that("mpp_gradient_mu", {
         mu = mu,
         Q_chol = Q_chol,
         log = TRUE,
-        symmetric = symmetric)
+        symmetric = symmetric,
+        max.threads = 1)
     }
     D
   }
   expect_equal(test_grad(FALSE),
                c(0, 0, 0),
-               tolerance = .Machine$double.eps^(1/3))
+               tolerance = 10 * .Machine$double.eps^(1/3))
   expect_equal(test_grad(TRUE),
                c(0, 0, 0),
                tolerance = .Machine$double.eps^(1/3))
@@ -191,14 +196,15 @@ test_that("mpp_hessian_mu", {
         mu = mu,
         Q_chol = Q_chol,
         log = TRUE,
-        diagonal = diagonal)
+        diagonal = diagonal,
+        max.threads = 1)
     }
     H
   }
   H <- test_hess(FALSE)
   expect_equal(H[lower.tri(H, diag = TRUE)],
-               c(-10.77145, 1.84297e-5, -2.065015e-4,
-                 -12.7324, 1.84297e-5, -10.77145),
+               c(-10.77126, 8.137935e-5, 8.864021e-4,
+                 -12.73240, 8.137935e-5, -10.77127),
                tolerance = .Machine$double.eps^(1/3))
   expect_equal(test_hess(TRUE), diag(H))
 })
@@ -231,14 +237,16 @@ test_that("mpp_gradient_u", {
         V_chol = V_chol,
         df = df,
         log = TRUE,
-        symmetric = symmetric)
+        symmetric = symmetric,
+        max.threads = 1)
     }
     D
   }
+  test_grad(TRUE)
   expect_equal(test_grad(TRUE),
-               c( 2.319965, 1.270981, 2.387166),
+               c( 2.320333, 1.271182, 2.381367),
                tolerance = .Machine$double.eps^(1/3))
   expect_equal(test_grad(FALSE),
-               c( 2.319965, 1.270981, 2.387166),
+               c( 2.320333, 1.271182, 2.381367),
                tolerance = .Machine$double.eps^(1/3))
 })
