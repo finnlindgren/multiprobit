@@ -2,9 +2,12 @@
 % Please edit documentation in R/transform.R
 \name{latent_to_wishart}
 \alias{latent_to_wishart}
+\alias{latent_from_wishart}
 \title{Transform latent variables to Wishart}
 \usage{
 latent_to_wishart(x, V_chol, df, lower_chol = FALSE)
+
+latent_from_wishart(W_chol, V_chol, df, lower_chol = FALSE)
 }
 \arguments{
 \item{x}{A vector of latent variables identifying the Wishart matrix,
@@ -16,24 +19,40 @@ length \eqn{d(d+1)/2}}
 
 \item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used
 (default = \code{FALSE})}
+
+\item{W_chol}{The Cholesky factor of the Wishart matrix}
 }
 \value{
 A list with components
-  \item{S_chol}{The Cholesky factor of the Wishart matrix}
+  \item{W_chol}{The Cholesky factor of the Wishart matrix}
   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
-When \code{lower_chol} is \code{FALSE}, \code{S_chol} is
+When \code{lower_chol} is \code{FALSE}, \code{W_chol} is
 \code{B_chol \%*\% V_chol}, otherwise \code{V_chol \%*\% B_chol}.
+
+A list with components
+  \item{x}{A vector of latent variables identifying the Wishart matrix,
+  length \eqn{d(d+1)/2}}
+  \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
 }
 \description{
-Transforms latent iid \eqn{N(0,1)} to Wishart matrices
+Transform latent iid \eqn{N(0,1)} to Wishart matrices
+
+Transforms a Wishart matrix to latent iid \eqn{N(0,1)} variables
 }
 \examples{
 \dontrun{
-if(interactive()){
- #EXAMPLE1
- }
+if (interactive()) {
+  # EXAMPLE1
+}
+}
+\dontrun{
+if (interactive()) {
+  # EXAMPLE1
+}
 }
 }
 \author{
+Finn Lindgren
+
 Finn Lindgren
 }

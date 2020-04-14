@@ -10,10 +10,13 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     stats,
-    excursions
+    excursions,
+    CholWishart
 RoxygenNote: 7.1.0
 Suggests: 
     testthat (>= 2.1.0),
     covr
 URL: https://github.com/finnlindgren/multiprobit
 BugReports: https://github.com/finnlindgren/multiprobit/issues
+Depends: 
+    Matrix
