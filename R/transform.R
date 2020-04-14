@@ -1,5 +1,3 @@
-#' @import stats
-
 #' @title Internal utilities
 #' @details \code{tri_solve} solves triangular systems with back/forwardsolve
 #' @keywords internal
@@ -26,6 +24,7 @@ tri_solve <- function(A, b, lower = FALSE) {
 #' @details \code{qchisq_pnorm} evaluates \code{qchisq(pnorm(...))} with
 #' attempt at numerical stability.
 #' @keywords internal
+#' @importFrom stats qchisq pnorm
 #' @rdname internal_utils
 
 qchisq_pnorm <- function(x, df) {
@@ -35,6 +34,7 @@ qchisq_pnorm <- function(x, df) {
 }
 
 #' @keywords internal
+#' @importFrom stats pchisq qnorm
 #' @rdname internal_utils
 
 qnorm_pchisq <- function(x, df) {
@@ -42,6 +42,7 @@ qnorm_pchisq <- function(x, df) {
 }
 
 #' @keywords internal
+#' @importFrom stats qbeta pchisq
 #' @rdname internal_utils
 
 qbeta_pchisq <- function(x,
@@ -54,6 +55,7 @@ qbeta_pchisq <- function(x,
 }
 
 #' @keywords internal
+#' @importFrom stats pbeta qchisq
 #' @rdname internal_utils
 
 qchisq_pbeta <- function(x,

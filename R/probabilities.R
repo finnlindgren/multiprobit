@@ -47,7 +47,6 @@
 #' }
 #' @export
 #' @rdname mpp
-#' @seealso
 #'
 #' @import excursions
 #' @import Matrix
@@ -277,8 +276,11 @@ mpp_hessian_mu <- function(y, mu, ..., seed = 1L,
 #' matrix, length \eqn{d(d-1)/2}
 #' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
-#'   (default = \code{FALSE})
+#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used,
+#'   Default: \code{FALSE})
+#' @param seed The random seed for \code{excursions::gaussint}, Default: NULL
+#' @param log Whether to compute gradient of the log-probability,
+#'   Default: \code{FALSE}
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
 #' @examples
@@ -299,7 +301,8 @@ mpp_gradient_u <- function(y,
                            seed = 1L,
                            h = 1e-6,
                            symmetric = FALSE,
-                           log = FALSE) {
+                           log = FALSE,
+                           ...) {
   dof <- length(u)
   d <- (1 + sqrt(1 + 8 * dof)) / 2
   g <- numeric(dof)
@@ -309,7 +312,7 @@ mpp_gradient_u <- function(y,
                              df = df,
                              lower_chol = FALSE)
     prob0 <- mpp(y = y, mu = mu, Sigma_chol = C0$W_chol, log = log,
-                 seed = seed)
+                 seed = seed, ...)
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
       C <- latent_to_nwishart(x = u + H,
@@ -317,7 +320,7 @@ mpp_gradient_u <- function(y,
                               df = df,
                               lower_chol = FALSE)
       prob <- mpp(y = y, mu = mu, Sigma_chol = C$W_chol, log = log,
-                  seed = seed)
+                  seed = seed, ...)
       g[loop] <- (prob$P - prob0$P) / h
     }
   } else {
@@ -332,9 +335,9 @@ mpp_gradient_u <- function(y,
                                 df = df,
                                 lower_chol = FALSE)
       prob_p <- mpp(y = y, mu = mu, Sigma_chol = C_p$W_chol, log = log,
-                    seed = seed)
+                    seed = seed, ...)
       prob_m <- mpp(y = y, mu = mu, Sigma_chol = C_m$W_chol, log = log,
-                    seed = seed)
+                    seed = seed, ...)
       g[loop] <- (prob_p$P - prob_m$P) / (2 * h)
     }
   }

@@ -20,7 +20,8 @@ mpp_gradient_u(
   seed = 1L,
   h = 1e-06,
   symmetric = FALSE,
-  log = FALSE
+  log = FALSE,
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ mpp_gradient_u(
 
 \item{...}{Further parameters passed on to
 \code{\link{mpp}}}
+
+\item{seed}{The random seed for \code{excursions::gaussint}, Default: NULL}
 
 \item{h}{Step size for finite differences, Default: 1e-06 (for gradients)
 or 1e-04 (for hessian)}
@@ -47,8 +50,11 @@ matrix, length \eqn{d(d-1)/2}}
 
 \item{df}{The Wishart degrees of freedom}
 
-\item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used
-(default = \code{FALSE})}
+\item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used,
+Default: \code{FALSE})}
+
+\item{log}{Whether to compute gradient of the log-probability,
+Default: \code{FALSE}}
 }
 \value{
 OUTPUT_DESCRIPTION gradient

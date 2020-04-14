@@ -77,6 +77,3 @@ if (interactive()) {
   )
 }
 }
-\seealso{
-
-}
