@@ -26,14 +26,16 @@ Wishart \eqn{V} parameter}
 \value{
 A list with components
   \item{W_chol}{The Cholesky factor of the Inverse Wishart matrix}
-  \item{B_chol}{The inner Cholesky factor of the inverse Barlett decomposition}
+  \item{B_chol}{The inner Cholesky factor of the inverse Barlett
+    decomposition}
 When \code{lower_chol} is \code{FALSE}, \code{W_chol} is
 \code{B_chol \%*\% V_chol}, otherwise \code{V_chol \%*\% B_chol}.
 
 A list with components
   \item{x}{A vector of latent variables identifying the Wishart matrix,
   length \eqn{d(d+1)/2}}
-  \item{B_chol}{The inner Cholesky factor of the inverse Barlett decomposition}
+  \item{B_chol}{The inner Cholesky factor of the inverse Barlett
+    decomposition}
 }
 \description{
 Transform latent iid \eqn{N(0,1)} to Inverse Wishart matrices

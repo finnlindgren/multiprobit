@@ -29,7 +29,8 @@ Default: NULL}
 \item{Q_chol}{The Cholesky factor of the precision matrix matrix parameter,
 Default: NULL}
 
-\item{log}{logical indicating if the log-probability should be returned, Default: FALSE}
+\item{log}{logical indicating if the log-probability should be returned,
+Default: FALSE}
 
 \item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used
 Default: FALSE}
@@ -42,7 +43,8 @@ Default: FALSE}
 A list with components
 \describe{
 \item{P}{A vector of probabilities}
-\item{E}{A vector with the estimated approximation error for each probability}
+\item{E}{A vector with the estimated approximation error for each
+  probability}
 }
 }
 \description{

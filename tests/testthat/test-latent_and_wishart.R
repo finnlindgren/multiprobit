@@ -168,3 +168,101 @@ test_that("self consistent latent/niwishart transformation", {
   expect_equal(W_to_x_u$s, W_to_x$s)
   expect_equal(W_to_x_u$B_chol, t(W_to_x$B_chol))
 })
+
+
+# Wishart/ density
+test_that("Wishart density", {
+  mydiag <- function(d, x = 1.0) {
+    Matrix::sparseMatrix(i = seq_len(d),
+                         j = seq_len(d),
+                         x = x,
+                         dims = c(d, d))
+  }
+
+  V_chol <- mydiag(3)
+  df <- 5
+  expect_equal(
+    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
+             lower_chol = FALSE, log = FALSE),
+    0.0001879003
+  )
+  expect_equal(
+    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
+             lower_chol = FALSE, log = TRUE),
+    log(0.0001879003),
+    tolerance = .Machine$double.eps^0.5 / 0.0001879003
+  )
+  expect_equal(
+    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
+             lower_chol = TRUE, log = FALSE),
+    0.0001879003
+  )
+  x <- latent_from_wishart(mydiag(3), V_chol, df, lower_chol = TRUE)
+  expect_equal(
+    dwishart(W = NULL, x = x$x, W_chol = NULL, V_chol, df,
+             lower_chol = TRUE, log = FALSE),
+    0.0001879003
+  )
+
+  # Input errors
+  # Missing df
+  expect_error(
+    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol,
+             lower_chol = FALSE, log = FALSE))
+  # Missing V_chol
+  expect_error(
+    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, df = df,
+             lower_chol = FALSE, log = FALSE))
+  # Missing input
+  expect_error(
+    dwishart(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
+             lower_chol = FALSE, log = FALSE))
+  # Overspecified input
+  expect_error(
+    dwishart(W = mydiag(3), x = rep(0, 6), W_chol = NULL, V_chol, df,
+             lower_chol = FALSE, log = FALSE))
+  expect_error(
+    dwishart(W = mydiag(3), x = NULL, W_chol = mydiag(3), V_chol, df,
+             lower_chol = FALSE, log = FALSE))
+  expect_error(
+    dwishart(W = NULL, x = rep(0, 6), W_chol = mydiag(3), V_chol, df,
+             lower_chol = FALSE, log = FALSE))
+
+})
+
+# internal utils ####
+test_that("Triangular solves", {
+  expect_equal(tri_solve(matrix(c(1, 0, 1, 1), 2, 2), lower = FALSE),
+               matrix(c(1, 0, -1, 1), 2, 2))
+  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), lower = TRUE),
+               matrix(c(1, -1, 0, 1), 2, 2))
+  expect_equal(tri_solve(matrix(c(1, 0, 1, 1), 2, 2), c(1, 1), lower = FALSE),
+               c(0, 1))
+  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), c(1, 1), lower = TRUE),
+               c(1, 0))
+  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), c(1, 1), lower = TRUE),
+               c(1, 0))
+})
+
+test_that("Quantile transformations", {
+  df <- 2
+  shape1 <- 3
+  shape2 <- 4
+  ncp <- 5
+  expect_equal(qchisq_pnorm(0, df),
+               qchisq(0.5, df))
+  expect_equal(qnorm_pchisq(qchisq(0.5, df), df),
+               qnorm(0.5))
+  expect_equal(qbeta_pchisq(qchisq(0.5, df, ncp),
+                            df,
+                            shape1, shape2,
+                            ncp),
+               qbeta(0.5, shape1, shape2, ncp))
+  expect_equal(qchisq_pbeta(qbeta(0.5,
+                                  shape1, shape2,
+                                  ncp),
+                            shape1, shape2,
+                            df,
+                            ncp),
+               qchisq(0.5, df, ncp))
+})

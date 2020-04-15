@@ -11,7 +11,8 @@
 #'   Default: NULL
 #' @param Q_chol The Cholesky factor of the precision matrix matrix parameter,
 #'   Default: NULL
-#' @param log logical indicating if the log-probability should be returned, Default: FALSE
+#' @param log logical indicating if the log-probability should be returned,
+#'   Default: FALSE
 #' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
 #'   Default: FALSE
 #' @param seed The random seed for \code{excursions::gaussint}, Default: NULL
@@ -19,7 +20,8 @@
 #' @return A list with components
 #' \describe{
 #' \item{P}{A vector of probabilities}
-#' \item{E}{A vector with the estimated approximation error for each probability}
+#' \item{E}{A vector with the estimated approximation error for each
+#'   probability}
 #' }
 #' @details Computes the probability
 #'   \deqn{P(y_1 > 0, ..., y_d > 0|\mu,\Sigma)}
@@ -77,7 +79,7 @@ mpp <- function(y, mu,
   if ((NROW(y) > 1) &&
     (NROW(mu) > 1) &&
     (NROW(y) != NROW(mu))) {
-    stop("y and mu must have either equal number of rows or on must have a single row")
+    stop("y and mu must either have equal #rows or a single row")
   }
   n <- max(NROW(y), NROW(mu))
 

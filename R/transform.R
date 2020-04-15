@@ -308,7 +308,8 @@ latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #'   (default = \code{FALSE})
 #' @return A list with components
 #'   \item{W_chol}{The Cholesky factor of the Inverse Wishart matrix}
-#'   \item{B_chol}{The inner Cholesky factor of the inverse Barlett decomposition}
+#'   \item{B_chol}{The inner Cholesky factor of the inverse Barlett
+#'     decomposition}
 #' When \code{lower_chol} is \code{FALSE}, \code{W_chol} is
 #' \code{B_chol \%*\% V_chol}, otherwise \code{V_chol \%*\% B_chol}.
 #' @author Finn Lindgren
@@ -347,7 +348,8 @@ latent_to_iwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #' @return A list with components
 #'   \item{x}{A vector of latent variables identifying the Wishart matrix,
 #'   length \eqn{d(d+1)/2}}
-#'   \item{B_chol}{The inner Cholesky factor of the inverse Barlett decomposition}
+#'   \item{B_chol}{The inner Cholesky factor of the inverse Barlett
+#'     decomposition}
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -515,13 +517,13 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #' @export
 #' @rdname dwishart
 
-dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df, lower_chol = FALSE,
-                     log = FALSE) {
+dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
+                     lower_chol = FALSE, log = FALSE) {
   if (!requireNamespace("CholWishart")) {
     stop("Missing package 'CholWishart'.")
   }
   if (is.null(W) && is.null(x) && is.null(W_chol)) {
-    stop("One of x and W_chol must be non-NULL.")
+    stop("One of W, x and W_chol must be non-NULL.")
   }
   if ((!is.null(W)) + (!is.null(x)) + (!is.null(W_chol)) > 1) {
     stop("Only one of W, x and W_chol may be non-NULL.")
@@ -550,9 +552,11 @@ dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df, lower_chol =
     LVi_LW <- tri_solve(t(V_chol), t(W_chol), lower = TRUE)
   }
   log_p <-
-    -df * d / 2 * log(2) - CholWishart::lmvgamma(df / 2, d) -
-    df * sum(log(diag(V_chol))) +
-    (df - d - 1) * sum(log(diag(W_chol))) - 0.5 * sum(LVi_LW * LVi_LW)
+    as.vector(
+      -df * d / 2 * log(2) - CholWishart::lmvgamma(df / 2, d) -
+        df * sum(log(diag(V_chol))) +
+        (df - d - 1) * sum(log(diag(W_chol))) - 0.5 * sum(LVi_LW * LVi_LW)
+    )
   if (log) {
     log_p
   } else {
