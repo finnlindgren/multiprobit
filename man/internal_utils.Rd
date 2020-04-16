@@ -8,7 +8,7 @@
 \alias{qchisq_pbeta}
 \title{Internal utilities}
 \usage{
-tri_solve(A, b, lower = FALSE)
+tri_solve(A, b, lower_tri = FALSE)
 
 qchisq_pnorm(x, df)
 

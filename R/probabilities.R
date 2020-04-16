@@ -1,3 +1,18 @@
+inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
+  d <- nrow(Sigma_chol)
+  Q_chol <- tri_solve(Sigma_chol, lower_tri = lower_chol)
+  perm <- rev(seq_len(d))
+  if (lower_chol) {
+    Q_chol <- Q_chol[perm, perm]
+  } else {
+    Q_chol <- t(Q_chol)[perm, perm]
+  }
+  Q_chol
+}
+
+
+
+
 #' @title Multivariate Probit Event Probabilities
 #' @description Evaluate one or more probabilities for outcomes of a
 #' multivariate probit model, with given location and covariance scale
@@ -15,8 +30,8 @@
 #'   Default: FALSE
 #' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
 #'   Default: FALSE
-#' @param seed The random seed for \code{excursions::gaussint}, Default: NULL
-#' @param ... Further parameters passed on to \code{excursions::gaussint}
+#' @param gaussint_options list of options for \code{excursions::gaussint}
+#' @param ... Further parameters, currently ignored
 #' @return A list with components
 #' \describe{
 #' \item{P}{A vector of probabilities}
@@ -26,7 +41,7 @@
 #' @details Computes the probability
 #'   \deqn{P(y_1 > 0, ..., y_d > 0|\mu,\Sigma)}
 #' when \eqn{y} is a \eqn{d}-dimensional indicator vector with elements
-#' \eqn{y_i=I(z_i \ge 0)}, and \eqn{z} is a \eqn{d}-dimensional
+#' \eqn{y_i=I(z_i > 0)}, and \eqn{z} is a \eqn{d}-dimensional
 #' Gaussian vector with distribution \eqn{N(\mu,\Sigma)}. Only the inequality
 #' for \eqn{y_i} is used, so alternative data representations such as
 #' \eqn{-1/+1} will also work as expected.
@@ -37,8 +52,9 @@
 #' The logical parameter \code{lower_chol} determines if a lower or upper
 #' triangular Cholesky factor was supplied.
 #'
-#' The \code{seed} parameter is passed on to \code{excursions::gaussint}, and
-#' allows consistent approximation error when calculating numerical derivatives.
+#' The internal \code{seed} parameter for \code{excursions::gaussint} can be
+#' provided as an element of \code{gaussint_options}, which provides
+#' consistent approximation error when calculating numerical derivatives.
 #' @examples
 #' if (interactive()) {
 #'   mpp(
@@ -58,7 +74,7 @@ mpp <- function(y, mu,
                 Q_chol = NULL,
                 log = FALSE,
                 lower_chol = FALSE,
-                seed = NULL,
+                gaussint_options = NULL,
                 ...) {
   # TODO:: generalise permitted y; vector vs matrix etc
   if (is.vector(y)) {
@@ -100,14 +116,9 @@ mpp <- function(y, mu,
     if (!is.null(Q_chol)) {
       stop("Q_chol must be NULL if Sigma_chol is provided.")
     }
-    Q_chol <- tri_solve(Sigma_chol, lower = lower_chol)
+    Q_chol <- inverse_chol_reverse(Sigma_chol, lower_chol = lower_chol)
     reverse <- TRUE
     perm <- rev(seq_len(d))
-    if (lower_chol) {
-      Q_chol <- Q_chol[perm, perm]
-    } else {
-      Q_chol <- t(Q_chol)[perm, perm]
-    }
   }
 
   prob <- list(P = numeric(n), E = numeric(n))
@@ -118,24 +129,20 @@ mpp <- function(y, mu,
     b <- ifelse(y_ > 0, Inf, 0)
     if (reverse) {
       prob_ <-
-        excursions::gaussint(
-          mu = mu_[perm],
-          Q.chol = Q_chol,
-          a = a[perm],
-          b = b[perm],
-          seed = seed,
-          ...
-        )
+        do.call(excursions::gaussint,
+                c(list(mu = mu_[perm],
+                       Q.chol = Q_chol,
+                       a = a[perm],
+                       b = b[perm]),
+                  gaussint_options))
     } else {
       prob_ <-
-        excursions::gaussint(
-          mu = mu_,
-          Q.chol = Q_chol,
-          a = a,
-          b = b,
-          seed = seed,
-          ...
-        )
+        do.call(excursions::gaussint,
+                c(list(mu = mu_,
+                       Q.chol = Q_chol,
+                       a = a,
+                       b = b),
+                  gaussint_options))
     }
     prob$P[obs] <- prob_$P
     prob$E[obs] <- prob_$E
@@ -156,6 +163,8 @@ mpp <- function(y, mu,
 #' @param mu PARAM_DESCRIPTION
 #' @param ... Further parameters passed on to
 #'   \code{\link{mpp}}
+#' @param gaussint_options list of options for \code{excursions::gaussint}.
+#'   By default sets \code{seed = 1L} to ensure consistent approximation error.
 #' @param h Step size for finite differences, Default: 1e-06 (for gradients)
 #'   or 1e-04 (for hessian)
 #' @param symmetric For gradients, whether to use symmetric finite differences,
@@ -172,26 +181,32 @@ mpp <- function(y, mu,
 #' @rdname mpp_derivatives
 #' @seealso \code{\link{mpp}}
 
-mpp_gradient_mu <- function(y, mu, ..., seed = 1L,
+mpp_gradient_mu <- function(y, mu, ...,
+                            gaussint_options = NULL,
                             h = 1e-6,
                             symmetric = FALSE) {
-  d <- length(mu)
+  gaussint_options <- as.list(gaussint_options)
+  if (is.null(gaussint_options[["seed"]])) {
+    gaussint_options[["seed"]] <- 1L
+  }
+
+    d <- length(mu)
   mu_ <- matrix(mu, d, d, byrow = TRUE)
   H <- diag(x = h, nrow = d, ncol = d)
   if (symmetric) {
     prob <- mpp(
       y = y,
       mu = rbind(mu_ - H, mu_ + H),
-      ...,
-      seed = seed
+      gaussint_options = gaussint_options,
+      ...
     )
     D <- (prob$P[d + seq_len(d)] - prob$P[seq_len(d)]) / (2 * h)
   } else {
     prob <- mpp(
       y = y,
       mu = rbind(mu, mu_ + H),
-      ...,
-      seed = seed
+      gaussint_options = gaussint_options,
+      ...
     )
     D <- (prob$P[1 + seq_len(d)] - prob$P[1]) / h
   }
@@ -212,9 +227,14 @@ mpp_gradient_mu <- function(y, mu, ..., seed = 1L,
 #' @export
 #' @rdname mpp_derivatives
 
-mpp_hessian_mu <- function(y, mu, ..., seed = 1L,
+mpp_hessian_mu <- function(y, mu, ...,
+                           gaussint_options = NULL,
                            h = 1e-4,
                            diagonal = FALSE) {
+  gaussint_options <- as.list(gaussint_options)
+  if (is.null(gaussint_options[["seed"]])) {
+    gaussint_options[["seed"]] <- 1L
+  }
   H <- function(h, d) {
     Matrix::sparseMatrix(
       i = seq_len(d), j = seq_len(d),
@@ -245,7 +265,7 @@ mpp_hessian_mu <- function(y, mu, ..., seed = 1L,
       y = y,
       mu = rbind(mu, mu_ + H(h, d), mu_ - H(h, d)),
       ...,
-      seed = seed
+      gaussint_options = gaussint_options
     )
     D <- (prob$P[1 + seq_len(d)]
     + prob$P[1 + d + seq_len(d)]
@@ -255,19 +275,17 @@ mpp_hessian_mu <- function(y, mu, ..., seed = 1L,
     prob <- mpp(
       y = y,
       mu = rbind(
-        mu,
         mu_ + Hi(h, d) + Hj(h, d),
         mu_ - Hi(h, d) - Hj(h, d),
         mu_ + Hi(h, d) - Hj(h, d) # ,
         # mu_ - Hi(h, d) + Hj(h, d)
       ),
       ...,
-      seed = seed
+      gaussint_options = gaussint_options
     )
-    p_0 <- prob$P[1]
-    p_pp <- matrix(prob$P[1 + seq_len(d^2)], d, d)
-    p_mm <- matrix(prob$P[1 + d^2 + seq_len(d^2)], d, d)
-    p_pm <- matrix(prob$P[1 + 2 * d^2 + seq_len(d^2)], d, d)
+    p_pp <- matrix(prob$P[seq_len(d^2)], d, d)
+    p_mm <- matrix(prob$P[d^2 + seq_len(d^2)], d, d)
+    p_pm <- matrix(prob$P[2 * d^2 + seq_len(d^2)], d, d)
     D <- (p_pp + p_mm - p_pm - t(p_pm)) / h^2
   }
   D
@@ -282,7 +300,6 @@ mpp_hessian_mu <- function(y, mu, ..., seed = 1L,
 #' @param df The Wishart degrees of freedom
 #' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used,
 #'   Default: \code{FALSE})
-#' @param seed The random seed for \code{excursions::gaussint}, Default: NULL
 #' @param log Whether to compute gradient of the log-probability,
 #'   Default: \code{FALSE}
 #' @return OUTPUT_DESCRIPTION
@@ -302,11 +319,15 @@ mpp_gradient_u <- function(y,
                            V_chol,
                            df,
                            lower_chol = FALSE,
-                           seed = 1L,
+                           gaussint_options = NULL,
                            h = 1e-6,
                            symmetric = FALSE,
                            log = FALSE,
                            ...) {
+  gaussint_options <- as.list(gaussint_options)
+  if (is.null(gaussint_options[["seed"]])) {
+    gaussint_options[["seed"]] <- 1L
+  }
   dof <- length(u)
   d <- (1 + sqrt(1 + 8 * dof)) / 2
   g <- numeric(dof)
@@ -315,17 +336,21 @@ mpp_gradient_u <- function(y,
                              V_chol = V_chol,
                              df = df,
                              lower_chol = FALSE)
-    prob0 <- mpp(y = y, mu = mu, Sigma_chol = C0$W_chol, log = log,
-                 seed = seed, ...)
+    prob0 <- sum(mpp(y = y, mu = mu, Sigma_chol = C0$W_chol, log = TRUE,
+                     gaussint_options = gaussint_options, ...)$P)
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
       C <- latent_to_nwishart(x = u + H,
                               V_chol = V_chol,
                               df = df,
                               lower_chol = FALSE)
-      prob <- mpp(y = y, mu = mu, Sigma_chol = C$W_chol, log = log,
-                  seed = seed, ...)
-      g[loop] <- (prob$P - prob0$P) / h
+      prob <- sum(mpp(y = y, mu = mu, Sigma_chol = C$W_chol, log = TRUE,
+                      gaussint_options = gaussint_options, ...)$P)
+      if (log) {
+        g[loop] <- (prob - prob0) / h
+      } else {
+        g[loop] <- (exp(prob) - exp(prob0)) / h
+      }
     }
   } else {
     for (loop in seq_len(dof)) {
@@ -338,13 +363,16 @@ mpp_gradient_u <- function(y,
                                 V_chol = V_chol,
                                 df = df,
                                 lower_chol = FALSE)
-      prob_p <- mpp(y = y, mu = mu, Sigma_chol = C_p$W_chol, log = log,
-                    seed = seed, ...)
-      prob_m <- mpp(y = y, mu = mu, Sigma_chol = C_m$W_chol, log = log,
-                    seed = seed, ...)
-      g[loop] <- (prob_p$P - prob_m$P) / (2 * h)
+      prob_p <- sum(mpp(y = y, mu = mu, Sigma_chol = C_p$W_chol, log = TRUE,
+                        gaussint_options = gaussint_options, ...)$P)
+      prob_m <- sum(mpp(y = y, mu = mu, Sigma_chol = C_m$W_chol, log = TRUE,
+                        gaussint_options = gaussint_options, ...)$P)
+      if (log) {
+        g[loop] <- (prob_p - prob_m) / (2 * h)
+      } else {
+        g[loop] <- (exp(prob_p) - exp(prob_m)) / (2 * h)
+      }
     }
   }
   g
 }
-

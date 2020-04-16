@@ -232,15 +232,15 @@ test_that("Wishart density", {
 
 # internal utils ####
 test_that("Triangular solves", {
-  expect_equal(tri_solve(matrix(c(1, 0, 1, 1), 2, 2), lower = FALSE),
+  expect_equal(tri_solve(matrix(c(1, 0, 1, 1), 2, 2), lower_tri = FALSE),
                matrix(c(1, 0, -1, 1), 2, 2))
-  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), lower = TRUE),
+  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), lower_tri = TRUE),
                matrix(c(1, -1, 0, 1), 2, 2))
-  expect_equal(tri_solve(matrix(c(1, 0, 1, 1), 2, 2), c(1, 1), lower = FALSE),
+  expect_equal(tri_solve(matrix(c(1, 0, 1, 1), 2, 2), c(1, 1), lower_tri = FALSE),
                c(0, 1))
-  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), c(1, 1), lower = TRUE),
+  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), c(1, 1), lower_tri = TRUE),
                c(1, 0))
-  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), c(1, 1), lower = TRUE),
+  expect_equal(tri_solve(matrix(c(1, 1, 0, 1), 2, 2), c(1, 1), lower_tri = TRUE),
                c(1, 0))
 })
 

@@ -6,9 +6,23 @@
 \alias{mpp_gradient_u}
 \title{Multivariate Probit Event Probability Derivatives}
 \usage{
-mpp_gradient_mu(y, mu, ..., seed = 1L, h = 1e-06, symmetric = FALSE)
+mpp_gradient_mu(
+  y,
+  mu,
+  ...,
+  gaussint_options = NULL,
+  h = 1e-06,
+  symmetric = FALSE
+)
 
-mpp_hessian_mu(y, mu, ..., seed = 1L, h = 1e-04, diagonal = FALSE)
+mpp_hessian_mu(
+  y,
+  mu,
+  ...,
+  gaussint_options = NULL,
+  h = 1e-04,
+  diagonal = FALSE
+)
 
 mpp_gradient_u(
   y,
@@ -17,7 +31,7 @@ mpp_gradient_u(
   V_chol,
   df,
   lower_chol = FALSE,
-  seed = 1L,
+  gaussint_options = NULL,
   h = 1e-06,
   symmetric = FALSE,
   log = FALSE,
@@ -32,7 +46,8 @@ mpp_gradient_u(
 \item{...}{Further parameters passed on to
 \code{\link{mpp}}}
 
-\item{seed}{The random seed for \code{excursions::gaussint}, Default: NULL}
+\item{gaussint_options}{list of options for \code{excursions::gaussint}.
+By default sets \code{seed = 1L} to ensure consistent approximation error.}
 
 \item{h}{Step size for finite differences, Default: 1e-06 (for gradients)
 or 1e-04 (for hessian)}

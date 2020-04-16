@@ -11,7 +11,7 @@ mpp(
   Q_chol = NULL,
   log = FALSE,
   lower_chol = FALSE,
-  seed = NULL,
+  gaussint_options = NULL,
   ...
 )
 }
@@ -35,9 +35,9 @@ Default: FALSE}
 \item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used
 Default: FALSE}
 
-\item{seed}{The random seed for \code{excursions::gaussint}, Default: NULL}
+\item{gaussint_options}{list of options for \code{excursions::gaussint}}
 
-\item{...}{Further parameters passed on to \code{excursions::gaussint}}
+\item{...}{Further parameters, currently ignored}
 }
 \value{
 A list with components
@@ -56,7 +56,7 @@ parameteters.
 Computes the probability
   \deqn{P(y_1 > 0, ..., y_d > 0|\mu,\Sigma)}
 when \eqn{y} is a \eqn{d}-dimensional indicator vector with elements
-\eqn{y_i=I(z_i \ge 0)}, and \eqn{z} is a \eqn{d}-dimensional
+\eqn{y_i=I(z_i > 0)}, and \eqn{z} is a \eqn{d}-dimensional
 Gaussian vector with distribution \eqn{N(\mu,\Sigma)}. Only the inequality
 for \eqn{y_i} is used, so alternative data representations such as
 \eqn{-1/+1} will also work as expected.
@@ -67,8 +67,9 @@ of \eqn{\Sigma}) \code{Q_chol}.
 The logical parameter \code{lower_chol} determines if a lower or upper
 triangular Cholesky factor was supplied.
 
-The \code{seed} parameter is passed on to \code{excursions::gaussint}, and
-allows consistent approximation error when calculating numerical derivatives.
+The internal \code{seed} parameter for \code{excursions::gaussint} can be
+provided as an element of \code{gaussint_options}, which provides
+consistent approximation error when calculating numerical derivatives.
 }
 \examples{
 if (interactive()) {

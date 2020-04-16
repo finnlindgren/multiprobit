@@ -28,16 +28,18 @@ test_that("mpp (multivariate_probit_probability)", {
     mpp(y, mu,
         Q_chol = Q_chol,
         ...,
-        seed = 1L,
-        max.threads = 1)
+        gaussint_options = list(seed = 1L,
+                                max.threads = 1)
+    )
   }
   independent_quadrant_sigma <- function(d, y, mu, ...) {
     Sigma_chol <- myident(d)
     mpp(y, mu,
         Sigma_chol = Sigma_chol,
         ...,
-        seed = 1L,
-        max.threads = 1)
+        gaussint_options = list(seed = 1L,
+                                max.threads = 1)
+    )
   }
 
   for (d in c(1, 2, 10)) {
@@ -197,7 +199,8 @@ test_that("mpp_hessian_mu", {
         Q_chol = Q_chol,
         log = TRUE,
         diagonal = diagonal,
-        max.threads = 1)
+        gaussint_options = list(seed = 1L,
+                                max.threads = 1))
     }
     H
   }
@@ -238,7 +241,8 @@ test_that("mpp_gradient_u", {
         df = df,
         log = TRUE,
         symmetric = symmetric,
-        max.threads = 1)
+        gaussint_options = list(seed = 1L,
+                                max.threads = 1))
     }
     D
   }

@@ -3,16 +3,16 @@
 #' @keywords internal
 #' @rdname internal_utils
 
-tri_solve <- function(A, b, lower = FALSE) {
+tri_solve <- function(A, b, lower_tri = FALSE) {
   if (missing(b)) {
     I <- diag(1.0, nrow(A))
-    if (!lower) {
+    if (!lower_tri) {
       backsolve(A, I)
     } else {
       forwardsolve(A, I)
     }
   } else {
-    if (!lower) {
+    if (!lower_tri) {
       backsolve(A, b)
     } else {
       forwardsolve(A, b)
@@ -96,7 +96,7 @@ qchisq_pbeta <- function(x,
 
 latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
   d <- nrow(V_chol)
-  R <- diag(sqrt(qchisq_pnorm(x[seq_len(d)], df = df - seq_len(d) + 1)))
+  R <- diag(sqrt(qchisq_pnorm(x[seq_len(d)], df = df - seq_len(d) + 1)), d, d)
   R[upper.tri(R)] <- x[d + seq_len(d * (d - 1) / 2)]
   if (lower_chol) {
     W_chol <- V_chol %*% t(R)
@@ -135,7 +135,7 @@ latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
     W_chol <- t(W_chol)
     V_chol <- t(V_chol)
   }
-  B_chol <- tri_solve(V_chol, W_chol, lower = TRUE)
+  B_chol <- tri_solve(V_chol, W_chol, lower_tri = TRUE)
   x <- numeric(d * (d + 1) / 2)
   x[seq_len(d)] <- qnorm_pchisq(diag(B_chol)^2, df = df - seq_len(d) + 1)
   x[d + seq_len(d * (d - 1) / 2)] <- t(B_chol)[upper.tri(B_chol)]
@@ -328,13 +328,13 @@ latent_to_iwishart <- function(x, V_chol, df, lower_chol = FALSE) {
   # Compute Wishart matrix, in reverse ordering
   W <- latent_to_wishart(
     x = x,
-    V_chol = t(tri_solve(V_chol, lower = lower_chol))[rd, rd],
+    V_chol = t(tri_solve(V_chol, lower_tri = lower_chol))[rd, rd],
     df = df,
     lower_chol = lower_chol
   )
   # Invert, and go back to original ordering
-  W$W_chol <- t(tri_solve(W$W_chol, lower = lower_chol))[rd, rd]
-  W$B_chol <- t(tri_solve(W$B_chol, lower = lower_chol))[rd, rd]
+  W$W_chol <- t(tri_solve(W$W_chol, lower_tri = lower_chol))[rd, rd]
+  W$B_chol <- t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   W
 }
 
@@ -367,21 +367,21 @@ latent_from_iwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
   # Pre-normalise V_chol for numerical stability; renormalisation afterwards
   # means we don't need to store this rescaling
   W <- latent_from_wishart(
-    t(tri_solve(W_chol, lower = lower_chol))[rd, rd],
-    t(tri_solve(V_chol, lower = lower_chol))[rd, rd],
+    t(tri_solve(W_chol, lower_tri = lower_chol))[rd, rd],
+    t(tri_solve(V_chol, lower_tri = lower_chol))[rd, rd],
     df = df,
     lower_chol = lower_chol
   )
   list(
     x = W$x,
-    B_chol = t(tri_solve(W$B_chol, lower = lower_chol))[rd, rd]
+    B_chol = t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   )
 }
 
 # Normalised Inverse Wishart ####
 
 normalise_ti_V_chol_rd <- function(V_chol, rd, lower_chol) {
-  ti_V_chol_rd <- t(tri_solve(V_chol, lower = lower_chol))[rd, rd]
+  ti_V_chol_rd <- t(tri_solve(V_chol, lower_tri = lower_chol))[rd, rd]
   if (lower_chol) {
     ti_V_chol_rd <- (1 / rowSums(ti_V_chol_rd^2)^0.5) * ti_V_chol_rd
   } else {
@@ -433,7 +433,7 @@ latent_to_niwishart <- function(x, V_chol, df, lower_chol = FALSE) {
     lower_chol = lower_chol
   )
   # Invert, and go back to original ordering
-  W$B_chol <- t(tri_solve(W$B_chol, lower = lower_chol))[rd, rd]
+  W$B_chol <- t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   # Renormalise
   if (lower_chol) {
     # Need to construct W_chol here, since V_chol was renormalised
@@ -475,7 +475,7 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
   rd <- rev(seq_len(d))
   # Reverse order and invert
   W <- latent_from_nwishart(
-    t(tri_solve(W_chol, lower = lower_chol))[rd, rd],
+    t(tri_solve(W_chol, lower_tri = lower_chol))[rd, rd],
     V_chol = normalise_ti_V_chol_rd(
       V_chol = V_chol,
       rd = rd,
@@ -484,7 +484,7 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
     df = df,
     lower_chol = lower_chol
   )
-  W$B_chol <- t(tri_solve(W$B_chol, lower = lower_chol))[rd, rd]
+  W$B_chol <- t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   if (lower_chol) {
     W$s <- 1 / rowSums((V_chol %*% W$B_chol)^2)^0.5
   } else {
@@ -547,9 +547,9 @@ dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
   }
   d <- nrow(W_chol)
   if (lower_chol) {
-    LVi_LW <- tri_solve(V_chol, W_chol, lower = TRUE)
+    LVi_LW <- tri_solve(V_chol, W_chol, lower_tri = TRUE)
   } else {
-    LVi_LW <- tri_solve(t(V_chol), t(W_chol), lower = TRUE)
+    LVi_LW <- tri_solve(t(V_chol), t(W_chol), lower_tri = TRUE)
   }
   log_p <-
     as.vector(
