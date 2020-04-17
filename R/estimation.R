@@ -420,7 +420,7 @@ optim_alternating <- function(model, max_iter,
             opt_type = "beta",
             model = model,
             u = u,
-            gaussint_ioptions = gaussint_options,
+            gaussint_options = gaussint_options,
             method = method,
             control = optim_options)
     beta <- opt_beta[[loop]]$par
@@ -432,7 +432,7 @@ optim_alternating <- function(model, max_iter,
             opt_type = "u",
             model = model,
             beta = beta,
-            gaussint_ioptions = gaussint_options,
+            gaussint_options = gaussint_options,
             method = method,
             control = optim_options)
     u <- opt_u[[loop]]$par
@@ -441,7 +441,7 @@ optim_alternating <- function(model, max_iter,
 
     result$latent[(loop - 1) * N_latent + seq_len(N_latent)] <- c(beta, u)
   }
-  list(result = result, counts = counts)
+  list(result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u)
 }
 
 optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
@@ -474,7 +474,7 @@ optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
           fn = fn, gr = gr,
           opt_type = "joint",
           model = model,
-          gaussint_ioptions = gaussint_options,
+          gaussint_options = gaussint_options,
           method = method,
           control = optim_options)
   result <- data.frame(index = seq_len(N_latent),
@@ -485,7 +485,7 @@ optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
                        fn = opt_joint$counts["function"],
                        gr_beta = opt_joint$counts["gradient"],
                        gr_u = opt_joint$counts["gradient"])
-  list(result = result, counts = counts)
+  list(result = result, counts = counts, opt_joint = opt_joint)
 }
 
 
@@ -519,7 +519,7 @@ optim_stepwise <- function(model, optim_options = NULL, gaussint_options = NULL)
           opt_type = "beta",
           model = model,
           u = u,
-          gaussint_ioptions = gaussint_options,
+          gaussint_options = gaussint_options,
           method = method,
           control = optim_options)
   beta <- opt_beta$par
@@ -528,7 +528,7 @@ optim_stepwise <- function(model, optim_options = NULL, gaussint_options = NULL)
           fn = fn, gr = gr,
           opt_type = "joint",
           model = model,
-          gaussint_ioptions = gaussint_options,
+          gaussint_options = gaussint_options,
           method = method,
           control = optim_options)
   result <- data.frame(index = seq_len(N_latent),
@@ -541,5 +541,6 @@ optim_stepwise <- function(model, optim_options = NULL, gaussint_options = NULL)
                        gr_beta = opt_beta$counts["gradient"] +
                          opt_joint$counts["gradient"],
                        gr_u = opt_joint$counts["gradient"])
-  list(result = result, counts = counts)
+  list(result = result, counts = counts,
+       opt_beta = opt_beta, opt_joint = opt_joint)
 }
