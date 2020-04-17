@@ -344,33 +344,45 @@ multiprobit <- function(response, X = NULL,
 
 fn <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
   opt_type <- match.arg(opt_type)
+  message(paste0("f,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")"))
   what <- "loglike"
-  switch(opt_type,
-         "joint" = do.call(mp_logposterior_joint,
-                           c(list(latent = x, what = what, ...),
-                             model)),
-         "beta" = do.call(mp_logposterior_fixed_u,
-                          c(list(latent = x, what = what, ...),
-                            model)),
-         "u" = do.call(mp_logposterior_fixed_beta,
-                       c(list(latent = x, what = what, ...),
-                         model))
+  f <- tryCatch(
+    switch(opt_type,
+           "joint" = do.call(mp_logposterior_joint,
+                             c(list(latent = x, what = what, ...),
+                               model)),
+           "beta" = do.call(mp_logposterior_fixed_u,
+                            c(list(latent = x, what = what, ...),
+                              model)),
+           "u" = do.call(mp_logposterior_fixed_beta,
+                         c(list(latent = x, what = what, ...),
+                           model))
+    ),
+    error = function(e) {
+      # Return -Inf for invalid parameter combinations
+      -Inf
+    }
   )
+  message(paste0("f(", opt_type, ") = ", paste0(f, collapse = ", "), ""))
+  f
 }
 gr <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
   opt_type <- match.arg(opt_type)
+  message(paste0("g,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")"))
   what <- "grad"
-  switch(opt_type,
-         "joint" = do.call(mp_logposterior_joint,
-                           c(list(latent = x, what = what, ...),
-                             model)),
-         "beta" = do.call(mp_logposterior_fixed_u,
-                          c(list(latent = x, what = what, ...),
-                            model)),
-         "u" = do.call(mp_logposterior_fixed_beta,
-                       c(list(latent = x, what = what, ...),
-                         model))
+  g <- switch(opt_type,
+              "joint" = do.call(mp_logposterior_joint,
+                                c(list(latent = x, what = what, ...),
+                                  model)),
+              "beta" = do.call(mp_logposterior_fixed_u,
+                               c(list(latent = x, what = what, ...),
+                                 model)),
+              "u" = do.call(mp_logposterior_fixed_beta,
+                            c(list(latent = x, what = what, ...),
+                              model))
   )
+  message(paste0("g(", opt_type, ") = (", paste0(g, collapse = ", "), ")"))
+  g
 }
 
 
