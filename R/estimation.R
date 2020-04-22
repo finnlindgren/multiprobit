@@ -231,9 +231,15 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 
 
 
-#' @title Estimate a multivariate probit model
-#' @description Estimate a multivariate probit model from multivariate binary
-#'   data in a Bayesian generalised linear model framework
+
+
+
+
+
+#' @title Setup multivariate probit model
+#' @description Construct a multivariate probit model object that stores
+#' information about model structure and parameters
+#' @param model An optional existing model object to be updated.
 #' @param response A matrix with n-by-d elements, where each row is a multivariate
 #'   observation, see Details. A vector is interpreted as a single row matrix.
 #' @param X An optimally precomputed n-by-J model matrix, where J is the number
@@ -244,19 +250,10 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 #' @param df Degrees of freedom for the normalised Wishart prior for the
 #'   correlation matrix. See Details.
 #' @param prec_beta Prior precision for the regression coefficients
-#' @param gaussint_options Optional list of options for
-#'   \code{excursions::gaussint}.
-#'   Specific relevant option:
-#'   \code{num_threads} The maximum number of allowed threads for parallel
-#' computing by \code{excursions::gaussint}, Default: 0, meaning no limit.
-#' @param optim_options Optional list of control options for \code{optim()}
-#' @param method Optimisation method. Options: "alternating", "joint",
-#'   "stepwise"
-#' @param max_iter The maximum number of steps for
-#'   \code{method == "alternating"}
-#' @return OUTPUT_DESCRIPTION
-#' @details Estimates a multivariate probit model for the response variable,
-#' here denoted \eqn{Y}. The model is built from a linear predictor
+#' @return An object of class \code{mp_model}
+#' @details The multivariate probit model has a multivariate binary
+#' response variable, here denoted \eqn{Y}. The model is built from a
+#' linear predictor
 #' \deqn{M = X B}
 #' where \eqn{X} is a n-by-J matrix of \eqn{J} predictors, and \eqn{B} is
 #' a J-by-d matrix of regression coefficients.
@@ -264,11 +261,12 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 #' predictor for one multivariate observation. The response variables \eqn{Y}
 #' are linked to \eqn{M} by first defining latent Gaussian variables
 #' \deqn{Z=M+E} where each row of \eqn{E} is a multivariate Normal vector,
-#' \eqn{E ~ N(0,\Sigma)}. Then, \deqn{Y_{i,k}=I(Z_{i,k} > 0).}
+#' \eqn{E \sim N(0,\Sigma)}. Then, \deqn{Y_{i,k}=I(Z_{i,k} > 0).}
 #' Conditionally on \eqn{B}, each row of \eqn{Y} has a multinomial distribution
 #' on the set of all \eqn{0/1} combinations, with each probability equal to a
 #' hyperquadrant probability of a the multivariate Normal distribution
 #' \eqn{N(\mu,\Sigma)}, where \eqn{\mu} is the corresponding row of \eqn{M}.
+#'
 #' Only the inequality \eqn{Y_{i,k} > 0} for the response variables is used,
 #' so alternative data representations such as \eqn{-1/+1} will also work as
 #' expected.
@@ -283,33 +281,128 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 #' }
 #' @export
 #' @importFrom stats model.matrix
+#' @rdname mp_model
+
+mp_model <- function(model = NULL,
+                     response = NULL,
+                     X = NULL,
+                     formula = NULL,
+                     data = NULL,
+                     df = NULL,
+                     prec_beta = NULL) {
+  if (!is.null(model)) {
+    stopifnot(inherits(model, "mp_model"))
+  } else {
+    model <- list(Y = NULL,
+                  X = NULL,
+                  formula = NULL,
+                  data = NULL,
+                  V_chol = NULL,
+                  df = df,
+                  prec_beta = prec_beta)
+  }
+  if (!is.null(response)) {
+    model$Y <- as.matrix(response) > 0
+  }
+
+  # New X provided, remove formula & data, formula|data provided is error
+  # New formula provided, compute new X if data present, otherwise clear X
+  # New data provided, compute new X if formula present, otherwise clear X
+  # X not existing, and none provided, do nothing
+  if (!is.null(X)) {
+    model$X <- as.matrix(X)
+    model$formula <- NULL
+    model$data <- NULL
+    if (!is.null(formula) || !is.null(data)) {
+      stop("When X is provided, do not also provide formula & data")
+    }
+  } else if (!is.null(formula) || !is.null(data)) {
+    if (!is.null(formula)) {
+      model$formula <- formula
+    }
+    if (!is.null(data)) {
+      model$data <- data
+    }
+    if (is.null(model$formula) || is.null(model$data)) {
+      model$X <- NULL
+    } else {
+      model$X <- model.matrix(model$formula, data = model$data)
+    }
+  } else {
+    # Do nothing.
+  }
+
+  if (!is.null(model$Y)) {
+    stopifnot(nrow(model$X) == nrow(model$Y))
+    model$V_chol <- myident(ncol(model$Y))
+
+    if (model$df <= ncol(model$Y)) {
+      warning(paste0("df model parameter (",
+                     df,
+                     ") should be larger than model dimensionminus one (",
+                     ncol(model$Y),
+                     " - 1)"))
+    }
+  }
+
+  if (!is.null(model$prec_beta)) {
+    model$prec_beta <- 0.0
+  }
+
+  class(model) <- "mp_model"
+  model
+}
+
+
+
+
+
+#' @title Estimate a multivariate probit model
+#' @description Estimate a multivariate probit model from multivariate binary
+#'   data in a Bayesian generalised linear model framework
+#' @param response A matrix with n-by-d elements, where each row is a multivariate
+#'   observation, see Details. A vector is interpreted as a single row matrix.
+#'   If \code{NULL}, the observations need to be present in the \code{model}
+#'   object.
+#' @param model An \code{\link{mp_model}} model object.
+#' @param gaussint_options Optional list of options for
+#'   \code{excursions::gaussint}.
+#'   Specific relevant option:
+#'   \code{num_threads} The maximum number of allowed threads for parallel
+#' computing by \code{excursions::gaussint}, Default: 0, meaning no limit.
+#' @param optim_options Optional list of control options for \code{optim()}
+#' @param method Optimisation method. Options: "alternating", "joint",
+#'   "stepwise"
+#' @param max_iter The maximum number of steps for
+#'   \code{method == "alternating"}
+#' @return OUTPUT_DESCRIPTION
+#' @details For details on the multivariate probit model, see
+#' \code{\link{mp_model}}. The \code{multiprobit} function estimates
+#' the model for observations stored in \code{response}
+#'
+#' @examples
+#' \dontrun{
+#' if (interactive()) {
+#'   # EXAMPLE1
+#' }
+#' }
+#' @export
+#' @importFrom stats model.matrix
 #' @importFrom stats optim
 #' @rdname multiprobit
 
-multiprobit <- function(response, X = NULL,
-                        formula = NULL, data = NULL,
-                        df, prec_beta = 0,
+multiprobit <- function(response = NULL,
+                        model,
                         gaussint_options = NULL,
                         optim_options = NULL,
                         max_iter = 10,
                         method = c("alternating", "joint", "stepwise")) {
-  Y <- response > 0
-  if (!is.null(X)) {
-    if (!is.null(formula) || !is.null(data)) {
-      stop("When X is provided, do not also provide formula & data")
-    }
-    X <- as.matrix(X)
-  } else {
-    if (is.null(formula) || is.null(data)) {
-      stop("Either X or formula & data must be provided")
-    }
-    X <- model.matrix(formula, data = data)
+  if (!is.null(response)) {
+    model <- mp_model(model, response = response)
   }
-
-  stopifnot(nrow(X) == nrow(Y))
-  V_chol <- myident(ncol(Y))
-  model <- list(
-    Y = Y, X = X, V_chol = V_chol, df = df, prec_beta = prec_beta)
+  if (is.null(model$Y)) {
+    stop("No response/observations provided.")
+  }
 
   method <- match.arg(method)
   if (method == "alternating") {
@@ -331,14 +424,6 @@ multiprobit <- function(response, X = NULL,
 
   opt
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -473,9 +558,6 @@ optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
   N <- nrow(model$Y)
   d <- ncol(model$Y)
   J <- ncol(model$X)
-  N <- nrow(model$Y)
-  d <- ncol(model$Y)
-  J <- ncol(model$X)
   N_beta <- J * d
   N_u <- d * (d - 1) / 2
   N_latent <- N_beta + N_u
@@ -488,7 +570,8 @@ optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
           model = model,
           gaussint_options = gaussint_options,
           method = method,
-          control = optim_options)
+          control = optim_options,
+          hessian = TRUE)
   result <- data.frame(index = seq_len(N_latent),
                        latent = opt_joint$par,
                        iteration = 1,

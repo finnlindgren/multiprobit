@@ -10,13 +10,12 @@ test_that("multiprobit", {
   df <- d + 1
   prec_beta <- 0.1
 
+  model <- mp_model(response = Y, X = X, df = df, prec_beta = prec_beta)
+
   timing <- list()
   opt <- list()
   for (method in c("alternating", "joint", "stepwise")) {
-    opt[[method]] <- multiprobit(response = Y,
-                                 X = X,
-                                 df = df,
-                                 prec_beta = prec_beta,
+    opt[[method]] <- multiprobit(model = model,
                                  max_iter = 1,
                                  gaussint_options = list(max.threads = 1),
                                  optim_options = list(),
