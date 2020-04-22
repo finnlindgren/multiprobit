@@ -22,9 +22,9 @@ object.}
 \item{model}{An \code{\link{mp_model}} model object.}
 
 \item{gaussint_options}{Optional list of options for
-  \code{excursions::gaussint}.
-  Specific relevant option:
-  \code{num_threads} The maximum number of allowed threads for parallel
+\code{excursions::gaussint}.
+Specific relevant option:
+\code{num_threads} The maximum number of allowed threads for parallel
 computing by \code{excursions::gaussint}, Default: 0, meaning no limit.}
 
 \item{optim_options}{Optional list of control options for \code{optim()}}
@@ -40,11 +40,11 @@ OUTPUT_DESCRIPTION
 }
 \description{
 Estimate a multivariate probit model from multivariate binary
-  data in a Bayesian generalised linear model framework
+data in a Bayesian generalised linear model framework
 }
 \details{
 For details on the multivariate probit model, see
-\code{\link{mp_model}}. The \code{multiprobit} function estimates
+\code{\link[=mp_model]{mp_model()}}. The \code{multiprobit} function estimates
 the model for observations stored in \code{response}
 }
 \examples{

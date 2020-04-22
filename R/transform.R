@@ -1,5 +1,5 @@
 #' @title Internal utilities
-#' @details \code{tri_solve} solves triangular systems with back/forwardsolve
+#' @details `tri_solve` solves triangular systems with back/forwardsolve
 #' @keywords internal
 #' @rdname internal_utils
 
@@ -21,7 +21,7 @@ tri_solve <- function(A, b, lower_tri = FALSE) {
 }
 
 
-#' @details \code{qchisq_pnorm} evaluates \code{qchisq(pnorm(...))} with
+#' @details `qchisq_pnorm` evaluates `qchisq(pnorm(...))` with
 #' attempt at numerical stability.
 #' @keywords internal
 #' @importFrom stats qchisq pnorm
@@ -77,13 +77,13 @@ qchisq_pbeta <- function(x,
 #' length \eqn{d(d+1)/2}
 #' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
-#'   (default = \code{FALSE})
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
+#'   (default = `FALSE`)
 #' @return A list with components
 #'   \item{W_chol}{The Cholesky factor of the Wishart matrix}
 #'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
-#' When \code{lower_chol} is \code{FALSE}, \code{W_chol} is
-#' \code{B_chol \%*\% V_chol}, otherwise \code{V_chol \%*\% B_chol}.
+#' When `lower_chol` is `FALSE`, `W_chol` is
+#' `B_chol \%*\% V_chol`, otherwise `V_chol \%*\% B_chol`.
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -112,8 +112,8 @@ latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #' @param W_chol The Cholesky factor of the Wishart matrix
 #' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
-#'   (default = \code{FALSE})
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
+#'   (default = `FALSE`)
 #' @return A list with components
 #'   \item{x}{A vector of latent variables identifying the Wishart matrix,
 #'   length \eqn{d(d+1)/2}}
@@ -155,17 +155,17 @@ latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #' matrix, length \eqn{d(d-1)/2}
 #' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
-#'   (default = \code{FALSE})
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
+#'   (default = `FALSE`)
 #' @return A list with components
 #'   \item{W_chol}{The Cholesky factor of the Normalised Wishart matrix}
 #'   \item{s}{Vector of scaling values}
 #'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
-#' When \code{lower_chol} is \code{FALSE},
-#' \code{W_chol = (B_chol \%*\% V_chol) \%*\% diag(s)}.
+#' When `lower_chol` is `FALSE`,
+#' `W_chol = (B_chol \%*\% V_chol) \%*\% diag(s)`.
 #'
-#' When \code{lower_chol} is \code{TRUE},
-#' \code{W_chol = s * (V_chol \%*\% B_chol)}.
+#' When `lower_chol` is `TRUE`,
+#' `W_chol = s * (V_chol \%*\% B_chol)`.
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -224,18 +224,18 @@ latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #' @param W_chol The Cholesky factor of the Normalised Wishart matrix
 #' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
-#'   (default = \code{FALSE})
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
+#'   (default = `FALSE`)
 #' @return A list with components
 #'   \item{x}{A vector of latent variables identifying the Normalised Wishart
 #'   matrix, length \eqn{d(d-1)/2}}
 #'   \item{s}{Vector of scaling values}
 #'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
-#' When \code{lower_chol} is \code{FALSE},
-#' \code{W_chol = (B_chol \%*\% V_chol) \%*\% diag(s)}.
+#' When `lower_chol` is `FALSE`,
+#' `W_chol = (B_chol \%*\% V_chol) \%*\% diag(s)`.
 #'
-#' When \code{lower_chol} is \code{TRUE},
-#' \code{W_chol = s * (V_chol \%*\% B_chol)}.
+#' When `lower_chol` is `TRUE`,
+#' `W_chol = s * (V_chol \%*\% B_chol)`.
 #'
 #' @author Finn Lindgren
 #' @examples
@@ -304,14 +304,14 @@ latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #' @param V_chol Transposed inverse of the Cholesky factor of the Inverse
 #' Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
-#'   (default = \code{FALSE})
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
+#'   (default = `FALSE`)
 #' @return A list with components
 #'   \item{W_chol}{The Cholesky factor of the Inverse Wishart matrix}
 #'   \item{B_chol}{The inner Cholesky factor of the inverse Barlett
 #'     decomposition}
-#' When \code{lower_chol} is \code{FALSE}, \code{W_chol} is
-#' \code{B_chol \%*\% V_chol}, otherwise \code{V_chol \%*\% B_chol}.
+#' When `lower_chol` is `FALSE`, `W_chol` is
+#' `B_chol \%*\% V_chol`, otherwise `V_chol \%*\% B_chol`.
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{
@@ -397,17 +397,17 @@ normalise_ti_V_chol_rd <- function(V_chol, rd, lower_chol) {
 #' Wishart matrix, length \eqn{d(d-1)/2}
 #' @param V_chol The Cholesky factor of the Inverse Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
-#'   (default = \code{FALSE})
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
+#'   (default = `FALSE`)
 #' @return A list with components
 #'   \item{W_chol}{The Cholesky factor of the Normalised Inverse Wishart matrix}
 #'   \item{s}{Vector of scaling values}
 #'   \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
-#' When \code{lower_chol} is \code{FALSE},
-#' \code{W_chol = (B_chol \%*\% V_chol) \%*\% diag(s)}.
+#' When `lower_chol` is `FALSE`,
+#' `W_chol = (B_chol \%*\% V_chol) \%*\% diag(s)`.
 #'
-#' When \code{lower_chol} is \code{TRUE},
-#' \code{W_chol = s * (V_chol \%*\% B_chol)}.
+#' When `lower_chol` is `TRUE`,
+#' `W_chol = s * (V_chol \%*\% B_chol)`.
 #' @author Finn Lindgren
 #' @examples
 #' \dontrun{

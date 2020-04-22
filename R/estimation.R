@@ -69,7 +69,7 @@ mp_loglike_gradient_u <- function(Y, u, mu, V_chol, df, ...) {
 #' @param ... PARAM_DESCRIPTION
 #' @param lower_chol PARAM_DESCRIPTION
 #' @param what PARAM_DESCRIPTION, Options: "loglike", "grad", with additional
-#'   options "grad_beta", "grad_u" for \code{mp_logposterior} only
+#'   options "grad_beta", "grad_u" for `mp_logposterior` only
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
 #' @examples
@@ -244,13 +244,13 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 #'   observation, see Details. A vector is interpreted as a single row matrix.
 #' @param X An optimally precomputed n-by-J model matrix, where J is the number
 #'   regression coeficcients for each of the d dimensions.
-#' @param formula A formula interpretable by \code{model.matrix}.
-#' @param data A \code{data.frame} containing the veriables needed by the
+#' @param formula A formula interpretable by `model.matrix`.
+#' @param data A `data.frame` containing the veriables needed by the
 #'   formula.
 #' @param df Degrees of freedom for the normalised Wishart prior for the
 #'   correlation matrix. See Details.
 #' @param prec_beta Prior precision for the regression coefficients
-#' @return An object of class \code{mp_model}
+#' @return An object of class `mp_model`
 #' @details The multivariate probit model has a multivariate binary
 #' response variable, here denoted \eqn{Y}. The model is built from a
 #' linear predictor
@@ -272,7 +272,7 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 #' expected.
 #'
 #' The degrees of freedom for the normalised Wishart prior are linked to the
-#' LKJ prior by \code{df = ...}, which makes the two models equivalent.
+#' LKJ prior by `df = ...`, which makes the two models equivalent.
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
@@ -356,29 +356,29 @@ mp_model <- function(model = NULL,
 
 
 
-
+#' @aliases multiprobit
 #' @title Estimate a multivariate probit model
 #' @description Estimate a multivariate probit model from multivariate binary
 #'   data in a Bayesian generalised linear model framework
 #' @param response A matrix with n-by-d elements, where each row is a multivariate
 #'   observation, see Details. A vector is interpreted as a single row matrix.
-#'   If \code{NULL}, the observations need to be present in the \code{model}
+#'   If `NULL`, the observations need to be present in the `model`
 #'   object.
-#' @param model An \code{\link{mp_model}} model object.
+#' @param model An [`mp_model`] model object.
 #' @param gaussint_options Optional list of options for
-#'   \code{excursions::gaussint}.
+#'   `excursions::gaussint`.
 #'   Specific relevant option:
-#'   \code{num_threads} The maximum number of allowed threads for parallel
-#' computing by \code{excursions::gaussint}, Default: 0, meaning no limit.
-#' @param optim_options Optional list of control options for \code{optim()}
+#'   `num_threads` The maximum number of allowed threads for parallel
+#' computing by `excursions::gaussint`, Default: 0, meaning no limit.
+#' @param optim_options Optional list of control options for `optim()`
 #' @param method Optimisation method. Options: "alternating", "joint",
 #'   "stepwise"
 #' @param max_iter The maximum number of steps for
-#'   \code{method == "alternating"}
+#'   `method == "alternating"`
 #' @return OUTPUT_DESCRIPTION
 #' @details For details on the multivariate probit model, see
-#' \code{\link{mp_model}}. The \code{multiprobit} function estimates
-#' the model for observations stored in \code{response}
+#' [`mp_model()`]. The `multiprobit` function estimates
+#' the model for observations stored in `response`
 #'
 #' @examples
 #' \dontrun{

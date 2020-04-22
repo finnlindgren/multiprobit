@@ -2,8 +2,8 @@
 % Please edit documentation in R/multiprobit-package.R
 \docType{package}
 \name{multiprobit-package}
-\alias{multiprobit}
 \alias{multiprobit-package}
+\alias{_PACKAGE}
 \title{multiprobit: Faster Bayesian Multivariate Probit Regression}
 \description{
 Perform fast Bayesian inference for multivariate probit models.

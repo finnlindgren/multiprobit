@@ -24,24 +24,24 @@ Wishart matrix, length \eqn{d(d-1)/2}}
 }
 \value{
 A list with components
-  \item{W_chol}{The Cholesky factor of the Normalised Inverse Wishart matrix}
-  \item{s}{Vector of scaling values}
-  \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
+\item{W_chol}{The Cholesky factor of the Normalised Inverse Wishart matrix}
+\item{s}{Vector of scaling values}
+\item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
 When \code{lower_chol} is \code{FALSE},
-\code{W_chol = (B_chol \%*\% V_chol) \%*\% diag(s)}.
+\verb{W_chol = (B_chol \\\%*\\\% V_chol) \\\%*\\\% diag(s)}.
 
 When \code{lower_chol} is \code{TRUE},
-\code{W_chol = s * (V_chol \%*\% B_chol)}.
+\verb{W_chol = s * (V_chol \\\%*\\\% B_chol)}.
 
 A list with components
-  \item{x}{A vector of latent variables identifying the Normalised Inverse
-  Wishart matrix, length \eqn{d(d-1)/2}}
-  \item{s}{Vector of scaling values}
-  \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
+\item{x}{A vector of latent variables identifying the Normalised Inverse
+Wishart matrix, length \eqn{d(d-1)/2}}
+\item{s}{Vector of scaling values}
+\item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
 }
 \description{
 Transform latent iid \eqn{N(0,1)} to Normalised Inverse Wishart
-  matrices
+matrices
 
 Transform a Normalised Inverse Wishart matrix to latent iid
 \eqn{N(0,1)} variables

@@ -44,7 +44,7 @@ A list with components
 \describe{
 \item{P}{A vector of probabilities}
 \item{E}{A vector with the estimated approximation error for each
-  probability}
+probability}
 }
 }
 \description{
@@ -54,7 +54,7 @@ parameteters.
 }
 \details{
 Computes the probability
-  \deqn{P(y_1 > 0, ..., y_d > 0|\mu,\Sigma)}
+\deqn{P(y_1 > 0, ..., y_d > 0|\mu,\Sigma)}
 when \eqn{y} is a \eqn{d}-dimensional indicator vector with elements
 \eqn{y_i=I(z_i > 0)}, and \eqn{z} is a \eqn{d}-dimensional
 Gaussian vector with distribution \eqn{N(\mu,\Sigma)}. Only the inequality

@@ -28,9 +28,9 @@ inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
 #'   Default: NULL
 #' @param log logical indicating if the log-probability should be returned,
 #'   Default: FALSE
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
 #'   Default: FALSE
-#' @param gaussint_options list of options for \code{excursions::gaussint}
+#' @param gaussint_options list of options for `excursions::gaussint`
 #' @param ... Further parameters, currently ignored
 #' @return A list with components
 #' \describe{
@@ -47,13 +47,13 @@ inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
 #' \eqn{-1/+1} will also work as expected.
 #'
 #' The \eqn{\Sigma} paramter can either be specified though its Cholesky factor
-#' \code{Sigma_chol} or through the Cholesky factor of the precision (inverse
-#' of \eqn{\Sigma}) \code{Q_chol}.
-#' The logical parameter \code{lower_chol} determines if a lower or upper
+#' `Sigma_chol` or through the Cholesky factor of the precision (inverse
+#' of \eqn{\Sigma}) `Q_chol`.
+#' The logical parameter `lower_chol` determines if a lower or upper
 #' triangular Cholesky factor was supplied.
 #'
-#' The internal \code{seed} parameter for \code{excursions::gaussint} can be
-#' provided as an element of \code{gaussint_options}, which provides
+#' The internal `seed` parameter for `excursions::gaussint` can be
+#' provided as an element of `gaussint_options`, which provides
 #' consistent approximation error when calculating numerical derivatives.
 #' @examples
 #' if (interactive()) {
@@ -162,9 +162,9 @@ mpp <- function(y, mu,
 #' @param y PARAM_DESCRIPTION
 #' @param mu PARAM_DESCRIPTION
 #' @param ... Further parameters passed on to
-#'   \code{\link{mpp}}
-#' @param gaussint_options list of options for \code{excursions::gaussint}.
-#'   By default sets \code{seed = 1L} to ensure consistent approximation error.
+#'   [mpp()]
+#' @param gaussint_options list of options for `excursions::gaussint`.
+#'   By default sets `seed = 1L` to ensure consistent approximation error.
 #' @param h Step size for finite differences, Default: 1e-06 (for gradients)
 #'   or 1e-04 (for hessian)
 #' @param symmetric For gradients, whether to use symmetric finite differences,
@@ -179,7 +179,7 @@ mpp <- function(y, mu,
 #' }
 #' @export
 #' @rdname mpp_derivatives
-#' @seealso \code{\link{mpp}}
+#' @seealso [mpp()]
 
 mpp_gradient_mu <- function(y, mu, ...,
                             gaussint_options = NULL,
@@ -214,7 +214,7 @@ mpp_gradient_mu <- function(y, mu, ...,
 }
 
 
-#' @param diagonal Logical; if \code{TRUE}, only the diagonal of the hessian
+#' @param diagonal Logical; if `TRUE`, only the diagonal of the hessian
 #'   is evaluated, Default: FALSE
 #' @return OUTPUT_DESCRIPTION hessian
 #' @details DETAILS hessain
@@ -298,10 +298,10 @@ mpp_hessian_mu <- function(y, mu, ...,
 #' matrix, length \eqn{d(d-1)/2}
 #' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
 #' @param df The Wishart degrees of freedom
-#' @param lower_chol \code{TRUE} if lower triangular Cholesky factors are used,
-#'   Default: \code{FALSE})
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used,
+#'   Default: `FALSE`)
 #' @param log Whether to compute gradient of the log-probability,
-#'   Default: \code{FALSE}
+#'   Default: `FALSE`
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
 #' @examples

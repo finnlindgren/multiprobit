@@ -44,7 +44,7 @@ mpp_gradient_u(
 \item{mu}{PARAM_DESCRIPTION}
 
 \item{...}{Further parameters passed on to
-\code{\link{mpp}}}
+\code{\link[=mpp]{mpp()}}}
 
 \item{gaussint_options}{list of options for \code{excursions::gaussint}.
 By default sets \code{seed = 1L} to ensure consistent approximation error.}
@@ -106,5 +106,5 @@ if(interactive()){
 }
 }
 \seealso{
-\code{\link{mpp}}
+\code{\link[=mpp]{mpp()}}
 }

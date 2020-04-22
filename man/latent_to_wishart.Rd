@@ -24,15 +24,15 @@ length \eqn{d(d+1)/2}}
 }
 \value{
 A list with components
-  \item{W_chol}{The Cholesky factor of the Wishart matrix}
-  \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
+\item{W_chol}{The Cholesky factor of the Wishart matrix}
+\item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
 When \code{lower_chol} is \code{FALSE}, \code{W_chol} is
-\code{B_chol \%*\% V_chol}, otherwise \code{V_chol \%*\% B_chol}.
+\verb{B_chol \\\%*\\\% V_chol}, otherwise \verb{V_chol \\\%*\\\% B_chol}.
 
 A list with components
-  \item{x}{A vector of latent variables identifying the Wishart matrix,
-  length \eqn{d(d+1)/2}}
-  \item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
+\item{x}{A vector of latent variables identifying the Wishart matrix,
+length \eqn{d(d+1)/2}}
+\item{B_chol}{The inner Cholesky factor of the Barlett decomposition}
 }
 \description{
 Transform latent iid \eqn{N(0,1)} to Wishart matrices
