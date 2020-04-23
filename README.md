@@ -9,6 +9,10 @@
 branch](https://travis-ci.org/finnlindgren/multiprobit.svg?branch=devel)](https://travis-ci.org/finnlindgren/multiprobit)
 [![Codecov test coverage for devel
 branch](https://codecov.io/gh/finnlindgren/multiprobit/branch/devel/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=devel)
+[![R build
+status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-Check/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
+[![R code coverage
+status](https://github.com/finnlindgren/multiprobit/workflows/test-coverage/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
 <!-- badges: end -->
 
 The goal of multiprobit is to perform fast Bayesian inference for
@@ -40,7 +44,6 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(multiprobit)
-#> Loading required package: Matrix
 ## basic example code
 if (interactive()) {
   N <- 6

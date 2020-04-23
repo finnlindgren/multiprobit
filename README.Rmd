@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Travis build status of devel branch](https://travis-ci.org/finnlindgren/multiprobit.svg?branch=devel)](https://travis-ci.org/finnlindgren/multiprobit)
 [![Codecov test coverage for devel branch](https://codecov.io/gh/finnlindgren/multiprobit/branch/devel/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=devel)
+[![R build status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-Check/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
+[![R code coverage status](https://github.com/finnlindgren/multiprobit/workflows/test-coverage/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
 <!-- badges: end -->
 
 The goal of multiprobit is to perform fast Bayesian inference for multivariate probit models. The method uses a latent Gaussian variable parameterisation of the correlation matrix, and numerical optimisation and integration to find the posterior distributions of the model coefficients and correlation matrix.
@@ -41,7 +43,7 @@ remotes::install_github("finnlindgren/multiprobit", ref = "devel")
 
 This is a basic example which shows you how to solve a common problem:
 
-```{r example}
+```{r example, eval=FALSE}
 library(multiprobit)
 ## basic example code
 if (interactive()) {
