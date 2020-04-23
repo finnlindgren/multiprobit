@@ -16,10 +16,10 @@ test_that("multiprobit", {
   opt <- list()
   for (method in c("alternating", "joint", "stepwise")) {
     opt[[method]] <- multiprobit(model = model,
-                                 max_iter = 1,
-                                 gaussint_options = list(max.threads = 1),
-                                 optim_options = list(),
-                                 method = method)
+                                 options = mp_options(
+                                   max_iter = 1,
+                                   gaussint = list(max.threads = 1),
+                                   strategy = method))
     expect_equal(class(opt[[method]]), "list")
     expect_equal(class(opt[[method]][["result"]])[1], "data.frame")
     expect_equal(class(opt[[method]][["counts"]])[1], "data.frame")

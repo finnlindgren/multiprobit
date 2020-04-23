@@ -298,8 +298,8 @@ mp_model <- function(model = NULL,
                   formula = NULL,
                   data = NULL,
                   V_chol = NULL,
-                  df = df,
-                  prec_beta = prec_beta)
+                  df = NULL,
+                  prec_beta = NULL)
   }
   if (!is.null(response)) {
     model$Y <- as.matrix(response) > 0
@@ -332,21 +332,30 @@ mp_model <- function(model = NULL,
     # Do nothing.
   }
 
+  if (!is.null(df)) {
+    model$df <- df
+  }
+
+  if (!is.null(prec_beta)) {
+    model$prec_beta <- prec_beta
+  }
+  if (is.null(model$prec_beta)) {
+    model$prec_beta <- 0.0
+  }
+
   if (!is.null(model$Y)) {
     stopifnot(nrow(model$X) == nrow(model$Y))
     model$V_chol <- myident(ncol(model$Y))
 
-    if (model$df <= ncol(model$Y)) {
+    if (is.null(model$df)) {
+      warning("Model degrees of freedom parameter 'df' is not set.")
+    } else if (model$df <= ncol(model$Y)) {
       warning(paste0("df model parameter (",
                      df,
                      ") should be larger than model dimensionminus one (",
                      ncol(model$Y),
                      " - 1)"))
     }
-  }
-
-  if (!is.null(model$prec_beta)) {
-    model$prec_beta <- 0.0
   }
 
   class(model) <- "mp_model"
@@ -360,69 +369,75 @@ mp_model <- function(model = NULL,
 #' @title Estimate a multivariate probit model
 #' @description Estimate a multivariate probit model from multivariate binary
 #'   data in a Bayesian generalised linear model framework
-#' @param response A matrix with n-by-d elements, where each row is a multivariate
-#'   observation, see Details. A vector is interpreted as a single row matrix.
-#'   If `NULL`, the observations need to be present in the `model`
-#'   object.
 #' @param model An [`mp_model`] model object.
-#' @param gaussint_options Optional list of options for
-#'   `excursions::gaussint`.
-#'   Specific relevant option:
-#'   `num_threads` The maximum number of allowed threads for parallel
-#' computing by `excursions::gaussint`, Default: 0, meaning no limit.
-#' @param optim_options Optional list of control options for `optim()`
-#' @param method Optimisation method. Options: "alternating", "joint",
-#'   "stepwise"
-#' @param max_iter The maximum number of steps for
-#'   `method == "alternating"`
+#' @param ... Parameters passed on to [mp_model()]
+#' @param options An [`mp_options`] object or a list that can be coerced into
+#' an `mp_options` object. Options set here will override the global options.
 #' @return OUTPUT_DESCRIPTION
 #' @details For details on the multivariate probit model, see
-#' [`mp_model()`]. The `multiprobit` function estimates
+#' [mp_model()]. The `multiprobit` function estimates
 #' the model for observations stored in `response`
 #'
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'   # EXAMPLE1
+#'     N <- 6
+#'     d <- 2
+#'     J <- 1
+#'
+#'     set.seed(1L)
+#'     X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
+#'     B <- matrix(0.5, J, d)
+#'     Y <- matrix(rnorm(N * d, mean = as.vector(X %*% B)) > 0, N, d)
+#'     df <- d + 1
+#'     prec_beta <- 0.1
+#'
+#'     model <- mp_model(response = Y, X = X,
+#'                       df = df, prec_beta = prec_beta)
+#'     opt <- multiprobit(model = model,
+#'                        options =
+#'                        mp_options(
+#'                        gaussint = list(max.threads = 1),
+#'                        strategy = "stepwise"))
 #' }
 #' }
 #' @export
 #' @importFrom stats model.matrix
 #' @importFrom stats optim
+#' @importFrom stats optimHess
 #' @rdname multiprobit
 
-multiprobit <- function(response = NULL,
-                        model,
-                        gaussint_options = NULL,
-                        optim_options = NULL,
-                        max_iter = 10,
-                        method = c("alternating", "joint", "stepwise")) {
-  if (!is.null(response)) {
-    model <- mp_model(model, response = response)
-  }
+multiprobit <- function(model = NULL,
+                        ...,
+                        options = NULL) {
+  model <- mp_model(model, ...)
   if (is.null(model$Y)) {
-    stop("No response/observations provided.")
+    stop("No response/observations provided; add to an existing model with mp_model(model, response = ...).")
   }
+  options <- mp_options_merge(mp_options_get(), options)
+  strategy <- match.arg(options$strategy,
+                        c("stepwise", "joint", "alternating"))
+  options <- mp_options_merge(options, strategy = strategy)
 
-  method <- match.arg(method)
-  if (method == "alternating") {
+  mp_log_message("Starting estimation with strategy '", strategy, "'")
+
+  if (strategy == "alternating") {
     opt <- optim_alternating(model,
-                             max_iter = max_iter,
-                             optim_options = optim_options,
-                             gaussint_options = gaussint_options)
-  } else if (method == "joint") {
-    opt <- optim_joint(model,
-                       optim_options = optim_options,
-                       gaussint_options = gaussint_options)
-  } else if (method == "stepwise") {
+                             max_iter = options$max_iter,
+                             optim_options = options$optim,
+                             gaussint_options = options$gaussint)
+  } else if (strategy == "joint") {
+    opt <- optim_joint(model, options = options)
+  } else if (strategy == "stepwise") {
     opt <- optim_stepwise(model,
-                          optim_options = optim_options,
-                          gaussint_options = gaussint_options)
+                          optim_options = options$optim,
+                          gaussint_options = options$gaussint)
   } else {
-    stop("Unknown method; This cannot happen.")
+    stop("Unknown strategy; This cannot happen.")
   }
 
-  opt
+  mp_log_message("Finished estimation with strategy '", strategy, "'")
+  c(list(model = model, options = options), opt)
 }
 
 
@@ -541,8 +556,9 @@ optim_alternating <- function(model, max_iter,
   list(result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u)
 }
 
-optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
-  optim_options <- as.list(optim_options)
+optim_joint <- function(model, options = NULL) {
+  options <- mp_options_get()
+  optim_options <- as.list(options$optim)
   optim_options[["fnscale"]] <- -1
   if (is.null(optim_options[["method"]])) {
     method <- "BFGS"
@@ -550,7 +566,7 @@ optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
     method <- optim_options[["method"]]
     optim_options[["method"]] <- NULL
   }
-  gaussint_options <- as.list(gaussint_options)
+  gaussint_options <- as.list(options$gaussint)
   if (is.null(gaussint_options[["seed"]])) {
     gaussint_options[["seed"]] <- 1L
   }
@@ -570,8 +586,45 @@ optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
           model = model,
           gaussint_options = gaussint_options,
           method = method,
-          control = optim_options,
-          hessian = TRUE)
+          control = optim_options)
+  if (is.null(options$hessian) ||
+      (options$hessian == "none")) {
+    hessian <- NULL
+  } else if (options$hessian == "full") {
+    hessian <-
+      optimHess(par = opt_joint$par,
+                fn = fn, gr = gr,
+                opt_type = "joint",
+                model = model,
+                gaussint_options = gaussint_options,
+                method = method,
+                control = optim_options)
+  } else if (options$hessian == "block") {
+    hessian <-
+      Matrix::bdiag(
+        optimHess(par = opt_joint$par[seq_len(N_beta)],
+                  fn = fn, gr = gr,
+                  opt_type = "beta",
+                  u = opt_joint$par[N_beta + seq_len(N_u)],
+                  model = model,
+                  gaussint_options = gaussint_options,
+                  method = method,
+                  control = optim_options),
+        optimHess(par = opt_joint$par[N_beta + seq_len(N_u)],
+                  fn = fn, gr = gr,
+                  opt_type = "u",
+                  beta = opt_joint$par[seq_len(N_beta)],
+                  model = model,
+                  gaussint_options = gaussint_options,
+                  method = method,
+                  control = optim_options)
+      )
+  } else if (options$hessian == "diagonal") {
+    warning("'diagonal' hessian not implemented.")
+    hessian <- NULL
+  } else {
+    warning("Unknown hessian type '", options$hessian, "'")
+  }
   result <- data.frame(index = seq_len(N_latent),
                        latent = opt_joint$par,
                        iteration = 1,
@@ -580,7 +633,8 @@ optim_joint <- function(model, optim_options = NULL, gaussint_options = NULL) {
                        fn = opt_joint$counts["function"],
                        gr_beta = opt_joint$counts["gradient"],
                        gr_u = opt_joint$counts["gradient"])
-  list(result = result, counts = counts, opt_joint = opt_joint)
+  list(result = result, counts = counts, opt_joint = opt_joint,
+       hessian = hessian)
 }
 
 

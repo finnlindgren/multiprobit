@@ -4,36 +4,15 @@
 \alias{multiprobit}
 \title{Estimate a multivariate probit model}
 \usage{
-multiprobit(
-  response = NULL,
-  model,
-  gaussint_options = NULL,
-  optim_options = NULL,
-  max_iter = 10,
-  method = c("alternating", "joint", "stepwise")
-)
+multiprobit(model = NULL, ..., options = NULL)
 }
 \arguments{
-\item{response}{A matrix with n-by-d elements, where each row is a multivariate
-observation, see Details. A vector is interpreted as a single row matrix.
-If \code{NULL}, the observations need to be present in the \code{model}
-object.}
-
 \item{model}{An \code{\link{mp_model}} model object.}
 
-\item{gaussint_options}{Optional list of options for
-\code{excursions::gaussint}.
-Specific relevant option:
-\code{num_threads} The maximum number of allowed threads for parallel
-computing by \code{excursions::gaussint}, Default: 0, meaning no limit.}
+\item{...}{Parameters passed on to \code{\link[=mp_model]{mp_model()}}}
 
-\item{optim_options}{Optional list of control options for \code{optim()}}
-
-\item{max_iter}{The maximum number of steps for
-\code{method == "alternating"}}
-
-\item{method}{Optimisation method. Options: "alternating", "joint",
-"stepwise"}
+\item{options}{An \code{\link{mp_options}} object or a list that can be coerced into
+an \code{mp_options} object. Options set here will override the global options.}
 }
 \value{
 OUTPUT_DESCRIPTION
@@ -50,7 +29,24 @@ the model for observations stored in \code{response}
 \examples{
 \dontrun{
 if (interactive()) {
-  # EXAMPLE1
+    N <- 6
+    d <- 2
+    J <- 1
+
+    set.seed(1L)
+    X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
+    B <- matrix(0.5, J, d)
+    Y <- matrix(rnorm(N * d, mean = as.vector(X \%*\% B)) > 0, N, d)
+    df <- d + 1
+    prec_beta <- 0.1
+
+    model <- mp_model(response = Y, X = X,
+                      df = df, prec_beta = prec_beta)
+    opt <- multiprobit(model = model,
+                       options =
+                       mp_options(
+                       gaussint = list(max.threads = 1),
+                       strategy = "stepwise"))
 }
 }
 }

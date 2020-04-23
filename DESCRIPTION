@@ -21,3 +21,10 @@ BugReports: https://github.com/finnlindgren/multiprobit/issues
 Depends: 
     Matrix
 Roxygen: list(markdown = TRUE)
+Collate: 
+    'aaaaa.R'
+    'environment.R'
+    'estimation.R'
+    'multiprobit-package.R'
+    'probabilities.R'
+    'transform.R'
