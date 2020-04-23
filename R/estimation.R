@@ -414,10 +414,10 @@ multiprobit <- function(model = NULL,
   if (is.null(model$Y)) {
     stop("No response/observations provided; add to an existing model with mp_model(model, response = ...).")
   }
-  options <- mp_options_merge(mp_options_get(), options)
+  options <- mp_options(mp_options_get(), options)
   strategy <- match.arg(options$strategy,
                         c("stepwise", "joint", "alternating"))
-  options <- mp_options_merge(options, strategy = strategy)
+  options <- mp_options(options, strategy = strategy)
 
   mp_log_message("Starting estimation with strategy '", strategy, "'")
 

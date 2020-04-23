@@ -83,6 +83,65 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 }
 
 
+#' @title Check multiprobit options
+#' @description Check for valid contents of an mp_options object
+#' @param options The [`mp_options`] object to check
+#' @return Logical; `TRUE` if the object is valid
+#' @details Warnings are produced for invalid contents
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'   mp_options_check(mp_options(invalid = "something"))
+#' }
+#' }
+#' @export
+#' @rdname mp_options_check
+
+mp_options_check <- function(options) {
+  options <- as.mp_options(options)
+  ok <- TRUE
+  # Check valid max_iter
+  if (is.null(options[["max_iter"]])) {
+    ok <- FALSE
+    warning("'max_iter' should be a positive integer, not NULL.")
+  } else if (!is.numeric(options[["max_iter"]]) ||
+             !(options[["max_iter"]] > 0)) {
+    ok <- FALSE
+    warning("'max_iter' should be a positive integer.")
+  }
+
+  # Check valid strategy
+  if (is.null(options[["strategy"]])) {
+    ok <- FALSE
+    warning("'strategy' should not be NULL.")
+  } else if (!is.character(options[["strategy"]]) ||
+             !(length(options[["strategy"]]) == 1) ||
+             !(options[["strategy"]] %in%
+               c("alternating",
+                 "stepwise",
+                 "joint"))) {
+    ok <- FALSE
+    warning("'strategy' should be a valid strategy string, see ?mp_options")
+  }
+
+
+  # Check valid hessian setting
+  if (is.null(options[["hessian"]])) {
+    ok <- FALSE
+    warning("'hessian' should not be NULL.")
+  } else if (!is.character(options[["hessian"]]) ||
+             !(length(options[["hessian"]]) == 1) ||
+             !(options[["hessian"]] %in%
+               c("none",
+                 "diagonal",
+                 "block",
+                 "full"))) {
+    ok <- FALSE
+    warning("'hessian' should be a valid hessian string, see ?mp_options")
+  }
+
+  ok
+}
 
 
 #' @title FUNCTION_TITLE
@@ -110,17 +169,24 @@ mp_options_get <- function(x = NULL) {
   }
 }
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
+#' @title Create or update an options objects
+#' @description Create a new options object, or merge information from several
+#' objects
+#' @param ... Named options, optionally started by one or more [`mp_options`]
+#' objects. Options specified later override the previous options.
+#' @return An `mp_options` object.
+#' @details Recognised options:
 #' \describe{
-#' \item{gaussint}{Optional list of options for
+#' \item{verbose}{logical; if `TRUE`, log messages are printed with `message()`}
+#' \item{gaussint}{List of options for
 #'   `excursions::gaussint`.
-#'   Specific relevant option:
-#'   `num_threads` The maximum number of allowed threads for parallel
-#' computing by `excursions::gaussint`, Default: 0, meaning no limit.
+#'   Specific relevant options:
+#'   \describe{
+#'     \item{num.threads}{The maximum number of allowed threads for parallel
+#'       computing by `excursions::gaussint`, Default: 0, meaning no limit.}
+#'     \item{seed}{The seed for the internal random number generator for
+#'       `excursions::gaussint`.}
+#'   }
 #' }
 #' \item{optim}{List of control options for `optim()`. Can also include
 #'   an element `method` for choosing the optimisation method.}
@@ -128,36 +194,85 @@ mp_options_get <- function(x = NULL) {
 #'   "stepwise". Default: "stepwise"}
 #' \item{max_iter}{The maximum number of steps for
 #'   `strategy == "alternating"`}
+#' \item{hessian}{The hessian computation style. Options: "none", "diagonal",
+#'   "block", and "full". Default: "full"}
 #'   }
 #'
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'   # EXAMPLE1
+#'  # Add hessian options to global options without changing the global options:
+#'  options1 <- mp_options(mp_options_get(), hessian = "block")
+#'  # Create a proto-options object in two equivalent ways:
+#'  options2 <- as.mp_options(hessian = "diagonal")
+#'  options2 <- as.mp_options(list(hessian = "diagonal"))
+#'  # Combine options objects:
+#'  options3 <- mp_options(options1, options2)
 #' }
 #' }
 #' @export
 #' @rdname mp_options
 
 mp_options <- function(...) {
-  options <- list(...)
-  class(options) <- c("mp_options", "list")
+  new_mp_options <- function() {
+    options <- list()
+    class(options) <- c("mp_options", "list")
+    options
+  }
+  traverse <- function(options, override) {
+    stopifnot(is.list(options) && is.list(override))
+    for (x in names(override)) {
+      if (inherits(options[[x]], "list") &&
+          inherits(override[[x]], "list")) {
+        options[[x]] <- traverse(
+          options[[x]],
+          override[[x]]
+        )
+      } else {
+        options[[x]] <- override[[x]]
+      }
+    }
+    options
+  }
+
+  input_options <- list(...)
+  n_input <- length(input_options)
+  if (n_input == 0) {
+    # Return an empty options object
+    return(new_mp_options())
+  }
+  if (inherits(input_options[[1]], "mp_options")) {
+    options <- input_options[[1]]
+    k <- 1
+    while ((k < n_input) &&
+           inherits(input_options[[k + 1]], "mp_options")) {
+      k <- k + 1
+      options <- traverse(options, input_options[[k]])
+    }
+    if (k < n_input) {
+      if (any(vapply(
+        input_options[-seq_len(k)],
+        function(x) inherits(x, "mp_options"),
+        TRUE))
+        ) {
+        stop("All mp_options input objects must come first in the parameter list.")
+      }
+      options <- traverse(options, input_options[-seq_len(k)])
+    }
+  } else {
+    options <- traverse(new_mp_options(), input_options)
+  }
+
   options
 }
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param x PARAM_DESCRIPTION, Default: NULL
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#' @param x An object to be converted to an `mp_options` object.
+#' @return For `as.mp_options`, `NULL` or no input returns an empty `mp_options`
+#' object, a `list` is converted via `mp_options(...)`, and `mp_options` input
+#' is passed through. Other types of input generates an error.
+#'
 #' @export
-#' @rdname as.mp_options
+#' @rdname mp_options
 
 as.mp_options <- function(x = NULL) {
   if (inherits(x, "mp_options")) {
@@ -196,65 +311,6 @@ mp_options_default <- function() {
   )
 }
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' This mid-level function does not access the global and/or default options
-#' by itself.
-#' @examples
-#' \dontrun{
-#' if (interactive()) {
-#'   # EXAMPLE1
-#' }
-#' }
-#' @export
-#' @rdname mp_options_merge
-
-mp_options_merge <- function(...) {
-  traverse <- function(options, override) {
-    stopifnot(is.list(options) && is.list(override))
-    for (x in names(override)) {
-      if (inherits(options[[x]], "list") &&
-          inherits(override[[x]], "list")) {
-        options[[x]] <- traverse(
-          options[[x]],
-          override[[x]]
-        )
-      } else {
-        options[[x]] <- override[[x]]
-      }
-    }
-    options
-  }
-
-  options <- list(...)
-  if (length(options) == 0) {
-    # Return an empty options object
-    options <- mp_options()
-  } else if (inherits(options[[1]], "mp_options")) {
-    if (length(options) == 1) {
-      options <- options[[1]]
-    } else if ((length(options) == 2) &&
-      inherits(options[[2]], "mp_options")) {
-      options <- traverse(options[[1]], options[[2]])
-    } else {
-      if (any(vapply(
-        options[-1],
-        function(x) inherits(x, "mp_options"),
-        TRUE
-      ))) {
-        stop("Either 0, 1, or 2 full mp_options inputs allowed")
-      }
-      options <- traverse(options[[1]], options[-1])
-    }
-  } else {
-    options <- traverse(mp_options(), options)
-  }
-
-  options
-}
 
 
 #' @title Set global multiprobit options
@@ -265,8 +321,7 @@ mp_options_merge <- function(...) {
 #' @param default logical; If `TRUE`, reinitialise the global options with
 #' default options before setting new options. Default: `FALSE`
 #' @return A copy of the global options is returned invisibly.`
-#' @seealso [mp_options()], [mp_options_default()], [mp_options_merge()],
-#' [mp_options_get()]
+#' @seealso [mp_options()], [mp_options_default()], [mp_options_get()]
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
@@ -282,6 +337,6 @@ mp_options_set <- function(..., default = FALSE) {
   if (default) {
     envir$options <- mp_options_default()
   }
-  envir$options <- mp_options_merge(envir$options, ...)
+  envir$options <- mp_options(envir$options, ...)
   invisible(mp_options_get())
 }

@@ -2,27 +2,43 @@
 % Please edit documentation in R/environment.R
 \name{mp_options}
 \alias{mp_options}
-\title{FUNCTION_TITLE}
+\alias{as.mp_options}
+\title{Create or update an options objects}
 \usage{
 mp_options(...)
+
+as.mp_options(x = NULL)
 }
 \arguments{
-\item{...}{PARAM_DESCRIPTION}
+\item{...}{Named options, optionally started by one or more \code{\link{mp_options}}
+objects. Options specified later override the previous options.}
+
+\item{x}{An object to be converted to an \code{mp_options} object.}
 }
 \value{
-OUTPUT_DESCRIPTION
+An \code{mp_options} object.
+
+For \code{as.mp_options}, \code{NULL} or no input returns an empty \code{mp_options}
+object, a \code{list} is converted via \code{mp_options(...)}, and \code{mp_options} input
+is passed through. Other types of input generates an error.
 }
 \description{
-FUNCTION_DESCRIPTION
+Create a new options object, or merge information from several
+objects
 }
 \details{
-DETAILS
+Recognised options:
 \describe{
-\item{gaussint}{Optional list of options for
+\item{verbose}{logical; if \code{TRUE}, log messages are printed with \code{message()}}
+\item{gaussint}{List of options for
 \code{excursions::gaussint}.
-Specific relevant option:
-\code{num_threads} The maximum number of allowed threads for parallel
-computing by \code{excursions::gaussint}, Default: 0, meaning no limit.
+Specific relevant options:
+\describe{
+\item{num.threads}{The maximum number of allowed threads for parallel
+computing by \code{excursions::gaussint}, Default: 0, meaning no limit.}
+\item{seed}{The seed for the internal random number generator for
+\code{excursions::gaussint}.}
+}
 }
 \item{optim}{List of control options for \code{optim()}. Can also include
 an element \code{method} for choosing the optimisation method.}
@@ -30,12 +46,20 @@ an element \code{method} for choosing the optimisation method.}
 "stepwise". Default: "stepwise"}
 \item{max_iter}{The maximum number of steps for
 \code{strategy == "alternating"}}
+\item{hessian}{The hessian computation style. Options: "none", "diagonal",
+"block", and "full". Default: "full"}
 }
 }
 \examples{
 \dontrun{
 if (interactive()) {
-  # EXAMPLE1
+ # Add hessian options to global options without changing the global options:
+ options1 <- mp_options(mp_options_get(), hessian = "block")
+ # Create a proto-options object in two equivalent ways:
+ options2 <- as.mp_options(hessian = "diagonal")
+ options2 <- as.mp_options(list(hessian = "diagonal"))
+ # Combine options objects:
+ options3 <- mp_options(options1, options2)
 }
 }
 }

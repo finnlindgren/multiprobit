@@ -29,6 +29,5 @@ if (interactive()) {
 }
 }
 \seealso{
-\code{\link[=mp_options]{mp_options()}}, \code{\link[=mp_options_default]{mp_options_default()}}, \code{\link[=mp_options_merge]{mp_options_merge()}},
-\code{\link[=mp_options_get]{mp_options_get()}}
+\code{\link[=mp_options]{mp_options()}}, \code{\link[=mp_options_default]{mp_options_default()}}, \code{\link[=mp_options_get]{mp_options_get()}}
 }
