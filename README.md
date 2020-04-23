@@ -43,9 +43,9 @@ remotes::install_github("finnlindgren/multiprobit", ref = "devel")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(multiprobit)
-## basic example code
 if (interactive()) {
+  library(multiprobit)
+  
   N <- 6
   d <- 2
   J <- 2
