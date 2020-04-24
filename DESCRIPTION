@@ -15,10 +15,10 @@ BugReports: https://github.com/finnlindgren/multiprobit/issues
 Depends: 
     Matrix
 Imports: 
-    CholWishart,
     excursions,
     stats
 Suggests: 
+    CholWishart,
     covr,
     testthat (>= 2.1.0)
 Encoding: UTF-8

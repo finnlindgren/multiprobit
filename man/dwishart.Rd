@@ -36,7 +36,8 @@ OUTPUT_DESCRIPTION
 FUNCTION_DESCRIPTION
 }
 \details{
-DETAILS
+This function requires the \code{CholWishart::lmvgamma} function from
+the \code{CholWishart} package.
 }
 \examples{
 \dontrun{

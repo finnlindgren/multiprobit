@@ -507,7 +507,8 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #' @param lower_chol PARAM_DESCRIPTION, Default: FALSE
 #' @param log PARAM_DESCRIPTION, Default: FALSE
 #' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
+#' @details This function requires the `CholWishart::lmvgamma` function from
+#' the `CholWishart` package.
 #' @examples
 #' \dontrun{
 #' if (interactive()) {

@@ -172,62 +172,65 @@ test_that("self consistent latent/niwishart transformation", {
 
 # Wishart/ density
 test_that("Wishart density", {
-  mydiag <- function(d, x = 1.0) {
-    Matrix::sparseMatrix(i = seq_len(d),
-                         j = seq_len(d),
-                         x = x,
-                         dims = c(d, d))
+  if (requireNamespace("CholWishart")) {
+
+    mydiag <- function(d, x = 1.0) {
+      Matrix::sparseMatrix(i = seq_len(d),
+                           j = seq_len(d),
+                           x = x,
+                           dims = c(d, d))
+    }
+
+    V_chol <- mydiag(3)
+    df <- 5
+    expect_equal(
+      dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
+               lower_chol = FALSE, log = FALSE),
+      0.0001879003
+    )
+    expect_equal(
+      dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
+               lower_chol = FALSE, log = TRUE),
+      log(0.0001879003),
+      tolerance = .Machine$double.eps^0.5 / 0.0001879003
+    )
+    expect_equal(
+      dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
+               lower_chol = TRUE, log = FALSE),
+      0.0001879003
+    )
+    x <- latent_from_wishart(mydiag(3), V_chol, df, lower_chol = TRUE)
+    expect_equal(
+      dwishart(W = NULL, x = x$x, W_chol = NULL, V_chol, df,
+               lower_chol = TRUE, log = FALSE),
+      0.0001879003
+    )
+
+    # Input errors
+    # Missing df
+    expect_error(
+      dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol,
+               lower_chol = FALSE, log = FALSE))
+    # Missing V_chol
+    expect_error(
+      dwishart(W = mydiag(3), x = NULL, W_chol = NULL, df = df,
+               lower_chol = FALSE, log = FALSE))
+    # Missing input
+    expect_error(
+      dwishart(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
+               lower_chol = FALSE, log = FALSE))
+    # Overspecified input
+    expect_error(
+      dwishart(W = mydiag(3), x = rep(0, 6), W_chol = NULL, V_chol, df,
+               lower_chol = FALSE, log = FALSE))
+    expect_error(
+      dwishart(W = mydiag(3), x = NULL, W_chol = mydiag(3), V_chol, df,
+               lower_chol = FALSE, log = FALSE))
+    expect_error(
+      dwishart(W = NULL, x = rep(0, 6), W_chol = mydiag(3), V_chol, df,
+               lower_chol = FALSE, log = FALSE))
+
   }
-
-  V_chol <- mydiag(3)
-  df <- 5
-  expect_equal(
-    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
-             lower_chol = FALSE, log = FALSE),
-    0.0001879003
-  )
-  expect_equal(
-    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
-             lower_chol = FALSE, log = TRUE),
-    log(0.0001879003),
-    tolerance = .Machine$double.eps^0.5 / 0.0001879003
-  )
-  expect_equal(
-    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol, df,
-             lower_chol = TRUE, log = FALSE),
-    0.0001879003
-  )
-  x <- latent_from_wishart(mydiag(3), V_chol, df, lower_chol = TRUE)
-  expect_equal(
-    dwishart(W = NULL, x = x$x, W_chol = NULL, V_chol, df,
-             lower_chol = TRUE, log = FALSE),
-    0.0001879003
-  )
-
-  # Input errors
-  # Missing df
-  expect_error(
-    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, V_chol,
-             lower_chol = FALSE, log = FALSE))
-  # Missing V_chol
-  expect_error(
-    dwishart(W = mydiag(3), x = NULL, W_chol = NULL, df = df,
-             lower_chol = FALSE, log = FALSE))
-  # Missing input
-  expect_error(
-    dwishart(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
-             lower_chol = FALSE, log = FALSE))
-  # Overspecified input
-  expect_error(
-    dwishart(W = mydiag(3), x = rep(0, 6), W_chol = NULL, V_chol, df,
-             lower_chol = FALSE, log = FALSE))
-  expect_error(
-    dwishart(W = mydiag(3), x = NULL, W_chol = mydiag(3), V_chol, df,
-             lower_chol = FALSE, log = FALSE))
-  expect_error(
-    dwishart(W = NULL, x = rep(0, 6), W_chol = mydiag(3), V_chol, df,
-             lower_chol = FALSE, log = FALSE))
-
 })
 
 # internal utils ####
