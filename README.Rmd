@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R build status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-check/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
 [![R code coverage status](https://github.com/finnlindgren/multiprobit/workflows/test-coverage/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
-[![Codecov test coverage](https://codecov.io/gh/finnlindgren/multiprobit/branch/master/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=devel)
+[![Codecov test coverage](https://codecov.io/gh/finnlindgren/multiprobit/branch/devel/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=devel)
 <!-- badges: end -->
 
 The goal of multiprobit is to perform fast Bayesian inference for multivariate probit models. The method uses a latent Gaussian variable parameterisation of the correlation matrix, and numerical optimisation and integration to find the posterior distributions of the model coefficients and correlation matrix.
