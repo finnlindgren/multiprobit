@@ -13,16 +13,28 @@ test_that("log messages", {
 })
 
 test_that("setting/getting options", {
-  expect_is(as.mp_options(),
-            "mp_options")
-  expect_is(as.mp_options(mp_options()),
-            "mp_options")
-  expect_is(as.mp_options(list()),
-            "mp_options")
-  expect_is(as.mp_options(as.list(mp_options_default())),
-            "mp_options")
-  expect_is(mp_options_set(default = TRUE),
-            "mp_options")
-  expect_is(mp_options_set(mp_options_default()),
-            "mp_options")
+  expect_is(
+    as.mp_options(),
+    "mp_options"
+  )
+  expect_is(
+    as.mp_options(mp_options()),
+    "mp_options"
+  )
+  expect_is(
+    as.mp_options(list()),
+    "mp_options"
+  )
+  expect_is(
+    as.mp_options(as.list(mp_options_default())),
+    "mp_options"
+  )
+  expect_is(
+    mp_options_set(default = TRUE),
+    "mp_options"
+  )
+  expect_is(
+    mp_options_set(mp_options_default()),
+    "mp_options"
+  )
 })

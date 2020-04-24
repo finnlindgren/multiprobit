@@ -293,13 +293,15 @@ mp_model <- function(model = NULL,
   if (!is.null(model)) {
     stopifnot(inherits(model, "mp_model"))
   } else {
-    model <- list(Y = NULL,
-                  X = NULL,
-                  formula = NULL,
-                  data = NULL,
-                  V_chol = NULL,
-                  df = NULL,
-                  prec_beta = NULL)
+    model <- list(
+      Y = NULL,
+      X = NULL,
+      formula = NULL,
+      data = NULL,
+      V_chol = NULL,
+      df = NULL,
+      prec_beta = NULL
+    )
   }
   if (!is.null(response)) {
     model$Y <- as.matrix(response) > 0
@@ -350,11 +352,13 @@ mp_model <- function(model = NULL,
     if (is.null(model$df)) {
       warning("Model degrees of freedom parameter 'df' is not set.")
     } else if (model$df <= ncol(model$Y)) {
-      warning(paste0("df model parameter (",
-                     df,
-                     ") should be larger than model dimensionminus one (",
-                     ncol(model$Y),
-                     " - 1)"))
+      warning(paste0(
+        "df model parameter (",
+        df,
+        ") should be larger than model dimensionminus one (",
+        ncol(model$Y),
+        " - 1)"
+      ))
     }
   }
 
@@ -381,24 +385,29 @@ mp_model <- function(model = NULL,
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'     N <- 6
-#'     d <- 2
-#'     J <- 1
+#'   N <- 6
+#'   d <- 2
+#'   J <- 1
 #'
-#'     set.seed(1L)
-#'     X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
-#'     B <- matrix(0.5, J, d)
-#'     Y <- matrix(rnorm(N * d, mean = as.vector(X %*% B)) > 0, N, d)
-#'     df <- d + 1
-#'     prec_beta <- 0.1
+#'   set.seed(1L)
+#'   X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
+#'   B <- matrix(0.5, J, d)
+#'   Y <- matrix(rnorm(N * d, mean = as.vector(X %*% B)) > 0, N, d)
+#'   df <- d + 1
+#'   prec_beta <- 0.1
 #'
-#'     model <- mp_model(response = Y, X = X,
-#'                       df = df, prec_beta = prec_beta)
-#'     opt <- multiprobit(model = model,
-#'                        options =
-#'                          mp_options(
-#'                            gaussint = list(max.threads = 1),
-#'                            strategy = "stepwise"))
+#'   model <- mp_model(
+#'     response = Y, X = X,
+#'     df = df, prec_beta = prec_beta
+#'   )
+#'   opt <- multiprobit(
+#'     model = model,
+#'     options =
+#'       mp_options(
+#'         gaussint = list(max.threads = 1),
+#'         strategy = "stepwise"
+#'       )
+#'   )
 #' }
 #' }
 #' @export
@@ -441,15 +450,27 @@ fn <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
   what <- "loglike"
   f <- tryCatch(
     switch(opt_type,
-           "joint" = do.call(mp_logposterior_joint,
-                             c(list(latent = x, what = what, ...),
-                               model)),
-           "beta" = do.call(mp_logposterior_fixed_u,
-                            c(list(latent = x, what = what, ...),
-                              model)),
-           "u" = do.call(mp_logposterior_fixed_beta,
-                         c(list(latent = x, what = what, ...),
-                           model))
+      "joint" = do.call(
+        mp_logposterior_joint,
+        c(
+          list(latent = x, what = what, ...),
+          model
+        )
+      ),
+      "beta" = do.call(
+        mp_logposterior_fixed_u,
+        c(
+          list(latent = x, what = what, ...),
+          model
+        )
+      ),
+      "u" = do.call(
+        mp_logposterior_fixed_beta,
+        c(
+          list(latent = x, what = what, ...),
+          model
+        )
+      )
     ),
     error = function(e) {
       # Return -Inf for invalid parameter combinations
@@ -464,15 +485,27 @@ gr <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
   message(paste0("g,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")"))
   what <- "grad"
   g <- switch(opt_type,
-              "joint" = do.call(mp_logposterior_joint,
-                                c(list(latent = x, what = what, ...),
-                                  model)),
-              "beta" = do.call(mp_logposterior_fixed_u,
-                               c(list(latent = x, what = what, ...),
-                                 model)),
-              "u" = do.call(mp_logposterior_fixed_beta,
-                            c(list(latent = x, what = what, ...),
-                              model))
+    "joint" = do.call(
+      mp_logposterior_joint,
+      c(
+        list(latent = x, what = what, ...),
+        model
+      )
+    ),
+    "beta" = do.call(
+      mp_logposterior_fixed_u,
+      c(
+        list(latent = x, what = what, ...),
+        model
+      )
+    ),
+    "u" = do.call(
+      mp_logposterior_fixed_beta,
+      c(
+        list(latent = x, what = what, ...),
+        model
+      )
+    )
   )
   message(paste0("g(", opt_type, ") = (", paste0(g, collapse = ", "), ")"))
   g
@@ -496,19 +529,24 @@ optim_alternating <- function(model, options = NULL) {
   N_beta <- J * d
   N_u <- d * (d - 1) / 2
   N_latent <- N_beta + N_u
-  opt_beta = list()
-  opt_u = list()
+  opt_beta <- list()
+  opt_u <- list()
   result <-
-    data.frame(index = rep(seq_len(N_latent),
-                           times = options$max_iter),
-               latent = 0,
-               iteration = rep(seq_len(options$max_iter), each = N_latent),
-               type = "alternating")
+    data.frame(
+      index = rep(seq_len(N_latent),
+        times = options$max_iter
+      ),
+      latent = 0,
+      iteration = rep(seq_len(options$max_iter), each = N_latent),
+      type = "alternating"
+    )
   counts <-
-    data.frame(iteration = seq_len(options$max_iter),
-               fn = numeric(options$max_iter),
-               gr_beta = numeric(options$max_iter),
-               gr_u = numeric(options$max_iter))
+    data.frame(
+      iteration = seq_len(options$max_iter),
+      fn = numeric(options$max_iter),
+      gr_beta = numeric(options$max_iter),
+      gr_u = numeric(options$max_iter)
+    )
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
   for (loop in seq_len(options$max_iter)) {
@@ -517,26 +555,30 @@ optim_alternating <- function(model, options = NULL) {
         counts[loop - 1, c("fn", "gr_beta", "gr_u")]
     }
     opt_beta[[loop]] <-
-      optim(par = beta,
-            fn = fn, gr = gr,
-            opt_type = "beta",
-            model = model,
-            u = u,
-            gaussint_options = options$gaussint,
-            method = method,
-            control = options$optim)
+      optim(
+        par = beta,
+        fn = fn, gr = gr,
+        opt_type = "beta",
+        model = model,
+        u = u,
+        gaussint_options = options$gaussint,
+        method = method,
+        control = options$optim
+      )
     beta <- opt_beta[[loop]]$par
     counts$fn[loop] <- counts$fn[loop] + opt_beta[[loop]]$counts["function"]
     counts$gr_beta[loop] <- counts$gr_beta[loop] + opt_beta[[loop]]$counts["gradient"]
     opt_u[[loop]] <-
-      optim(par = u,
-            fn = fn, gr = gr,
-            opt_type = "u",
-            model = model,
-            beta = beta,
-            gaussint_options = options$gaussint,
-            method = method,
-            control = options$optim)
+      optim(
+        par = u,
+        fn = fn, gr = gr,
+        opt_type = "u",
+        model = model,
+        beta = beta,
+        gaussint_options = options$gaussint,
+        method = method,
+        control = options$optim
+      )
     u <- opt_u[[loop]]$par
     counts$fn[loop] <- counts$fn[loop] + opt_u[[loop]]$counts["function"]
     counts$gr_u[loop] <- counts$gr_u[loop] + opt_u[[loop]]$counts["gradient"]
@@ -566,44 +608,52 @@ optim_joint <- function(model, options = NULL) {
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
   opt_joint <-
-    optim(par = c(beta, u),
-          fn = fn, gr = gr,
-          opt_type = "joint",
-          model = model,
-          gaussint_options = options$gaussin,
-          method = method,
-          control = options$optim)
+    optim(
+      par = c(beta, u),
+      fn = fn, gr = gr,
+      opt_type = "joint",
+      model = model,
+      gaussint_options = options$gaussin,
+      method = method,
+      control = options$optim
+    )
   if (is.null(options$hessian) ||
-      (options$hessian == "none")) {
+    (options$hessian == "none")) {
     hessian <- NULL
   } else if (options$hessian == "full") {
     hessian <-
-      optimHess(par = opt_joint$par,
-                fn = fn, gr = gr,
-                opt_type = "joint",
-                model = model,
-                gaussint_options = options$gaussint,
-                method = method,
-                control = options$optim)
+      optimHess(
+        par = opt_joint$par,
+        fn = fn, gr = gr,
+        opt_type = "joint",
+        model = model,
+        gaussint_options = options$gaussint,
+        method = method,
+        control = options$optim
+      )
   } else if (options$hessian == "block") {
     hessian <-
       Matrix::bdiag(
-        optimHess(par = opt_joint$par[seq_len(N_beta)],
-                  fn = fn, gr = gr,
-                  opt_type = "beta",
-                  u = opt_joint$par[N_beta + seq_len(N_u)],
-                  model = model,
-                  gaussint_options = options$gaussint,
-                  method = method,
-                  control = options$optim),
-        optimHess(par = opt_joint$par[N_beta + seq_len(N_u)],
-                  fn = fn, gr = gr,
-                  opt_type = "u",
-                  beta = opt_joint$par[seq_len(N_beta)],
-                  model = model,
-                  gaussint_options = options$gaussint,
-                  method = method,
-                  control = options$optim)
+        optimHess(
+          par = opt_joint$par[seq_len(N_beta)],
+          fn = fn, gr = gr,
+          opt_type = "beta",
+          u = opt_joint$par[N_beta + seq_len(N_u)],
+          model = model,
+          gaussint_options = options$gaussint,
+          method = method,
+          control = options$optim
+        ),
+        optimHess(
+          par = opt_joint$par[N_beta + seq_len(N_u)],
+          fn = fn, gr = gr,
+          opt_type = "u",
+          beta = opt_joint$par[seq_len(N_beta)],
+          model = model,
+          gaussint_options = options$gaussint,
+          method = method,
+          control = options$optim
+        )
       )
   } else if (options$hessian == "diagonal") {
     warning("'diagonal' hessian not implemented.")
@@ -611,16 +661,22 @@ optim_joint <- function(model, options = NULL) {
   } else {
     warning("Unknown hessian type '", options$hessian, "'")
   }
-  result <- data.frame(index = seq_len(N_latent),
-                       latent = opt_joint$par,
-                       iteration = 1,
-                       type = "joint")
-  counts <- data.frame(iteration = 1,
-                       fn = opt_joint$counts["function"],
-                       gr_beta = opt_joint$counts["gradient"],
-                       gr_u = opt_joint$counts["gradient"])
-  list(result = result, counts = counts, opt_joint = opt_joint,
-       hessian = hessian)
+  result <- data.frame(
+    index = seq_len(N_latent),
+    latent = opt_joint$par,
+    iteration = 1,
+    type = "joint"
+  )
+  counts <- data.frame(
+    iteration = 1,
+    fn = opt_joint$counts["function"],
+    gr_beta = opt_joint$counts["gradient"],
+    gr_u = opt_joint$counts["gradient"]
+  )
+  list(
+    result = result, counts = counts, opt_joint = opt_joint,
+    hessian = hessian
+  )
 }
 
 
@@ -641,38 +697,48 @@ optim_stepwise <- function(model, options = NULL) {
   N_beta <- J * d
   N_u <- d * (d - 1) / 2
   N_latent <- N_beta + N_u
-  opt_beta = list()
-  opt_u = list()
+  opt_beta <- list()
+  opt_u <- list()
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
   opt_beta <-
-    optim(par = beta,
-          fn = fn, gr = gr,
-          opt_type = "beta",
-          model = model,
-          u = u,
-          gaussint_options = options$gaussint,
-          method = method,
-          control = options$optim)
+    optim(
+      par = beta,
+      fn = fn, gr = gr,
+      opt_type = "beta",
+      model = model,
+      u = u,
+      gaussint_options = options$gaussint,
+      method = method,
+      control = options$optim
+    )
   beta <- opt_beta$par
   opt_joint <-
-    optim(par = c(beta, u),
-          fn = fn, gr = gr,
-          opt_type = "joint",
-          model = model,
-          gaussint_options = options$gaussint,
-          method = method,
-          control = options$optim)
-  result <- data.frame(index = seq_len(N_latent),
-                       latent = opt_joint$par,
-                       iteration = 1,
-                       type = "stepwise")
-  counts <- data.frame(iteration = 1,
-                       fn = opt_beta$counts["function"] +
-                         opt_joint$counts["function"],
-                       gr_beta = opt_beta$counts["gradient"] +
-                         opt_joint$counts["gradient"],
-                       gr_u = opt_joint$counts["gradient"])
-  list(result = result, counts = counts,
-       opt_beta = opt_beta, opt_joint = opt_joint)
+    optim(
+      par = c(beta, u),
+      fn = fn, gr = gr,
+      opt_type = "joint",
+      model = model,
+      gaussint_options = options$gaussint,
+      method = method,
+      control = options$optim
+    )
+  result <- data.frame(
+    index = seq_len(N_latent),
+    latent = opt_joint$par,
+    iteration = 1,
+    type = "stepwise"
+  )
+  counts <- data.frame(
+    iteration = 1,
+    fn = opt_beta$counts["function"] +
+      opt_joint$counts["function"],
+    gr_beta = opt_beta$counts["gradient"] +
+      opt_joint$counts["gradient"],
+    gr_u = opt_joint$counts["gradient"]
+  )
+  list(
+    result = result, counts = counts,
+    opt_beta = opt_beta, opt_joint = opt_joint
+  )
 }

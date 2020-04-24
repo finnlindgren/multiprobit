@@ -129,20 +129,32 @@ mpp <- function(y, mu,
     b <- ifelse(y_ > 0, Inf, 0)
     if (reverse) {
       prob_ <-
-        do.call(excursions::gaussint,
-                c(list(mu = mu_[perm],
-                       Q.chol = Q_chol,
-                       a = a[perm],
-                       b = b[perm]),
-                  gaussint_options))
+        do.call(
+          excursions::gaussint,
+          c(
+            list(
+              mu = mu_[perm],
+              Q.chol = Q_chol,
+              a = a[perm],
+              b = b[perm]
+            ),
+            gaussint_options
+          )
+        )
     } else {
       prob_ <-
-        do.call(excursions::gaussint,
-                c(list(mu = mu_,
-                       Q.chol = Q_chol,
-                       a = a,
-                       b = b),
-                  gaussint_options))
+        do.call(
+          excursions::gaussint,
+          c(
+            list(
+              mu = mu_,
+              Q.chol = Q_chol,
+              a = a,
+              b = b
+            ),
+            gaussint_options
+          )
+        )
     }
     prob$P[obs] <- prob_$P
     prob$E[obs] <- prob_$E
@@ -190,7 +202,7 @@ mpp_gradient_mu <- function(y, mu, ...,
     gaussint_options[["seed"]] <- 1L
   }
 
-    d <- length(mu)
+  d <- length(mu)
   mu_ <- matrix(mu, d, d, byrow = TRUE)
   H <- diag(x = h, nrow = d, ncol = d)
   if (symmetric) {
@@ -306,9 +318,9 @@ mpp_hessian_mu <- function(y, mu, ...,
 #' @details DETAILS
 #' @examples
 #' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#' if (interactive()) {
+#'   # EXAMPLE1
+#' }
 #' }
 #' @export
 #' @rdname mpp_derivatives
@@ -332,20 +344,28 @@ mpp_gradient_u <- function(y,
   d <- (1 + sqrt(1 + 8 * dof)) / 2
   g <- numeric(dof)
   if (!symmetric) {
-    C0 <- latent_to_nwishart(x = u,
-                             V_chol = V_chol,
-                             df = df,
-                             lower_chol = FALSE)
-    prob0 <- sum(mpp(y = y, mu = mu, Sigma_chol = C0$W_chol, log = TRUE,
-                     gaussint_options = gaussint_options, ...)$P)
+    C0 <- latent_to_nwishart(
+      x = u,
+      V_chol = V_chol,
+      df = df,
+      lower_chol = FALSE
+    )
+    prob0 <- sum(mpp(
+      y = y, mu = mu, Sigma_chol = C0$W_chol, log = TRUE,
+      gaussint_options = gaussint_options, ...
+    )$P)
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
-      C <- latent_to_nwishart(x = u + H,
-                              V_chol = V_chol,
-                              df = df,
-                              lower_chol = FALSE)
-      prob <- sum(mpp(y = y, mu = mu, Sigma_chol = C$W_chol, log = TRUE,
-                      gaussint_options = gaussint_options, ...)$P)
+      C <- latent_to_nwishart(
+        x = u + H,
+        V_chol = V_chol,
+        df = df,
+        lower_chol = FALSE
+      )
+      prob <- sum(mpp(
+        y = y, mu = mu, Sigma_chol = C$W_chol, log = TRUE,
+        gaussint_options = gaussint_options, ...
+      )$P)
       if (log) {
         g[loop] <- (prob - prob0) / h
       } else {
@@ -355,18 +375,26 @@ mpp_gradient_u <- function(y,
   } else {
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
-      C_p <- latent_to_nwishart(x = u + H,
-                                V_chol = V_chol,
-                                df = df,
-                                lower_chol = FALSE)
-      C_m <- latent_to_nwishart(x = u - H,
-                                V_chol = V_chol,
-                                df = df,
-                                lower_chol = FALSE)
-      prob_p <- sum(mpp(y = y, mu = mu, Sigma_chol = C_p$W_chol, log = TRUE,
-                        gaussint_options = gaussint_options, ...)$P)
-      prob_m <- sum(mpp(y = y, mu = mu, Sigma_chol = C_m$W_chol, log = TRUE,
-                        gaussint_options = gaussint_options, ...)$P)
+      C_p <- latent_to_nwishart(
+        x = u + H,
+        V_chol = V_chol,
+        df = df,
+        lower_chol = FALSE
+      )
+      C_m <- latent_to_nwishart(
+        x = u - H,
+        V_chol = V_chol,
+        df = df,
+        lower_chol = FALSE
+      )
+      prob_p <- sum(mpp(
+        y = y, mu = mu, Sigma_chol = C_p$W_chol, log = TRUE,
+        gaussint_options = gaussint_options, ...
+      )$P)
+      prob_m <- sum(mpp(
+        y = y, mu = mu, Sigma_chol = C_m$W_chol, log = TRUE,
+        gaussint_options = gaussint_options, ...
+      )$P)
       if (log) {
         g[loop] <- (prob_p - prob_m) / (2 * h)
       } else {

@@ -16,17 +16,23 @@ test_that("multiprobit", {
       max_iter = 1,
       gaussint = list(max.threads = 1)
     )
-  expect_true(mp_options_check(mp_options(mp_options_default(),
-                                          options)))
+  expect_true(mp_options_check(mp_options(
+    mp_options_default(),
+    options
+  )))
 
   timing <- list()
   opt <- list()
   for (strategy in c("alternating", "joint", "stepwise")) {
     options <- mp_options(options, strategy = strategy)
-    expect_true(mp_options_check(mp_options(mp_options_default(),
-                                            options)))
-    opt[[strategy]] <- multiprobit(model = model,
-                                   options = options)
+    expect_true(mp_options_check(mp_options(
+      mp_options_default(),
+      options
+    )))
+    opt[[strategy]] <- multiprobit(
+      model = model,
+      options = options
+    )
     expect_equal(class(opt[[strategy]]), "list")
     expect_equal(class(opt[[strategy]][["result"]])[1], "data.frame")
     expect_equal(class(opt[[strategy]][["counts"]])[1], "data.frame")

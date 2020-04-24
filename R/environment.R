@@ -76,8 +76,9 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
   envir$log <- c(
     envir$log,
     .makeMessage(Sys.time(), ": ", ...,
-                 domain = domain,
-                 appendLF = FALSE)
+      domain = domain,
+      appendLF = FALSE
+    )
   )
   invisible()
 }
@@ -90,7 +91,7 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 #' @details Warnings are produced for invalid contents
 #' @examples
 #' \dontrun{
-#' if(interactive()){
+#' if (interactive()) {
 #'   mp_options_check(mp_options(invalid = "something"))
 #' }
 #' }
@@ -105,7 +106,7 @@ mp_options_check <- function(options) {
     ok <- FALSE
     warning("'max_iter' should be a positive integer, not NULL.")
   } else if (!is.numeric(options[["max_iter"]]) ||
-             !(options[["max_iter"]] > 0)) {
+    !(options[["max_iter"]] > 0)) {
     ok <- FALSE
     warning("'max_iter' should be a positive integer.")
   }
@@ -115,11 +116,13 @@ mp_options_check <- function(options) {
     ok <- FALSE
     warning("'strategy' should not be NULL.")
   } else if (!is.character(options[["strategy"]]) ||
-             !(length(options[["strategy"]]) == 1) ||
-             !(options[["strategy"]] %in%
-               c("alternating",
-                 "stepwise",
-                 "joint"))) {
+    !(length(options[["strategy"]]) == 1) ||
+    !(options[["strategy"]] %in%
+      c(
+        "alternating",
+        "stepwise",
+        "joint"
+      ))) {
     ok <- FALSE
     warning("'strategy' should be a valid strategy string, see ?mp_options")
   }
@@ -130,12 +133,14 @@ mp_options_check <- function(options) {
     ok <- FALSE
     warning("'hessian' should not be NULL.")
   } else if (!is.character(options[["hessian"]]) ||
-             !(length(options[["hessian"]]) == 1) ||
-             !(options[["hessian"]] %in%
-               c("none",
-                 "diagonal",
-                 "block",
-                 "full"))) {
+    !(length(options[["hessian"]]) == 1) ||
+    !(options[["hessian"]] %in%
+      c(
+        "none",
+        "diagonal",
+        "block",
+        "full"
+      ))) {
     ok <- FALSE
     warning("'hessian' should be a valid hessian string, see ?mp_options")
   }
@@ -201,13 +206,13 @@ mp_options_get <- function(x = NULL) {
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'  # Add hessian options to global options without changing the global options:
-#'  options1 <- mp_options(mp_options_get(), hessian = "block")
-#'  # Create a proto-options object in two equivalent ways:
-#'  options2 <- as.mp_options(hessian = "diagonal")
-#'  options2 <- as.mp_options(list(hessian = "diagonal"))
-#'  # Combine options objects:
-#'  options3 <- mp_options(options1, options2)
+#'   # Add hessian options to global options without changing the global options:
+#'   options1 <- mp_options(mp_options_get(), hessian = "block")
+#'   # Create a proto-options object in two equivalent ways:
+#'   options2 <- as.mp_options(hessian = "diagonal")
+#'   options2 <- as.mp_options(list(hessian = "diagonal"))
+#'   # Combine options objects:
+#'   options3 <- mp_options(options1, options2)
 #' }
 #' }
 #' @export
@@ -223,7 +228,7 @@ mp_options <- function(...) {
     stopifnot(is.list(options) && is.list(override))
     for (x in names(override)) {
       if (inherits(options[[x]], "list") &&
-          inherits(override[[x]], "list")) {
+        inherits(override[[x]], "list")) {
         options[[x]] <- traverse(
           options[[x]],
           override[[x]]
@@ -245,7 +250,7 @@ mp_options <- function(...) {
     options <- input_options[[1]]
     k <- 1
     while ((k < n_input) &&
-           inherits(input_options[[k + 1]], "mp_options")) {
+      inherits(input_options[[k + 1]], "mp_options")) {
       k <- k + 1
       options <- traverse(options, input_options[[k]])
     }
@@ -253,8 +258,9 @@ mp_options <- function(...) {
       if (any(vapply(
         input_options[-seq_len(k)],
         function(x) inherits(x, "mp_options"),
-        TRUE))
-        ) {
+        TRUE
+      ))
+      ) {
         stop("All mp_options input objects must come first in the parameter list.")
       }
       options <- traverse(options, input_options[-seq_len(k)])
@@ -303,8 +309,10 @@ as.mp_options <- function(x = NULL) {
 mp_options_default <- function() {
   mp_options(
     verbose = FALSE,
-    optim = list(fnscale = -1,
-                 method = "BFGS"),
+    optim = list(
+      fnscale = -1,
+      method = "BFGS"
+    ),
     gaussint = list(),
     max_iter = 5,
     strategy = "stepwise",
@@ -326,8 +334,10 @@ mp_options_default <- function() {
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'   mp_options_set(gauusint = list(max.threads = 1),
-#'                  optim = list(trace = 5))
+#'   mp_options_set(
+#'     gauusint = list(max.threads = 1),
+#'     optim = list(trace = 5)
+#'   )
 #' }
 #' }
 #' @export
