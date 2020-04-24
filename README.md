@@ -55,12 +55,17 @@ if (interactive()) {
   df <- d + 1
   prec_beta <- 0.1
   
-  model <- mp_model(response = Y, X = X,
-                    df = df, prec_beta = prec_beta)
-  opt <- multiprobit(model = model,
-                     options =
-                       mp_options(
-                         gaussint = list(max.threads = 1),
-                         strategy = "stepwise"))
+  model <- mp_model(
+    response = Y, X = X,
+    df = df, prec_beta = prec_beta
+  )
+  opt <- multiprobit(
+    model = model,
+    options =
+      mp_options(
+        gaussint = list(max.threads = 1),
+        strategy = "stepwise"
+      )
+  )
 }
 ```
