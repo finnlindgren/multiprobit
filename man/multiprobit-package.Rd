@@ -4,9 +4,10 @@
 \name{multiprobit-package}
 \alias{multiprobit-package}
 \alias{_PACKAGE}
-\title{multiprobit: Faster Bayesian Multivariate Probit Regression}
+\title{multiprobit: Bayesian Multivariate Probit Regression}
 \description{
-Perform fast Bayesian inference for multivariate probit models.
+Perform fast Bayesian inference for multivariate
+    probit models.
 }
 \seealso{
 Useful links:
@@ -14,6 +15,10 @@ Useful links:
   \item \url{https://github.com/finnlindgren/multiprobit}
   \item Report bugs at \url{https://github.com/finnlindgren/multiprobit/issues}
 }
+
+}
+\author{
+\strong{Maintainer}: Finn Lindgren \email{finn.lindgren@gmail.com}
 
 }
 \keyword{internal}

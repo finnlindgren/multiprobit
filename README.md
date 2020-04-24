@@ -5,14 +5,12 @@
 
 <!-- badges: start -->
 
-[![Travis build status of devel
-branch](https://travis-ci.org/finnlindgren/multiprobit.svg?branch=devel)](https://travis-ci.org/finnlindgren/multiprobit)
-[![Codecov test coverage for devel
-branch](https://codecov.io/gh/finnlindgren/multiprobit/branch/devel/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=devel)
 [![R build
 status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-Check/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
 [![R code coverage
 status](https://github.com/finnlindgren/multiprobit/workflows/test-coverage/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/finnlindgren/multiprobit/branch/master/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=devel)
 <!-- badges: end -->
 
 The goal of multiprobit is to perform fast Bayesian inference for

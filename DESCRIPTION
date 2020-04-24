@@ -1,26 +1,30 @@
-Package: multiprobit
 Type: Package
-Title: Faster Bayesian Multivariate Probit Regression
+Package: multiprobit
+Title: Bayesian Multivariate Probit Regression
 Version: 0.1.0.9000
-Author: Finn Lindgren
-Maintainer: The package maintainer <finn.lindgren@gmail.com>
-Description: Perform fast Bayesian inference for multivariate probit models.
+Authors@R: 
+    person(given = "Finn",
+           family = "Lindgren",
+           role = c("aut", "cre"),
+           email = "finn.lindgren@gmail.com")
+Description: Perform fast Bayesian inference for multivariate
+    probit models.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
-Imports: 
-    stats,
-    excursions,
-    CholWishart
-RoxygenNote: 7.1.0
-Suggests: 
-    testthat (>= 2.1.0),
-    covr
 URL: https://github.com/finnlindgren/multiprobit
 BugReports: https://github.com/finnlindgren/multiprobit/issues
 Depends: 
     Matrix
+Imports: 
+    CholWishart,
+    excursions,
+    stats
+Suggests: 
+    covr,
+    testthat (>= 2.1.0)
+Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
 Collate: 
     'aaaaa.R'
     'environment.R'

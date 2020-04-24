@@ -7,3 +7,4 @@
 ^sandbox
 ^\.gitignore$
 ^\.github$
+^multiprobit\.Rproj$
