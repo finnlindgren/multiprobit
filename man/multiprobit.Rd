@@ -44,9 +44,9 @@ if (interactive()) {
                       df = df, prec_beta = prec_beta)
     opt <- multiprobit(model = model,
                        options =
-                       mp_options(
-                       gaussint = list(max.threads = 1),
-                       strategy = "stepwise"))
+                         mp_options(
+                           gaussint = list(max.threads = 1),
+                           strategy = "stepwise"))
 }
 }
 }

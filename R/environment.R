@@ -303,7 +303,8 @@ as.mp_options <- function(x = NULL) {
 mp_options_default <- function() {
   mp_options(
     verbose = FALSE,
-    optim = list(method = "BFGS"),
+    optim = list(fnscale = -1,
+                 method = "BFGS"),
     gaussint = list(),
     max_iter = 5,
     strategy = "stepwise",
