@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Setup multivariate probit model — mp_model • multiprobit</title>
+<title>Internal multiprobit utilities — tri_solve • multiprobit</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Setup multivariate probit model — mp_model" />
-<meta property="og:description" content="Construct a multivariate probit model object that stores
-information about model structure and parameters" />
+<meta property="og:title" content="Internal multiprobit utilities — tri_solve" />
+<meta property="og:description" content="Internal multiprobit utilities" />
 
 
 
@@ -112,96 +111,38 @@ information about model structure and parameters" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Setup multivariate probit model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/estimation.R'><code>R/estimation.R</code></a></small>
-    <div class="hidden name"><code>mp_model.Rd</code></div>
+    <h1>Internal multiprobit utilities</h1>
+    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
+    <div class="hidden name"><code>multiprobit_utils.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Construct a multivariate probit model object that stores
-information about model structure and parameters</p>
+    <p>Internal multiprobit utilities</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mp_model</span>(
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>response</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>formula</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>df</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>prec_beta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>tri_solve</span>(<span class='no'>A</span>, <span class='no'>b</span>, <span class='kw'>lower_tri</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>model</th>
-      <td><p>An optional existing model object to be updated.</p></td>
-    </tr>
-    <tr>
-      <th>response</th>
-      <td><p>A matrix with n-by-d elements, where each row is a
-multivariate observation, see Details. A vector is interpreted as a
-single row matrix.</p></td>
-    </tr>
-    <tr>
-      <th>X</th>
-      <td><p>An optimally precomputed n-by-J model matrix, where J is the number
-regression coeficcients for each of the d dimensions.</p></td>
-    </tr>
-    <tr>
-      <th>formula</th>
-      <td><p>A formula interpretable by <code>model.matrix</code>.</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p>A <code>data.frame</code> containing the veriables needed by the
-formula.</p></td>
-    </tr>
-    <tr>
-      <th>df</th>
-      <td><p>Degrees of freedom for the normalised Wishart prior for the
-correlation matrix. See Details.</p></td>
-    </tr>
-    <tr>
-      <th>prec_beta</th>
-      <td><p>Prior precision for the regression coefficients</p></td>
-    </tr>
-    </table>
+<span class='fu'>qchisq_pnorm</span>(<span class='no'>x</span>, <span class='no'>df</span>)
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+<span class='fu'>qnorm_pchisq</span>(<span class='no'>x</span>, <span class='no'>df</span>)
 
-    <p>An object of class <code>mp_model</code></p>
+<span class='fu'>qbeta_pchisq</span>(<span class='no'>x</span>, <span class='no'>df</span>, <span class='no'>shape1</span>, <span class='no'>shape2</span>, <span class='no'>ncp</span>)
+
+<span class='fu'>qchisq_pbeta</span>(<span class='no'>x</span>, <span class='no'>shape1</span>, <span class='no'>shape2</span>, <span class='no'>df</span>, <span class='no'>ncp</span>)
+
+<span class='fu'>cvec</span>(<span class='no'>A</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>rvec</span>(<span class='no'>A</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>sparse_identity</span>(<span class='no'>d</span>)</pre>
+
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The multivariate probit model has a multivariate binary
-response variable, here denoted \(Y\). The model is built from a
-linear predictor
-$$M = X B$$
-where \(X\) is a n-by-J matrix of \(J\) predictors, and \(B\) is
-a J-by-d matrix of regression coefficients.
-Each row of \(M\) is the linear
-predictor for one multivariate observation. The response variables \(Y\)
-are linked to \(M\) by first defining latent Gaussian variables
-$$Z=M+E$$ where each row of \(E\) is a multivariate Normal vector,
-\(E \sim N(0,\Sigma)\). Then, $$Y_{i,k}=I(Z_{i,k} &gt; 0).$$
-Conditionally on \(B\), each row of \(Y\) has a multinomial distribution
-on the set of all \(0/1\) combinations, with each probability equal to a
-hyperquadrant probability of a the multivariate Normal distribution
-\(N(\mu,\Sigma)\), where \(\mu\) is the corresponding row of \(M\).</p>
-<p>Only the inequality \(Y_{i,k} &gt; 0\) for the response variables is used,
-so alternative data representations such as \(-1/+1\) will also work as
-expected.</p>
-<p>The degrees of freedom for the normalised Wishart prior are linked to the
-LKJ prior by <code>df = ...</code>, which makes the two models equivalent.</p>
+    <p><code>tri_solve</code> solves triangular systems with back/forwardsolve</p>
+<p><code>qchisq_pnorm</code> evaluates <code><a href='https://rdrr.io/r/stats/Chisquare.html'>qchisq(pnorm(...))</a></code> with
+attempt at numerical stability.</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='co'># EXAMPLE1</span>
-}
-}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

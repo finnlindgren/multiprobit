@@ -41,7 +41,10 @@
 
 <meta property="og:title" content="Create or update an options objects — mp_options" />
 <meta property="og:description" content="Create a new options object, or merge information from several
-objects" />
+objects.
+The _get, _set, and _reset functions operate on a global
+package options object. In many cases, setting options in specific calls
+to multiprobit() is recommended instead." />
 
 
 
@@ -119,12 +122,25 @@ objects" />
 
     <div class="ref-description">
     <p>Create a new options object, or merge information from several
-objects</p>
+objects.</p>
+<p>The <code>_get</code>, <code>_set</code>, and <code>_reset</code> functions operate on a global
+package options object. In many cases, setting options in specific calls
+to <code><a href='multiprobit.html'>multiprobit()</a></code> is recommended instead.</p>
     </div>
 
     <pre class="usage"><span class='fu'>mp_options</span>(<span class='no'>...</span>)
 
-<span class='fu'>as.mp_options</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>as.mp_options</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>mp_options_default</span>()
+
+<span class='fu'>mp_options_check</span>(<span class='no'>options</span>)
+
+<span class='fu'>mp_options_get</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>mp_options_set</span>(<span class='no'>...</span>)
+
+<span class='fu'>mp_options_reset</span>()</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,17 +154,36 @@ objects. Options specified later override the previous options.</p></td>
       <th>x</th>
       <td><p>An object to be converted to an <code>mp_options</code> object.</p></td>
     </tr>
+    <tr>
+      <th>options</th>
+      <td><p>An <code>mp_options</code> object to be checked</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>Either <code>NULL</code>, or single option name string, or a list of
+option namescharacter vector or list with option names,
+Default: NULL</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An <code>mp_options</code> object.</p>
-<p>For <code>as.mp_options</code>, <code>NULL</code> or no input returns an empty <code>mp_options</code>
+    <p><code>mp_options()</code> returns an <code>mp_options</code> object.</p>
+<p>For <code>as.mp_options()</code>, <code>NULL</code> or no input returns an empty <code>mp_options</code>
 object, a <code>list</code> is converted via <code>mp_options(...)</code>, and <code>mp_options</code> input
 is passed through. Other types of input generates an error.</p>
+<p><code>mp_options_default()</code> returns an <code>mp_options</code> object containing
+default options.</p>
+<p><code>mp_options_check()</code> returns a <code>logical</code>; <code>TRUE</code> if the object
+contains valid options for use by other functions</p>
+<p><code>mp_options_get</code> returns either an <code>mp_options</code> object, for
+<code>name == NULL</code>, the contents of single option, if <code>name</code> is a options name
+string, or a named list of option contents, if <code>name</code> is a list of option
+name strings.</p>
+<p><code>mp_options_set()</code> returns a copy of the global options, invisibly.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Recognised options:</p><dl>
+    <p>For <code>mp_options</code> and <code>mp_options_set</code>, recognised options are:</p><dl>
 <dt>verbose</dt><dd><p>logical; if <code>TRUE</code>, log messages are printed with <code><a href='https://rdrr.io/r/base/message.html'>message()</a></code></p></dd>
 <dt>gaussint</dt><dd><p>List of options for
 <code><a href='https://rdrr.io/pkg/excursions/man/gaussint.html'>excursions::gaussint</a></code>.
@@ -158,10 +193,11 @@ Specific relevant options:
 computing by <code><a href='https://rdrr.io/pkg/excursions/man/gaussint.html'>excursions::gaussint</a></code>, Default: 0, meaning no limit.</p></dd>
 <dt>seed</dt><dd><p>The seed for the internal random number generator for
 <code><a href='https://rdrr.io/pkg/excursions/man/gaussint.html'>excursions::gaussint</a></code>.</p></dd></dl></p></dd>
-<dt>optim</dt><dd><p>List of control options for <code><a href='https://rdrr.io/r/stats/optim.html'>optim()</a></code>. Can also include
-an element <code>method</code> for choosing the optimisation method.</p></dd>
-<dt>strategy</dt><dd><p>The estimation optimisation strategy. Options: "alternating", "joint",
-"stepwise". Default: "stepwise"</p></dd>
+<dt>optim</dt><dd><p>List of options for <code><a href='https://rdrr.io/r/stats/optim.html'>optim()</a></code>. Relevant options are <code>method</code>
+for choosing the optimisation method, and <code>control</code> for setting
+convergence criteria and verbose output.</p></dd>
+<dt>strategy</dt><dd><p>The estimation optimisation strategy.
+Options: "alternating", "joint", "stepwise". Default: "stepwise"</p></dd>
 <dt>max_iter</dt><dd><p>The maximum number of steps for
 <code>strategy == "alternating"</code></p></dd>
 <dt>hessian</dt><dd><p>The hessian computation style. Options: "none", "diagonal",
@@ -169,17 +205,48 @@ an element <code>method</code> for choosing the optimisation method.</p></dd>
 
 </dl>
 
+<p><code>mp_options_check</code> checks for valid contents of an `mp_options`` object</p>
+<p><code>mp_options_check()</code> produces warnings for invalid options.</p>
+<p><code>mp_options_set()</code> is used to set global package options.</p>
+<p>After its first run, <code>mp_options_reset()</code> is equivalent to
+<code>mp_options_set(mp_options_default())</code>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code>mp_options()</code>, <code>mp_options_default()</code>, <code>mp_options_get()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
- <span class='co'># Add hessian options to global options without changing the global options:</span>
- <span class='no'>options1</span> <span class='kw'>&lt;-</span> <span class='fu'>mp_options</span>(<span class='fu'><a href='mp_options_get.html'>mp_options_get</a></span>(), <span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"block"</span>)
- <span class='co'># Create a proto-options object in two equivalent ways:</span>
- <span class='no'>options2</span> <span class='kw'>&lt;-</span> <span class='fu'>as.mp_options</span>(<span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"diagonal"</span>)
- <span class='no'>options2</span> <span class='kw'>&lt;-</span> <span class='fu'>as.mp_options</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"diagonal"</span>))
- <span class='co'># Combine options objects:</span>
- <span class='no'>options3</span> <span class='kw'>&lt;-</span> <span class='fu'>mp_options</span>(<span class='no'>options1</span>, <span class='no'>options2</span>)
+  <span class='co'># Compine global and user options:</span>
+  <span class='no'>options1</span> <span class='kw'>&lt;-</span> <span class='fu'>mp_options</span>(<span class='fu'>mp_options_get</span>(), <span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"block"</span>)
+  <span class='co'># Create a proto-options object in two equivalent ways:</span>
+  <span class='no'>options2</span> <span class='kw'>&lt;-</span> <span class='fu'>as.mp_options</span>(<span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"diagonal"</span>)
+  <span class='no'>options2</span> <span class='kw'>&lt;-</span> <span class='fu'>as.mp_options</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"diagonal"</span>))
+  <span class='co'># Combine options objects:</span>
+  <span class='no'>options3</span> <span class='kw'>&lt;-</span> <span class='fu'>mp_options</span>(<span class='no'>options1</span>, <span class='no'>options2</span>)
+}
+}
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='co'># EXAMPLE1</span>
+}
+}
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'>mp_options_check</span>(<span class='fu'>mp_options</span>(<span class='kw'>invalid</span> <span class='kw'>=</span> <span class='st'>"something"</span>))
+}
+}
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='co'># EXAMPLE1</span>
+}
+}
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'>mp_options_set</span>(
+    <span class='kw'>gauusint</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>max.threads</span> <span class='kw'>=</span> <span class='fl'>1</span>),
+    <span class='kw'>optim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>5</span>))
+  )
 }
 }</div></pre>
   </div>

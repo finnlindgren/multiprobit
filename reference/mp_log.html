@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Estimate a multivariate probit model — multiprobit • multiprobit</title>
+<title>multiprobit log message methods — mp_log_reset • multiprobit</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Estimate a multivariate probit model — multiprobit" />
-<meta property="og:description" content="Estimate a multivariate probit model from multivariate binary
-data in a Bayesian generalised linear model framework" />
+<meta property="og:title" content="multiprobit log message methods — mp_log_reset" />
+<meta property="og:description" content="FUNCTION_DESCRIPTION" />
 
 
 
@@ -112,71 +111,62 @@ data in a Bayesian generalised linear model framework" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Estimate a multivariate probit model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/estimation.R'><code>R/estimation.R</code></a></small>
-    <div class="hidden name"><code>multiprobit.Rd</code></div>
+    <h1>multiprobit log message methods</h1>
+    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/environment.R'><code>R/environment.R</code></a></small>
+    <div class="hidden name"><code>mp_log.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Estimate a multivariate probit model from multivariate binary
-data in a Bayesian generalised linear model framework</p>
+    <p>FUNCTION_DESCRIPTION</p>
     </div>
 
-    <pre class="usage"><span class='fu'>multiprobit</span>(<span class='kw'>model</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>mp_log_reset</span>()
+
+<span class='fu'>mp_log_get</span>()
+
+<span class='fu'>mp_log_message</span>(<span class='no'>...</span>, <span class='kw'>domain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>appendLF</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>allow_verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>model</th>
-      <td><p>An <code><a href='mp_model.html'>mp_model</a></code> model object.</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>Parameters passed on to <code><a href='mp_model.html'>mp_model()</a></code></p></td>
+      <td><p>Zero or more objects passed on to <code><a href='https://rdrr.io/r/base/message.html'>base::.makeMessage()</a></code></p></td>
     </tr>
     <tr>
-      <th>options</th>
-      <td><p>An <code><a href='mp_options.html'>mp_options</a></code> object or a list that can be coerced into
-an <code>mp_options</code> object. Options set here will override the global options.</p></td>
+      <th>domain</th>
+      <td><p>Domain for translations, passed on to <code><a href='https://rdrr.io/r/base/message.html'>base::.makeMessage()</a></code></p></td>
+    </tr>
+    <tr>
+      <th>appendLF</th>
+      <td><p>logical; whether to add a newline to the message. Only
+used for verbose output.</p></td>
+    </tr>
+    <tr>
+      <th>allow_verbose</th>
+      <td><p>Whether to allow verbose output. Must be set to FALSE
+until the options object has been initialised.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>OUTPUT_DESCRIPTION</p>
+    <p><code>mp_log_get</code> RETURN_VALUE</p>
+<p><code>mp_log_message</code> OUTPUT_DESCRIPTION</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>For details on the multivariate probit model, see
-<code><a href='mp_model.html'>mp_model()</a></code>. The <code>multiprobit</code> function estimates
-the model for observations stored in <code>response</code></p>
+    <p><code>mp_log_reset()</code> clears the log contents.</p>
+<p><code>mp_log_message</code> DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='no'>N</span> <span class='kw'>&lt;-</span> <span class='fl'>6</span>
-  <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>
-  <span class='no'>J</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-
-  <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1L</span>)
-  <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>N</span> * (<span class='no'>J</span> - <span class='fl'>1</span>)), <span class='no'>N</span>, <span class='no'>J</span> - <span class='fl'>1</span>))
-  <span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>0.5</span>, <span class='no'>J</span>, <span class='no'>d</span>)
-  <span class='no'>Y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>N</span> * <span class='no'>d</span>, <span class='kw'>mean</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span>(<span class='no'>X</span> <span class='kw'>%*%</span> <span class='no'>B</span>)) <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='no'>N</span>, <span class='no'>d</span>)
-  <span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='no'>d</span> + <span class='fl'>1</span>
-  <span class='no'>prec_beta</span> <span class='kw'>&lt;-</span> <span class='fl'>0.1</span>
-
-  <span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mp_model.html'>mp_model</a></span>(
-    <span class='kw'>response</span> <span class='kw'>=</span> <span class='no'>Y</span>, <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>X</span>,
-    <span class='kw'>df</span> <span class='kw'>=</span> <span class='no'>df</span>, <span class='kw'>prec_beta</span> <span class='kw'>=</span> <span class='no'>prec_beta</span>
-  )
-  <span class='no'>opt</span> <span class='kw'>&lt;-</span> <span class='fu'>multiprobit</span>(
-    <span class='kw'>model</span> <span class='kw'>=</span> <span class='no'>model</span>,
-    <span class='kw'>options</span> <span class='kw'>=</span>
-      <span class='fu'><a href='mp_options.html'>mp_options</a></span>(
-        <span class='kw'>gaussint</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>max.threads</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-        <span class='kw'>strategy</span> <span class='kw'>=</span> <span class='st'>"stepwise"</span>
-      )
-  )
+  <span class='co'># EXAMPLE1</span>
+}
+}
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='co'># EXAMPLE1</span>
 }
 }</div></pre>
   </div>
