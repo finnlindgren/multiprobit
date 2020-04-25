@@ -3,31 +3,69 @@
 \name{mp_options}
 \alias{mp_options}
 \alias{as.mp_options}
+\alias{mp_options_default}
+\alias{mp_options_check}
+\alias{mp_options_get}
+\alias{mp_options_set}
+\alias{mp_options_reset}
 \title{Create or update an options objects}
 \usage{
 mp_options(...)
 
 as.mp_options(x = NULL)
+
+mp_options_default()
+
+mp_options_check(options)
+
+mp_options_get(name = NULL)
+
+mp_options_set(...)
+
+mp_options_reset()
 }
 \arguments{
 \item{...}{Named options, optionally started by one or more \code{\link{mp_options}}
 objects. Options specified later override the previous options.}
 
 \item{x}{An object to be converted to an \code{mp_options} object.}
+
+\item{options}{An \code{mp_options} object to be checked}
+
+\item{name}{Either \code{NULL}, or single option name string, or a list of
+option namescharacter vector or list with option names,
+Default: NULL}
 }
 \value{
-An \code{mp_options} object.
+\code{mp_options()} returns an \code{mp_options} object.
 
-For \code{as.mp_options}, \code{NULL} or no input returns an empty \code{mp_options}
+For \code{as.mp_options()}, \code{NULL} or no input returns an empty \code{mp_options}
 object, a \code{list} is converted via \code{mp_options(...)}, and \code{mp_options} input
 is passed through. Other types of input generates an error.
+
+\code{mp_options_default()} returns an \code{mp_options} object containing
+default options.
+
+\code{mp_options_check()} returns a \code{logical}; \code{TRUE} if the object
+contains valid options for use by other functions
+
+\code{mp_options_get} returns either an \code{\link{mp_options}} object, for
+\code{name == NULL}, the contents of single option, if \code{name} is a options name
+string, or a named list of option contents, if \code{name} is a list of option
+name strings.
+
+\code{mp_options_set()} returns a copy of the global options, invisibly.
 }
 \description{
 Create a new options object, or merge information from several
-objects
+objects.
+
+The \verb{_get}, \verb{_set}, and \verb{_reset} functions operate on a global
+package options object. In many cases, setting options in specific calls
+to \code{\link[=multiprobit]{multiprobit()}} is recommended instead.
 }
 \details{
-Recognised options:
+For \code{mp_options} and \code{mp_options_set}, recognised options are:
 \describe{
 \item{verbose}{logical; if \code{TRUE}, log messages are printed with \code{message()}}
 \item{gaussint}{List of options for
@@ -40,26 +78,62 @@ computing by \code{excursions::gaussint}, Default: 0, meaning no limit.}
 \code{excursions::gaussint}.}
 }
 }
-\item{optim}{List of control options for \code{optim()}. Can also include
-an element \code{method} for choosing the optimisation method.}
-\item{strategy}{The estimation optimisation strategy. Options: "alternating", "joint",
-"stepwise". Default: "stepwise"}
+\item{optim}{List of options for \code{optim()}. Relevant options are \code{method}
+for choosing the optimisation method, and \code{control} for setting
+convergence criteria and verbose output.}
+\item{strategy}{The estimation optimisation strategy.
+Options: "alternating", "joint", "stepwise". Default: "stepwise"}
 \item{max_iter}{The maximum number of steps for
 \code{strategy == "alternating"}}
 \item{hessian}{The hessian computation style. Options: "none", "diagonal",
 "block", and "full". Default: "full"}
 }
+
+\code{mp_options_check} checks for valid contents of an `mp_options`` object
+
+\code{mp_options_check()} produces warnings for invalid options.
+
+\code{mp_options_set()} is used to set global package options.
+
+After its first run, \code{mp_options_reset()} is equivalent to
+\code{mp_options_set(mp_options_default())}.
 }
 \examples{
 \dontrun{
 if (interactive()) {
- # Add hessian options to global options without changing the global options:
- options1 <- mp_options(mp_options_get(), hessian = "block")
- # Create a proto-options object in two equivalent ways:
- options2 <- as.mp_options(hessian = "diagonal")
- options2 <- as.mp_options(list(hessian = "diagonal"))
- # Combine options objects:
- options3 <- mp_options(options1, options2)
+  # Compine global and user options:
+  options1 <- mp_options(mp_options_get(), hessian = "block")
+  # Create a proto-options object in two equivalent ways:
+  options2 <- as.mp_options(hessian = "diagonal")
+  options2 <- as.mp_options(list(hessian = "diagonal"))
+  # Combine options objects:
+  options3 <- mp_options(options1, options2)
 }
 }
+\dontrun{
+if (interactive()) {
+  # EXAMPLE1
+}
+}
+\dontrun{
+if (interactive()) {
+  mp_options_check(mp_options(invalid = "something"))
+}
+}
+\dontrun{
+if (interactive()) {
+  # EXAMPLE1
+}
+}
+\dontrun{
+if (interactive()) {
+  mp_options_set(
+    gauusint = list(max.threads = 1),
+    optim = list(control = list(trace = 5))
+  )
+}
+}
+}
+\seealso{
+\code{\link[=mp_options]{mp_options()}}, \code{\link[=mp_options_default]{mp_options_default()}}, \code{\link[=mp_options_get]{mp_options_get()}}
 }

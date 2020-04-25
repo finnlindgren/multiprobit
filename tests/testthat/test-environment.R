@@ -1,3 +1,7 @@
+test_that("internal environment", {
+  expect_is(multiprobit_env_get(), "environment")
+})
+
 test_that("internal environment setup", {
   .onLoad(NULL, "multiprobit")
   logg_post <- mp_log_get()
@@ -36,5 +40,14 @@ test_that("setting/getting options", {
   expect_is(
     mp_options_set(mp_options_default()),
     "mp_options"
+  )
+
+  expect_equal(
+    suppressWarnings(mp_options_check(mp_options_default())),
+    TRUE
+  )
+  expect_equal(
+    suppressWarnings(mp_options_check(mp_options())),
+    FALSE
   )
 })

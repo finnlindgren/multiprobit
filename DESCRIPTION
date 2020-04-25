@@ -32,3 +32,4 @@ Collate:
     'multiprobit-package.R'
     'probabilities.R'
     'transform.R'
+    'utils.R'

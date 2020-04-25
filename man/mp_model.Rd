@@ -17,8 +17,9 @@ mp_model(
 \arguments{
 \item{model}{An optional existing model object to be updated.}
 
-\item{response}{A matrix with n-by-d elements, where each row is a multivariate
-observation, see Details. A vector is interpreted as a single row matrix.}
+\item{response}{A matrix with n-by-d elements, where each row is a
+multivariate observation, see Details. A vector is interpreted as a
+single row matrix.}
 
 \item{X}{An optimally precomputed n-by-J model matrix, where J is the number
 regression coeficcients for each of the d dimensions.}

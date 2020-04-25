@@ -29,24 +29,29 @@ the model for observations stored in \code{response}
 \examples{
 \dontrun{
 if (interactive()) {
-    N <- 6
-    d <- 2
-    J <- 1
+  N <- 6
+  d <- 2
+  J <- 1
 
-    set.seed(1L)
-    X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
-    B <- matrix(0.5, J, d)
-    Y <- matrix(rnorm(N * d, mean = as.vector(X \%*\% B)) > 0, N, d)
-    df <- d + 1
-    prec_beta <- 0.1
+  set.seed(1L)
+  X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
+  B <- matrix(0.5, J, d)
+  Y <- matrix(rnorm(N * d, mean = as.vector(X \%*\% B)) > 0, N, d)
+  df <- d + 1
+  prec_beta <- 0.1
 
-    model <- mp_model(response = Y, X = X,
-                      df = df, prec_beta = prec_beta)
-    opt <- multiprobit(model = model,
-                       options =
-                         mp_options(
-                           gaussint = list(max.threads = 1),
-                           strategy = "stepwise"))
+  model <- mp_model(
+    response = Y, X = X,
+    df = df, prec_beta = prec_beta
+  )
+  opt <- multiprobit(
+    model = model,
+    options =
+      mp_options(
+        gaussint = list(max.threads = 1),
+        strategy = "stepwise"
+      )
+  )
 }
 }
 }

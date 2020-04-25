@@ -16,17 +16,8 @@ test_that("excursions::gaussint", {
 })
 
 test_that("mpp (multivariate_probit_probability)", {
-  myident <- function(d) {
-    Matrix::sparseMatrix(
-      i = seq_len(d),
-      j = seq_len(d),
-      x = 1.0,
-      dims = c(d, d)
-    )
-  }
-
   independent_quadrant <- function(d, y, mu, ...) {
-    Q_chol <- myident(d)
+    Q_chol <- sparse_identity(d)
     mpp(y, mu,
       Q_chol = Q_chol,
       ...,
@@ -37,7 +28,7 @@ test_that("mpp (multivariate_probit_probability)", {
     )
   }
   independent_quadrant_sigma <- function(d, y, mu, ...) {
-    Sigma_chol <- myident(d)
+    Sigma_chol <- sparse_identity(d)
     mpp(y, mu,
       Sigma_chol = Sigma_chol,
       ...,
@@ -101,7 +92,7 @@ test_that("mpp (multivariate_probit_probability)", {
       d = d,
       y = rep(1, d),
       mu = rep(0, d),
-      Q_chol = myident(d)
+      Q_chol = sparse_identity(d)
     ))
     # log
     expect_equal(independent_quadrant(
@@ -141,18 +132,9 @@ test_that("mpp (sum of all combinations)", {
 
 
 test_that("mpp_gradient_mu", {
-  myident <- function(d) {
-    Matrix::sparseMatrix(
-      i = seq_len(d),
-      j = seq_len(d),
-      x = 1.0,
-      dims = c(d, d)
-    )
-  }
-
   test_grad <- function(symmetric) {
     d <- 3
-    Q_chol <- myident(d)
+    Q_chol <- sparse_identity(d)
     y <- cbind(
       rep(c(0, 1), times = c(15, 5)),
       rep(c(0, 1), times = c(10, 10)),
@@ -185,18 +167,9 @@ test_that("mpp_gradient_mu", {
 
 
 test_that("mpp_hessian_mu", {
-  myident <- function(d) {
-    Matrix::sparseMatrix(
-      i = seq_len(d),
-      j = seq_len(d),
-      x = 1.0,
-      dims = c(d, d)
-    )
-  }
-
   test_hess <- function(diagonal) {
     d <- 3
-    Q_chol <- myident(d)
+    Q_chol <- sparse_identity(d)
     y <- cbind(
       rep(c(0, 1), times = c(15, 5)),
       rep(c(0, 1), times = c(10, 10)),
@@ -236,18 +209,9 @@ test_that("mpp_hessian_mu", {
 
 
 test_that("mpp_gradient_u", {
-  myident <- function(d) {
-    Matrix::sparseMatrix(
-      i = seq_len(d),
-      j = seq_len(d),
-      x = 1.0,
-      dims = c(d, d)
-    )
-  }
-
   test_grad <- function(symmetric) {
     d <- 3
-    V_chol <- myident(d)
+    V_chol <- sparse_identity(d)
     df <- 10
     y <- cbind(
       rep(c(0, 1), times = c(15, 5)),

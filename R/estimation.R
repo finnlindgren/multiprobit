@@ -1,25 +1,3 @@
-cvec <- function(A, d = NULL) {
-  if (is.matrix(A)) {
-    as.vector(A)
-  } else {
-    matrix(A, length(A) / d, d, byrow = FALSE)
-  }
-}
-rvec <- function(A, d = NULL) {
-  if (is.matrix(A)) {
-    as.vector(t(A))
-  } else {
-    matrix(A, length(A) / d, d, byrow = TRUE)
-  }
-}
-myident <- function(d) {
-  Matrix::sparseMatrix(
-    i = seq_len(d),
-    j = seq_len(d),
-    x = 1.0,
-    dims = c(d, d)
-  )
-}
 
 
 mp_loglike <- function(Y, mu, Sigma_chol,
@@ -81,10 +59,11 @@ mp_loglike_gradient_u <- function(Y, u, mu, V_chol, df, ...) {
 #' @export
 #' @rdname mp_logposterior
 
-mp_logposterior <- function(Y, X, V_chol, df, prec_beta,
-                            beta, u, ...,
-                            lower_chol = FALSE,
-                            what = c("loglike", "grad", "grad_beta", "grad_u")) {
+mp_logposterior <-
+  function(Y, X, V_chol, df, prec_beta,
+           beta, u, ...,
+           lower_chol = FALSE,
+           what = c("loglike", "grad", "grad_beta", "grad_u")) {
   what <- match.arg(what)
   d <- ncol(Y)
   dd <- d * (d - 1) / 2
@@ -240,8 +219,9 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 #' @description Construct a multivariate probit model object that stores
 #' information about model structure and parameters
 #' @param model An optional existing model object to be updated.
-#' @param response A matrix with n-by-d elements, where each row is a multivariate
-#'   observation, see Details. A vector is interpreted as a single row matrix.
+#' @param response A matrix with n-by-d elements, where each row is a
+#'   multivariate observation, see Details. A vector is interpreted as a
+#'   single row matrix.
 #' @param X An optimally precomputed n-by-J model matrix, where J is the number
 #'   regression coeficcients for each of the d dimensions.
 #' @param formula A formula interpretable by `model.matrix`.
@@ -347,7 +327,7 @@ mp_model <- function(model = NULL,
 
   if (!is.null(model$Y)) {
     stopifnot(nrow(model$X) == nrow(model$Y))
-    model$V_chol <- myident(ncol(model$Y))
+    model$V_chol <- sparse_identity(ncol(model$Y))
 
     if (is.null(model$df)) {
       warning("Model degrees of freedom parameter 'df' is not set.")
@@ -421,7 +401,12 @@ multiprobit <- function(model = NULL,
                         options = NULL) {
   model <- mp_model(model, ...)
   if (is.null(model$Y)) {
-    stop("No response/observations provided; add to an existing model with mp_model(model, response = ...).")
+    stop(
+      paste0(
+        "No response/observations provided:\n",
+        "Add to an existing model with mp_model(model, response = ...)."
+      )
+    )
   }
   options <- mp_options(mp_options_get(), options)
   mp_options_check(options)
@@ -446,7 +431,9 @@ multiprobit <- function(model = NULL,
 
 fn <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
   opt_type <- match.arg(opt_type)
-  message(paste0("f,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")"))
+  mp_log_message(
+    paste0("f,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")")
+  )
   what <- "loglike"
   f <- tryCatch(
     switch(opt_type,
@@ -477,12 +464,16 @@ fn <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
       -Inf
     }
   )
-  message(paste0("f(", opt_type, ") = ", paste0(f, collapse = ", "), ""))
+  mp_log_message(
+    paste0("f(", opt_type, ") = ", paste0(f, collapse = ", "), "")
+  )
   f
 }
 gr <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
   opt_type <- match.arg(opt_type)
-  message(paste0("g,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")"))
+  mp_log_message(
+    paste0("g,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")")
+  )
   what <- "grad"
   g <- switch(opt_type,
     "joint" = do.call(
@@ -507,10 +498,77 @@ gr <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
       )
     )
   )
-  message(paste0("g(", opt_type, ") = (", paste0(g, collapse = ", "), ")"))
+  mp_log_message(
+    paste0("g(", opt_type, ") = (", paste0(g, collapse = ", "), ")")
+  )
   g
 }
 
+
+calc_hessian <- function(latent, model, options) {
+  if (is.null(options$hessian) ||
+    (options$hessian == "none")) {
+    hessian <- NULL
+  } else {
+    if (options$hessian == "full") {
+      hessian <-
+        do.call(
+          optimHess,
+          c(
+            list(
+              par = latent,
+              fn = fn, gr = gr,
+              opt_type = "joint",
+              model = model,
+              gaussint_options = options$gaussint
+            ),
+            options$optim
+          )
+        )
+    } else if (options$hessian == "block") {
+      d <- ncol(model$Y)
+      N_beta <- ncol(model$X) * d
+      N_u <- d * (d - 1) / 2
+      hessian <-
+        Matrix::bdiag(
+          do.call(
+            optimHess,
+            c(
+              list(
+                par = latent[seq_len(N_beta)],
+                fn = fn, gr = gr,
+                opt_type = "beta",
+                u = latent[N_beta + seq_len(N_u)],
+                model = model,
+                gaussint_options = options$gaussint
+              ),
+              options$optim
+            )
+          ),
+          do.call(
+            optimHess,
+            c(
+              list(
+                par = latent[N_beta + seq_len(N_u)],
+                fn = fn, gr = gr,
+                opt_type = "u",
+                beta = latent[seq_len(N_beta)],
+                model = model,
+                gaussint_options = options$gaussint
+              ),
+              options$optim
+            )
+          )
+        )
+    } else if (options$hessian == "diagonal") {
+      warning("'diagonal' hessian not implemented.")
+      hessian <- NULL
+    } else {
+      warning("Unknown hessian type '", options$hessian, "'")
+    }
+  }
+  hessian
+}
 
 optim_alternating <- function(model, options = NULL) {
   options <- mp_options(
@@ -520,8 +578,6 @@ optim_alternating <- function(model, options = NULL) {
     # Caller options:
     options
   )
-  method <- options$optim[["method"]]
-  options$optim[["method"]] <- NULL
 
   N <- nrow(model$Y)
   d <- ncol(model$Y)
@@ -555,29 +611,39 @@ optim_alternating <- function(model, options = NULL) {
         counts[loop - 1, c("fn", "gr_beta", "gr_u")]
     }
     opt_beta[[loop]] <-
-      optim(
-        par = beta,
-        fn = fn, gr = gr,
-        opt_type = "beta",
-        model = model,
-        u = u,
-        gaussint_options = options$gaussint,
-        method = method,
-        control = options$optim
+      do.call(
+        optim,
+        c(
+          list(
+            par = beta,
+            fn = fn, gr = gr,
+            opt_type = "beta",
+            model = model,
+            u = u,
+            gaussint_options = options$gaussint
+          ),
+          options$optim
+        )
       )
     beta <- opt_beta[[loop]]$par
-    counts$fn[loop] <- counts$fn[loop] + opt_beta[[loop]]$counts["function"]
-    counts$gr_beta[loop] <- counts$gr_beta[loop] + opt_beta[[loop]]$counts["gradient"]
+    counts$fn[loop] <-
+      counts$fn[loop] + opt_beta[[loop]]$counts["function"]
+    counts$gr_beta[loop] <-
+      counts$gr_beta[loop] + opt_beta[[loop]]$counts["gradient"]
     opt_u[[loop]] <-
-      optim(
-        par = u,
-        fn = fn, gr = gr,
-        opt_type = "u",
-        model = model,
-        beta = beta,
-        gaussint_options = options$gaussint,
-        method = method,
-        control = options$optim
+      do.call(
+        optim,
+        c(
+          list(
+            par = u,
+            fn = fn, gr = gr,
+            opt_type = "u",
+            model = model,
+            beta = beta,
+            gaussint_options = options$gaussint
+          ),
+          options$optim
+        )
       )
     u <- opt_u[[loop]]$par
     counts$fn[loop] <- counts$fn[loop] + opt_u[[loop]]$counts["function"]
@@ -585,7 +651,13 @@ optim_alternating <- function(model, options = NULL) {
 
     result$latent[(loop - 1) * N_latent + seq_len(N_latent)] <- c(beta, u)
   }
-  list(result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u)
+  loop <- options$max_iter
+  hessian <- calc_hessian(
+    result$latent[(options$max_iter - 1) * N_latent + seq_len(N_latent)],
+    model, options
+  )
+  list(result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u,
+       hessian = hessian)
 }
 
 optim_joint <- function(model, options = NULL) {
@@ -596,8 +668,6 @@ optim_joint <- function(model, options = NULL) {
     # Caller options:
     options
   )
-  method <- options$optim[["method"]]
-  options$optim[["method"]] <- NULL
 
   N <- nrow(model$Y)
   d <- ncol(model$Y)
@@ -608,59 +678,19 @@ optim_joint <- function(model, options = NULL) {
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
   opt_joint <-
-    optim(
-      par = c(beta, u),
-      fn = fn, gr = gr,
-      opt_type = "joint",
-      model = model,
-      gaussint_options = options$gaussin,
-      method = method,
-      control = options$optim
-    )
-  if (is.null(options$hessian) ||
-    (options$hessian == "none")) {
-    hessian <- NULL
-  } else if (options$hessian == "full") {
-    hessian <-
-      optimHess(
-        par = opt_joint$par,
-        fn = fn, gr = gr,
-        opt_type = "joint",
-        model = model,
-        gaussint_options = options$gaussint,
-        method = method,
-        control = options$optim
-      )
-  } else if (options$hessian == "block") {
-    hessian <-
-      Matrix::bdiag(
-        optimHess(
-          par = opt_joint$par[seq_len(N_beta)],
+    do.call(
+      optim,
+      c(
+        list(
+          par = c(beta, u),
           fn = fn, gr = gr,
-          opt_type = "beta",
-          u = opt_joint$par[N_beta + seq_len(N_u)],
+          opt_type = "joint",
           model = model,
-          gaussint_options = options$gaussint,
-          method = method,
-          control = options$optim
+          gaussint_options = options$gaussin
         ),
-        optimHess(
-          par = opt_joint$par[N_beta + seq_len(N_u)],
-          fn = fn, gr = gr,
-          opt_type = "u",
-          beta = opt_joint$par[seq_len(N_beta)],
-          model = model,
-          gaussint_options = options$gaussint,
-          method = method,
-          control = options$optim
-        )
+        options$optim
       )
-  } else if (options$hessian == "diagonal") {
-    warning("'diagonal' hessian not implemented.")
-    hessian <- NULL
-  } else {
-    warning("Unknown hessian type '", options$hessian, "'")
-  }
+    )
   result <- data.frame(
     index = seq_len(N_latent),
     latent = opt_joint$par,
@@ -675,7 +705,7 @@ optim_joint <- function(model, options = NULL) {
   )
   list(
     result = result, counts = counts, opt_joint = opt_joint,
-    hessian = hessian
+    hessian = calc_hessian(result$latent, model, options)
   )
 }
 
@@ -688,8 +718,6 @@ optim_stepwise <- function(model, options = NULL) {
     # Caller options:
     options
   )
-  method <- options$optim[["method"]]
-  options$optim[["method"]] <- NULL
 
   N <- nrow(model$Y)
   d <- ncol(model$Y)
@@ -702,26 +730,34 @@ optim_stepwise <- function(model, options = NULL) {
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
   opt_beta <-
-    optim(
-      par = beta,
-      fn = fn, gr = gr,
-      opt_type = "beta",
-      model = model,
-      u = u,
-      gaussint_options = options$gaussint,
-      method = method,
-      control = options$optim
+    do.call(
+      optim,
+      c(
+        list(
+          par = beta,
+          fn = fn, gr = gr,
+          opt_type = "beta",
+          model = model,
+          u = u,
+          gaussint_options = options$gaussint
+        ),
+        options$optim
+      )
     )
   beta <- opt_beta$par
   opt_joint <-
-    optim(
-      par = c(beta, u),
-      fn = fn, gr = gr,
-      opt_type = "joint",
-      model = model,
-      gaussint_options = options$gaussint,
-      method = method,
-      control = options$optim
+    do.call(
+      optim,
+      c(
+        list(
+          par = c(beta, u),
+          fn = fn, gr = gr,
+          opt_type = "joint",
+          model = model,
+          gaussint_options = options$gaussint
+        ),
+        options$optim
+      )
     )
   result <- data.frame(
     index = seq_len(N_latent),
@@ -739,6 +775,7 @@ optim_stepwise <- function(model, options = NULL) {
   )
   list(
     result = result, counts = counts,
-    opt_beta = opt_beta, opt_joint = opt_joint
+    opt_beta = opt_beta, opt_joint = opt_joint,
+    hessian = calc_hessian(result$latent, model, options)
   )
 }
