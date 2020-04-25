@@ -204,7 +204,7 @@ test_that("self consistent latent/niwishart transformation", {
 
 # Wishart/ density
 test_that("Wishart density", {
-  if (requireNamespace("CholWishart")) {
+  if (requireNamespace("CholWishart", quietly = TRUE)) {
     mydiag <- function(d, x = 1.0) {
       Matrix::sparseMatrix(
         i = seq_len(d),
