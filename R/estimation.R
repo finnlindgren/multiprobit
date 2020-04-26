@@ -1,4 +1,4 @@
-
+# Loglikelihood, logposterior, and derivatives ####
 
 mp_loglike <- function(Y, mu, Sigma_chol,
                        lower_chol = FALSE, ...) {
@@ -212,7 +212,7 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 
 
 
-
+# User interface ####
 
 
 #' @title Setup multivariate probit model
@@ -280,7 +280,8 @@ mp_model <- function(model = NULL,
       data = NULL,
       V_chol = NULL,
       df = NULL,
-      prec_beta = NULL
+      prec_beta = NULL,
+      lower_chol = FALSE
     )
   }
   if (!is.null(response)) {
@@ -424,9 +425,14 @@ multiprobit <- function(model = NULL,
   }
 
   mp_log_message("Finished estimation with strategy '", options$strategy, "'")
-  c(list(model = model, options = options), opt)
+  est <- c(list(model = model, options = options), opt)
+  class(est) <- "mp_estimate"
+  est
 }
 
+
+
+# Optimisation methods ####
 
 
 fn <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
@@ -778,4 +784,61 @@ optim_stepwise <- function(model, options = NULL) {
     opt_beta = opt_beta, opt_joint = opt_joint,
     hessian = calc_hessian(result$latent, model, options)
   )
+}
+
+
+
+# Summary output ####
+
+latent_to_Sigma <- function(fun, ..., lower_chol) {
+  Sigma_chol <- fun(..., lower_chol = lower_chol)$W_chol
+  if (lower_chol) {
+    Sigma <- Sigma_chol %*% t(Sigma_chol)
+  } else {
+    Sigma <- t(Sigma_chol) %*% Sigma_chol
+  }
+  Sigma
+}
+
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param object PARAM_DESCRIPTION
+#' @param ... PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @export
+#' @method summary mp_estimate
+#' @rdname summary.mp_estimate
+
+summary.mp_estimate <- function(object, ...) {
+  out <- list()
+  J <- ncol(object$model$X)
+  d <- ncol(object$model$Y)
+  N_beta <- J * d
+  N_u <- d * (d - 1) / 2
+  S <- solve(-object$hessian)
+  out$beta <- data.frame(estimate = object$result$latent[seq_len(N_beta)],
+                         sd = diag(S)[seq_len(N_beta)]^0.5)
+  out$u <- data.frame(estimate = object$result$latent[N_beta + seq_len(N_u)],
+                         sd = diag(S)[N_beta + seq_len(N_u)]^0.5)
+
+  Sigma <-
+    do.call(
+      latent_to_Sigma,
+      c(
+        list(fun = latent_to_nwishart,
+             x = out$u$estimate),
+        object$model[c("V_chol", "df", "lower_chol")]
+      )
+    )
+  out$Sigma <- list(estimate = Sigma)
+
+  class(out) <- "mp_estimate_summary"
+  out
 }

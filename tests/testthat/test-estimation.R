@@ -33,7 +33,7 @@ test_that("multiprobit", {
       model = model,
       options = options
     )
-    expect_equal(class(opt[[strategy]]), "list")
+    expect_equal(class(opt[[strategy]]), "mp_estimate")
     expect_equal(class(opt[[strategy]][["result"]])[1], "data.frame")
     expect_equal(class(opt[[strategy]][["counts"]])[1], "data.frame")
   }
