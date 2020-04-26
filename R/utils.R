@@ -29,7 +29,7 @@ tri_solve <- function(A, b, lower_tri = FALSE) {
 
 qchisq_pnorm <- function(x, df) {
   qchisq(pnorm(x, log.p = TRUE),
-         df = df, log.p = TRUE
+    df = df, log.p = TRUE
   )
 }
 
@@ -50,7 +50,7 @@ qbeta_pchisq <- function(x,
                          shape1, shape2,
                          ncp) {
   qbeta(pchisq(q = x, df = df, ncp = ncp, log.p = TRUE),
-        shape1 = shape1, shape2 = shape2, ncp = ncp, log.p = TRUE
+    shape1 = shape1, shape2 = shape2, ncp = ncp, log.p = TRUE
   )
 }
 

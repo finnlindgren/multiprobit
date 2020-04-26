@@ -238,7 +238,7 @@ mp_options_default <- function() {
     verbose = FALSE,
     optim = list(
       method = "BFGS",
-      control = list (
+      control = list(
         fnscale = -1
       )
     ),
@@ -272,7 +272,7 @@ mp_options_check <- function(options) {
     ok <- FALSE
     warning("'max_iter' should be a positive integer, not NULL.")
   } else if (!is.numeric(options[["max_iter"]]) ||
-             !(options[["max_iter"]] > 0)) {
+    !(options[["max_iter"]] > 0)) {
     ok <- FALSE
     warning("'max_iter' should be a positive integer.")
   }
@@ -282,13 +282,13 @@ mp_options_check <- function(options) {
     ok <- FALSE
     warning("'strategy' should not be NULL.")
   } else if (!is.character(options[["strategy"]]) ||
-             !(length(options[["strategy"]]) == 1) ||
-             !(options[["strategy"]] %in%
-               c(
-                 "alternating",
-                 "stepwise",
-                 "joint"
-               ))) {
+    !(length(options[["strategy"]]) == 1) ||
+    !(options[["strategy"]] %in%
+      c(
+        "alternating",
+        "stepwise",
+        "joint"
+      ))) {
     ok <- FALSE
     warning("'strategy' should be a valid strategy string, see ?mp_options")
   }
@@ -299,14 +299,14 @@ mp_options_check <- function(options) {
     ok <- FALSE
     warning("'hessian' should not be NULL.")
   } else if (!is.character(options[["hessian"]]) ||
-             !(length(options[["hessian"]]) == 1) ||
-             !(options[["hessian"]] %in%
-               c(
-                 "none",
-                 "diagonal",
-                 "block",
-                 "full"
-               ))) {
+    !(length(options[["hessian"]]) == 1) ||
+    !(options[["hessian"]] %in%
+      c(
+        "none",
+        "diagonal",
+        "block",
+        "full"
+      ))) {
     ok <- FALSE
     warning("'hessian' should be a valid hessian string, see ?mp_options")
   }

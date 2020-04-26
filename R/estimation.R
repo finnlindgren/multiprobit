@@ -64,53 +64,53 @@ mp_logposterior <-
            beta, u, ...,
            lower_chol = FALSE,
            what = c("loglike", "grad", "grad_beta", "grad_u")) {
-  what <- match.arg(what)
-  d <- ncol(Y)
-  dd <- d * (d - 1) / 2
-  J <- ncol(X)
+    what <- match.arg(what)
+    d <- ncol(Y)
+    dd <- d * (d - 1) / 2
+    J <- ncol(X)
 
-  stopifnot(length(beta) + length(u) == (J * d + dd))
+    stopifnot(length(beta) + length(u) == (J * d + dd))
 
-  mu <- X %*% rvec(beta, d)
-  if (what != "grad_u") {
-    Sigma_chol <- latent_to_nwishart(
-      x = u, V_chol = V_chol, df = df,
-      lower_chol = lower_chol
-    )$W_chol
-  }
-  if (what == "loglike") {
-    L <- -sum(u)^2 / 2 - prec_beta / 2 * sum(beta^2) +
-      mp_loglike(
-        Y = Y, mu = mu, Sigma_chol = Sigma_chol,
-        lower_chol = lower_chol,
-        ...
-      )
-  } else {
-    if (what %in% c("grad", "grad_beta")) {
-      dL_dbeta <- -prec_beta * beta +
-        mp_loglike_gradient_beta(
-          Y = Y, X = X, mu = mu,
-          Sigma_chol = Sigma_chol,
+    mu <- X %*% rvec(beta, d)
+    if (what != "grad_u") {
+      Sigma_chol <- latent_to_nwishart(
+        x = u, V_chol = V_chol, df = df,
+        lower_chol = lower_chol
+      )$W_chol
+    }
+    if (what == "loglike") {
+      L <- -sum(u)^2 / 2 - prec_beta / 2 * sum(beta^2) +
+        mp_loglike(
+          Y = Y, mu = mu, Sigma_chol = Sigma_chol,
           lower_chol = lower_chol,
           ...
         )
-    }
-    if (what %in% c("grad", "grad_u")) {
-      dL_du <- -u + mp_loglike_gradient_u(
-        Y = Y, u = u, mu = mu,
-        V_chol = V_chol, df = df,
-        lower_chol = lower_chol,
-        ...
+    } else {
+      if (what %in% c("grad", "grad_beta")) {
+        dL_dbeta <- -prec_beta * beta +
+          mp_loglike_gradient_beta(
+            Y = Y, X = X, mu = mu,
+            Sigma_chol = Sigma_chol,
+            lower_chol = lower_chol,
+            ...
+          )
+      }
+      if (what %in% c("grad", "grad_u")) {
+        dL_du <- -u + mp_loglike_gradient_u(
+          Y = Y, u = u, mu = mu,
+          V_chol = V_chol, df = df,
+          lower_chol = lower_chol,
+          ...
+        )
+      }
+      switch(what,
+        "grad" = L <- c(dL_dbeta, dL_du),
+        "grad_beta" = L <- dL_dbeta,
+        "grad_u" = L <- dL_du
       )
     }
-    switch(what,
-      "grad" = L <- c(dL_dbeta, dL_du),
-      "grad_beta" = L <- dL_dbeta,
-      "grad_u" = L <- dL_du
-    )
+    L
   }
-  L
-}
 
 #' @param latent PARAM_DESCRIPTION
 #' @return OUTPUT_DESCRIPTION
@@ -672,8 +672,10 @@ optim_alternating <- function(model, options = NULL) {
     result$latent[(options$max_iter - 1) * N_latent + seq_len(N_latent)],
     model, options
   )
-  list(result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u,
-       hessian = hessian)
+  list(
+    result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u,
+    hessian = hessian
+  )
 }
 
 optim_joint <- function(model, options = NULL) {
@@ -817,9 +819,9 @@ latent_to_Sigma <- function(fun, ..., lower_chol) {
 #' @return An `mp_estimate_summary` object
 #' @examples
 #' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#' if (interactive()) {
+#'   # EXAMPLE1
+#' }
 #' }
 #'
 #' @method summary mp_estimate
@@ -833,20 +835,26 @@ summary.mp_estimate <- function(object, ...) {
   N_beta <- J * d
   N_u <- d * (d - 1) / 2
   S <- solve(-object$hessian)
-  out$beta <- data.frame(name = rep(object$model$names, times = d),
-                         component = rep(seq_len(d), each = J),
-                         estimate = object$result$latent[seq_len(N_beta)],
-                         sd = diag(S)[seq_len(N_beta)]^0.5)
-  out$u <- data.frame(name = paste0("u", seq_len(N_u)),
-                      estimate = object$result$latent[N_beta + seq_len(N_u)],
-                      sd = diag(S)[N_beta + seq_len(N_u)]^0.5)
+  out$beta <- data.frame(
+    name = rep(object$model$names, times = d),
+    component = rep(seq_len(d), each = J),
+    estimate = object$result$latent[seq_len(N_beta)],
+    sd = diag(S)[seq_len(N_beta)]^0.5
+  )
+  out$u <- data.frame(
+    name = paste0("u", seq_len(N_u)),
+    estimate = object$result$latent[N_beta + seq_len(N_u)],
+    sd = diag(S)[N_beta + seq_len(N_u)]^0.5
+  )
 
   Sigma <-
     do.call(
       latent_to_Sigma,
       c(
-        list(fun = latent_to_nwishart,
-             x = out$u$estimate),
+        list(
+          fun = latent_to_nwishart,
+          x = out$u$estimate
+        ),
         object$model[c("V_chol", "df", "lower_chol")]
       )
     )
