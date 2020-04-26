@@ -203,9 +203,10 @@ mp_options <- function(...) {
 }
 
 #' @param x An object to be converted to an `mp_options` object.
-#' @return For `as.mp_options()`, `NULL` or no input returns an empty `mp_options`
-#' object, a `list` is converted via `mp_options(...)`, and `mp_options` input
-#' is passed through. Other types of input generates an error.
+#' @return For `as.mp_options()`, `NULL` or no input returns an empty
+#' `mp_options` object, a `list` is converted via `mp_options(...)`,
+#' and `mp_options` input is passed through. Other types of input generates
+#' an error.
 #'
 #' @export
 #' @rdname mp_options
@@ -250,7 +251,8 @@ mp_options_default <- function() {
 }
 
 
-#' @details `mp_options_check` checks for valid contents of an `mp_options`` object
+#' @details `mp_options_check` checks for valid contents of an `mp_options`
+#' object
 #' @param options An `mp_options` object to be checked
 #' @return `mp_options_check()` returns a `logical`; `TRUE` if the object
 #'   contains valid options for use by other functions

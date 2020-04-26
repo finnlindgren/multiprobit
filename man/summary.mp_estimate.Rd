@@ -19,9 +19,9 @@ Organise information about multiprobit parameter estimates
 }
 \examples{
 \dontrun{
-if(interactive()){
- #EXAMPLE1
- }
+if (interactive()) {
+  # EXAMPLE1
+}
 }
 
 }

@@ -66,8 +66,8 @@ inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
 #' @export
 #' @rdname mpp
 #'
-#' @import excursions
 #' @import Matrix
+# (importFrom excursions gaussint)
 
 mpp <- function(y, mu,
                 Sigma_chol = NULL,

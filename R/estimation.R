@@ -743,8 +743,6 @@ optim_stepwise <- function(model, options = NULL) {
   N_beta <- J * d
   N_u <- d * (d - 1) / 2
   N_latent <- N_beta + N_u
-  opt_beta <- list()
-  opt_u <- list()
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
   opt_beta <-

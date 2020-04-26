@@ -202,7 +202,7 @@ test_that("self consistent latent/niwishart transformation", {
 })
 
 
-# Wishart/ density
+# Wishart density
 test_that("Wishart density", {
   if (requireNamespace("CholWishart", quietly = TRUE)) {
     mydiag <- function(d, x = 1.0) {
