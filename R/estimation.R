@@ -314,6 +314,16 @@ mp_model <- function(model = NULL,
   } else {
     # Do nothing.
   }
+  # Extract covariate names
+  if (is.null(model$X)) {
+    model$names <- NULL
+  } else {
+    model$names <- colnames(model$X)
+    if (is.null(model$names)) {
+      model$names <- paste0("name", seq_len(ncol(model$X)))
+      colnames(model$X) <- model$names
+    }
+  }
 
   if (!is.null(df)) {
     model$df <- df
@@ -350,7 +360,7 @@ mp_model <- function(model = NULL,
 
 
 
-#' @aliases multiprobit
+#' @aliases multiprobit mp_estimate
 #' @title Estimate a multivariate probit model
 #' @description Estimate a multivariate probit model from multivariate binary
 #'   data in a Bayesian generalised linear model framework
@@ -358,7 +368,7 @@ mp_model <- function(model = NULL,
 #' @param ... Parameters passed on to [mp_model()]
 #' @param options An [`mp_options`] object or a list that can be coerced into
 #' an `mp_options` object. Options set here will override the global options.
-#' @return OUTPUT_DESCRIPTION
+#' @return An `mp_estimate` object.
 #' @details For details on the multivariate probit model, see
 #' [mp_model()]. The `multiprobit` function estimates
 #' the model for observations stored in `response`
@@ -800,20 +810,20 @@ latent_to_Sigma <- function(fun, ..., lower_chol) {
   Sigma
 }
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param object PARAM_DESCRIPTION
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
+#' @title Multiprobit Estimate Summary Information
+#' @description Organise information about multiprobit parameter estimates
+#' @param object An [`mp_estimate`] object
+#' @param ... Additional parameters, currently unused.
+#' @return An `mp_estimate_summary` object
 #' @examples
 #' \dontrun{
 #' if(interactive()){
 #'  #EXAMPLE1
 #'  }
 #' }
-#' @export
+#'
 #' @method summary mp_estimate
+#' @export
 #' @rdname summary.mp_estimate
 
 summary.mp_estimate <- function(object, ...) {
@@ -823,10 +833,13 @@ summary.mp_estimate <- function(object, ...) {
   N_beta <- J * d
   N_u <- d * (d - 1) / 2
   S <- solve(-object$hessian)
-  out$beta <- data.frame(estimate = object$result$latent[seq_len(N_beta)],
+  out$beta <- data.frame(name = rep(object$model$names, times = d),
+                         component = rep(seq_len(d), each = J),
+                         estimate = object$result$latent[seq_len(N_beta)],
                          sd = diag(S)[seq_len(N_beta)]^0.5)
-  out$u <- data.frame(estimate = object$result$latent[N_beta + seq_len(N_u)],
-                         sd = diag(S)[N_beta + seq_len(N_u)]^0.5)
+  out$u <- data.frame(name = paste0("u", seq_len(N_u)),
+                      estimate = object$result$latent[N_beta + seq_len(N_u)],
+                      sd = diag(S)[N_beta + seq_len(N_u)]^0.5)
 
   Sigma <-
     do.call(

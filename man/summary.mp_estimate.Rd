@@ -2,23 +2,20 @@
 % Please edit documentation in R/estimation.R
 \name{summary.mp_estimate}
 \alias{summary.mp_estimate}
-\title{FUNCTION_TITLE}
+\title{Multiprobit Estimate Summary Information}
 \usage{
 \method{summary}{mp_estimate}(object, ...)
 }
 \arguments{
-\item{object}{PARAM_DESCRIPTION}
+\item{object}{An \code{\link{mp_estimate}} object}
 
-\item{...}{PARAM_DESCRIPTION}
+\item{...}{Additional parameters, currently unused.}
 }
 \value{
-OUTPUT_DESCRIPTION
+An \code{mp_estimate_summary} object
 }
 \description{
-FUNCTION_DESCRIPTION
-}
-\details{
-DETAILS
+Organise information about multiprobit parameter estimates
 }
 \examples{
 \dontrun{
@@ -26,4 +23,5 @@ if(interactive()){
  #EXAMPLE1
  }
 }
+
 }

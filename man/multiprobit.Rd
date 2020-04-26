@@ -2,6 +2,7 @@
 % Please edit documentation in R/estimation.R
 \name{multiprobit}
 \alias{multiprobit}
+\alias{mp_estimate}
 \title{Estimate a multivariate probit model}
 \usage{
 multiprobit(model = NULL, ..., options = NULL)
@@ -15,7 +16,7 @@ multiprobit(model = NULL, ..., options = NULL)
 an \code{mp_options} object. Options set here will override the global options.}
 }
 \value{
-OUTPUT_DESCRIPTION
+An \code{mp_estimate} object.
 }
 \description{
 Estimate a multivariate probit model from multivariate binary

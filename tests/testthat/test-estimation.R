@@ -1,7 +1,7 @@
 test_that("multiprobit", {
   N <- 6
   d <- 2
-  J <- 1
+  J <- 2
 
   set.seed(1L)
   X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
