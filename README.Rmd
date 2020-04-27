@@ -16,6 +16,10 @@ knitr::opts_chunk$set(
 # multiprobit
 
 <!-- badges: start -->
+master: 
+[![R build status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-check-master/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
+<br />
+devel: 
 [![R build status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-check/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
 [![R code coverage status](https://github.com/finnlindgren/multiprobit/workflows/test-coverage/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
 [![Codecov test coverage](https://codecov.io/gh/finnlindgren/multiprobit/branch/devel/graph/badge.svg)](https://codecov.io/gh/finnlindgren/multiprobit?branch=devel)

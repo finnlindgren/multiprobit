@@ -20,6 +20,8 @@
 \item{include_global}{logical; If \code{TRUE}, include global override options}
 
 \item{include_default}{logical; If \code{TRUE}, include default options}
+
+\item{...}{Further parameters, currently ignored}
 }
 \description{
 Print multiprobit options

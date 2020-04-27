@@ -394,6 +394,7 @@ mp_options_reset <- function() {
 #' @param legend logical; If `TRUE`, include explanatory text, Default: `TRUE`
 #' @param include_global logical; If `TRUE`, include global override options
 #' @param include_default logical; If `TRUE`, include default options
+#' @param ... Further parameters, currently ignored
 #'
 #' @examples
 #' if (interactive()) {

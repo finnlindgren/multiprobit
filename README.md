@@ -5,7 +5,9 @@
 
 <!-- badges: start -->
 
-[![R build
+master: [![R build
+status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-check-master/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
+<br /> devel: [![R build
 status](https://github.com/finnlindgren/multiprobit/workflows/R-CMD-check/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
 [![R code coverage
 status](https://github.com/finnlindgren/multiprobit/workflows/test-coverage/badge.svg)](https://github.com/finnlindgren/multiprobit/actions)
