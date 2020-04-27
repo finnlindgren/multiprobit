@@ -24,7 +24,7 @@ multiprobit_env_get <- function() {
 .onLoad <- function(libname, pkgname) {
   mp_log_reset()
   mp_log_message("multiprobit attached", allow_verbose = FALSE)
-  mp_log_message("Set default options", allow_verbose = FALSE)
+  mp_log_message("Clear override options", allow_verbose = FALSE)
   mp_options_reset()
 }
 
@@ -80,7 +80,7 @@ mp_log_get <- function() {
 mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
                            allow_verbose = TRUE) {
   if (allow_verbose) {
-    if (mp_options_get("verbose")) {
+    if (mp_options_get("verbose", include_default = TRUE)) {
       message(..., domain = domain, appendLF = appendLF)
     }
   }
@@ -104,8 +104,8 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 #'   objects.
 #'
 #'   The `_get`, `_set`, and `_reset` functions operate on a global
-#'   package options object. In many cases, setting options in specific calls
-#'   to [multiprobit()] is recommended instead.
+#'   package options override object. In many cases, setting options in
+#'   specific calls to [multiprobit()] is recommended instead.
 #' @param ... Named options, optionally started by one or more [`mp_options`]
 #' objects. Options specified later override the previous options.
 #' @return `mp_options()` returns an `mp_options` object.
@@ -321,6 +321,8 @@ mp_options_check <- function(options) {
 #' @param name Either `NULL`, or single option name string, or a list of
 #'   option namescharacter vector or list with option names,
 #'   Default: NULL
+#' @param include_default logical; If `TRUE`, the default options are included
+#'   together with the global override options. Default: `FALSE`
 #' @return `mp_options_get` returns either an [`mp_options`] object, for
 #'   `name == NULL`, the contents of single option, if `name` is a options name
 #'   string, or a named list of option contents, if `name` is a list of option
@@ -335,14 +337,21 @@ mp_options_check <- function(options) {
 #' @export
 #' @rdname mp_options
 
-mp_options_get <- function(name = NULL) {
+mp_options_get <- function(name = NULL, include_default = FALSE) {
+  if (include_default) {
+    default <- mp_options_default()
+  } else {
+    default <- mp_options()
+  }
+  global <- multiprobit_env_get()$options
+  options <- mp_options(default, global)
   if (is.null(name)) {
-    return(multiprobit_env_get()$options)
+    return(options)
   }
   if (is.list(name)) {
-    mget(unlist(name), as.environment(multiprobit_env_get()$options))
+    mget(unlist(name), as.environment(options))
   } else {
-    multiprobit_env_get()$options[[name]]
+    options[[name]]
   }
 }
 
@@ -354,7 +363,7 @@ mp_options_get <- function(name = NULL) {
 #' \dontrun{
 #' if (interactive()) {
 #'   mp_options_set(
-#'     gauusint = list(max.threads = 1),
+#'     gaussint = list(max.threads = 1),
 #'     optim = list(control = list(trace = 5))
 #'   )
 #' }
@@ -368,13 +377,92 @@ mp_options_set <- function(...) {
   invisible(mp_options_get())
 }
 
-#' @details After its first run, `mp_options_reset()` is equivalent to
-#'   `mp_options_set(mp_options_default())`.
+#' @details `mp_options_reset()` clears the global opption overrides.
 #' @export
 #' @rdname mp_options
 
 mp_options_reset <- function() {
   envir <- multiprobit_env_get()
-  envir$options <- mp_options_default()
+  envir$options <- mp_options()
   invisible(mp_options_get())
+}
+
+
+
+#' @title Print multiprobit options
+#' @param options An [`mp_object`] object to be printed
+#' @param legend logical; If `TRUE`, include explanatory text, Default: `TRUE`
+#' @param include_global logical; If `TRUE`, include global override options
+#' @param include_default logical; If `TRUE`, include default options
+#'
+#' @examples
+#' if (interactive()) {
+#'   options <- mp_options(verbose = TRUE)
+#'
+#'   # Don't print options only set in default:
+#'   print(options, include_default = FALSE)
+#'
+#'   # Only include options set in the object:
+#'   print(options, include_default = FALSE, include_global = FALSE)
+#' }
+#'
+#' @method print mp_options
+#' @export
+#' @rdname print.mp_options
+
+print.mp_options <- function(options,
+                             legend = TRUE,
+                             include_global = TRUE,
+                             include_default = TRUE,
+                             ...) {
+  traverse <- function(combined, default, global, options, prefix = "") {
+    for (name in sort(names(combined))) {
+      if (is.list(combined[[name]])) {
+        cat(paste0(prefix, name, " =\n"))
+        traverse(combined[[name]], default[[name]],
+                 global[[name]], options[[name]],
+                 prefix = paste0(prefix, "  "))
+      } else {
+        cat(paste0(prefix,
+                   name, " = ",
+                   ifelse(is.null(combined[[name]]), "NULL", combined[[name]]),
+                   " (",
+                   ifelse(!is.null(options[[name]]) &&
+                            (options[[name]] == combined[[name]]),
+                          "user",
+                          ifelse(!is.null(global[[name]]) &&
+                                   (global[[name]] == combined[[name]]),
+                                 "global",
+                                 ifelse(!is.null(default[[name]]) &&
+                                          (default[[name]] == combined[[name]]),
+                                        "default",
+                                        "unknown"))),
+                   ")\n"))
+      }
+    }
+  }
+  if (include_default) {
+    default <- mp_options_default()
+  } else {
+    default <-mp_options()
+  }
+  if (include_global) {
+    global <- mp_options_get()
+  } else {
+    global <- mp_options()
+  }
+  combined <- mp_options(default, global, options)
+
+  if (legend) {
+    cat("Legend:\n")
+    cat("  user = set in the object\n")
+    if (include_global) {
+      cat("  global = set in the global override object\n")
+    }
+    if (include_default) {
+      cat("  user = set in the default options\n")
+    }
+  }
+  cat("Options for multiprobit:\n")
+  traverse(combined, default, global, options, prefix = "  ")
 }

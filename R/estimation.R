@@ -317,12 +317,12 @@ mp_model <- function(model = NULL,
   }
   # Extract covariate names
   if (is.null(model$X)) {
-    model$names <- NULL
+    model$x_names <- NULL
   } else {
-    model$names <- colnames(model$X)
-    if (is.null(model$names)) {
-      model$names <- paste0("name", seq_len(ncol(model$X)))
-      colnames(model$X) <- model$names
+    model$x_names <- colnames(model$X)
+    if (is.null(model$x_names)) {
+      model$x_names <- paste0("x_name_", seq_len(ncol(model$X)))
+      colnames(model$X) <- model$x_names
     }
   }
 
@@ -351,6 +351,17 @@ mp_model <- function(model = NULL,
         ncol(model$Y),
         " - 1)"
       ))
+    }
+  }
+
+  # Extract covariate names
+  if (is.null(model$Y)) {
+    model$y_names <- NULL
+  } else {
+    model$y_names <- colnames(model$Y)
+    if (is.null(model$y_names)) {
+      model$y_names <- paste0("y_name_", seq_len(ncol(model$Y)))
+      colnames(model$Y) <- model$y_names
     }
   }
 
@@ -420,7 +431,7 @@ multiprobit <- function(model = NULL,
       )
     )
   }
-  options <- mp_options(mp_options_get(), options)
+  options <- mp_options(mp_options_default(), mp_options_get(), options)
   mp_options_check(options)
 
   mp_log_message("Starting estimation with strategy '", options$strategy, "'")
@@ -851,8 +862,8 @@ summary.mp_estimate <- function(object, ...) {
   N_u <- d * (d - 1) / 2
   S <- solve(-object$hessian)
   out$beta <- data.frame(
-    name = rep(object$model$names, each = d),
-    y_dim = rep(seq_len(d), times = J),
+    x_name = rep(object$model$x_names, each = d),
+    y_name = rep(object$model$y_names, times = J),
     estimate = object$result$latent[seq_len(N_beta)],
     sd = diag(S)[seq_len(N_beta)]^0.5
   )
@@ -892,8 +903,8 @@ summary.mp_model <- function(object, ...) {
   N_beta <- J * d
   N_u <- d * (d - 1) / 2
   out$beta <- data.frame(
-    name = rep(object$names, each = d),
-    y_dim = rep(seq_len(d), times = J),
+    x_name = rep(object$x_names, each = d),
+    y_name = rep(object$y_names, times = J),
     prior_mean = rep(0, N_beta),
     prior_sd = rep(object$prec_beta^(-0.5), N_beta)
   )
@@ -912,3 +923,35 @@ summary.mp_model <- function(object, ...) {
   class(out) <- "mp_model_summary"
   out
 }
+
+
+
+#' @title Print multiprobit objects
+#' @method print mp_estimate_summary
+#' @export
+#' @rdname print_mp_objects
+
+print.mp_estimate_summary <- function(object, ...) {
+  cat("beta:\n")
+  print(object$beta)
+  cat("u:\n")
+  print(object$u)
+  cat("Sigma:\n")
+  print(object$Sigma)
+}
+
+
+#' @method print mp_model_summary
+#' @export
+#' @rdname print_mp_objects
+
+print.mp_model_summary <- function(object, ...) {
+  cat("beta:\n")
+  print(object$beta)
+  cat("u:\n")
+  print(object$u)
+  cat("Sigma:\n")
+  print(object$Sigma)
+}
+
+

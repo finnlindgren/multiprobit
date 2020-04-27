@@ -34,11 +34,11 @@ test_that("setting/getting options", {
     "mp_options"
   )
   expect_is(
-    mp_options_set(default = TRUE),
+    mp_options_set(),
     "mp_options"
   )
   expect_is(
-    mp_options_set(mp_options_default()),
+    mp_options_get(),
     "mp_options"
   )
 

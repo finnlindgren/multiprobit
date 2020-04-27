@@ -18,7 +18,7 @@ mp_options_default()
 
 mp_options_check(options)
 
-mp_options_get(name = NULL)
+mp_options_get(name = NULL, include_default = FALSE)
 
 mp_options_set(...)
 
@@ -35,6 +35,9 @@ objects. Options specified later override the previous options.}
 \item{name}{Either \code{NULL}, or single option name string, or a list of
 option namescharacter vector or list with option names,
 Default: NULL}
+
+\item{include_default}{logical; If \code{TRUE}, the default options are included
+together with the global override options. Default: \code{FALSE}}
 }
 \value{
 \code{mp_options()} returns an \code{mp_options} object.
@@ -62,8 +65,8 @@ Create a new options object, or merge information from several
 objects.
 
 The \verb{_get}, \verb{_set}, and \verb{_reset} functions operate on a global
-package options object. In many cases, setting options in specific calls
-to \code{\link[=multiprobit]{multiprobit()}} is recommended instead.
+package options override object. In many cases, setting options in
+specific calls to \code{\link[=multiprobit]{multiprobit()}} is recommended instead.
 }
 \details{
 For \code{mp_options} and \code{mp_options_set}, recognised options are:
@@ -97,8 +100,7 @@ object
 
 \code{mp_options_set()} is used to set global package options.
 
-After its first run, \code{mp_options_reset()} is equivalent to
-\code{mp_options_set(mp_options_default())}.
+\code{mp_options_reset()} clears the global opption overrides.
 }
 \examples{
 \dontrun{
@@ -130,7 +132,7 @@ if (interactive()) {
 \dontrun{
 if (interactive()) {
   mp_options_set(
-    gauusint = list(max.threads = 1),
+    gaussint = list(max.threads = 1),
     optim = list(control = list(trace = 5))
   )
 }
