@@ -43,8 +43,8 @@
 <meta property="og:description" content="Create a new options object, or merge information from several
 objects.
 The _get, _set, and _reset functions operate on a global
-package options object. In many cases, setting options in specific calls
-to multiprobit() is recommended instead." />
+package options override object. In many cases, setting options in
+specific calls to multiprobit() is recommended instead." />
 
 
 
@@ -124,8 +124,8 @@ to multiprobit() is recommended instead." />
     <p>Create a new options object, or merge information from several
 objects.</p>
 <p>The <code>_get</code>, <code>_set</code>, and <code>_reset</code> functions operate on a global
-package options object. In many cases, setting options in specific calls
-to <code><a href='multiprobit.html'>multiprobit()</a></code> is recommended instead.</p>
+package options override object. In many cases, setting options in
+specific calls to <code><a href='multiprobit.html'>multiprobit()</a></code> is recommended instead.</p>
     </div>
 
     <pre class="usage"><span class='fu'>mp_options</span>(<span class='no'>...</span>)
@@ -136,7 +136,7 @@ to <code><a href='multiprobit.html'>multiprobit()</a></code> is recommended inst
 
 <span class='fu'>mp_options_check</span>(<span class='no'>options</span>)
 
-<span class='fu'>mp_options_get</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>mp_options_get</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>include_default</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>mp_options_set</span>(<span class='no'>...</span>)
 
@@ -163,6 +163,11 @@ objects. Options specified later override the previous options.</p></td>
       <td><p>Either <code>NULL</code>, or single option name string, or a list of
 option namescharacter vector or list with option names,
 Default: NULL</p></td>
+    </tr>
+    <tr>
+      <th>include_default</th>
+      <td><p>logical; If <code>TRUE</code>, the default options are included
+together with the global override options. Default: <code>FALSE</code></p></td>
     </tr>
     </table>
 
@@ -210,8 +215,7 @@ Options: "alternating", "joint", "stepwise". Default: "stepwise"</p></dd>
 object</p>
 <p><code>mp_options_check()</code> produces warnings for invalid options.</p>
 <p><code>mp_options_set()</code> is used to set global package options.</p>
-<p>After its first run, <code>mp_options_reset()</code> is equivalent to
-<code>mp_options_set(mp_options_default())</code>.</p>
+<p><code>mp_options_reset()</code> clears the global opption overrides.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code>mp_options()</code>, <code>mp_options_default()</code>, <code>mp_options_get()</code></p></div>
@@ -246,7 +250,7 @@ object</p>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
   <span class='fu'>mp_options_set</span>(
-    <span class='kw'>gauusint</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>max.threads</span> <span class='kw'>=</span> <span class='fl'>1</span>),
+    <span class='kw'>gaussint</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>max.threads</span> <span class='kw'>=</span> <span class='fl'>1</span>),
     <span class='kw'>optim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>5</span>))
   )
 }
