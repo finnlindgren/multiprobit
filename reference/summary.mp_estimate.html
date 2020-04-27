@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Multiprobit Estimate Summary Information — summary.mp_estimate • multiprobit</title>
+<title>Multiprobit Summary Information — summary.mp_estimate • multiprobit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Multiprobit Estimate Summary Information — summary.mp_estimate" />
-<meta property="og:description" content="Organise information about multiprobit parameter estimates" />
+<meta property="og:title" content="Multiprobit Summary Information — summary.mp_estimate" />
+<meta property="og:description" content="Organise information about multiprobit parameter estimates and models" />
 
 
 
@@ -111,16 +111,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Multiprobit Estimate Summary Information</h1>
+    <h1>Multiprobit Summary Information</h1>
     <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/estimation.R'><code>R/estimation.R</code></a></small>
     <div class="hidden name"><code>summary.mp_estimate.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Organise information about multiprobit parameter estimates</p>
+    <p>Organise information about multiprobit parameter estimates and models</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for mp_estimate</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for mp_model</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -128,7 +131,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>An <code><a href='multiprobit.html'>mp_estimate</a></code> object</p></td>
+      <td><p>An <code><a href='multiprobit.html'>mp_estimate</a></code> or <code><a href='mp_model.html'>mp_model</a></code>object</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -138,18 +141,22 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An <code>mp_estimate_summary</code> list object with elements</p><dl>
-<dt>beta</dt><dd><p>Summary information about the \(B\) coefficient estimates
+    <p>An <code>mp_estimate_summary</code> or <code>mp_model_summary</code> list object with
+elements</p><dl>
+<dt>beta</dt><dd><p>Summary information about the \(B\) coefficients
 (see <code><a href='mp_model.html'>mp_model()</a></code> for model definition).
 The elements of the matrix \(B\) are listed row-wise, so that the
-estimates for all Y-dimensions are grouped together, for each covariate.</p></dd>
-<dt>u</dt><dd><p>Summary information about the \(u\) estimates (see <code><a href='mp_model.html'>mp_model()</a></code>
-for model definition). This is the internal scale representation of the
-probit correlation matrix \(\Sigma\).</p></dd>
-<dt>Sigma</dt><dd><p>Summary of the the \(\Sigma\) estimate.</p></dd>
+values for each covariate are grouped together, for all Y-dimensions.</p></dd>
+<dt>u</dt><dd><p>Summary information about the latent \(u\) parameters (see
+<code><a href='mp_model.html'>mp_model()</a></code> for model definition). This is the internal scale
+representation of the probit correlation matrix parameter \(\Sigma\).</p></dd>
+<dt>Sigma</dt><dd><p>Summary information for \(\Sigma\).</p></dd>
 
-</dl>
-
+</dl><p>For model summaries, the prior mean and standard deviations are provided.
+For estimate summaries, the available quantities depend on what was computed
+and stored in the input object. Currently, the latent MAP estimates and
+their Hessian-based uncertainties are provided, and the corresponding point
+estimate of the probit correlation matrix parameter \(\Sigma\).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
