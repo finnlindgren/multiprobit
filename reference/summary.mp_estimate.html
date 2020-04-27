@@ -138,7 +138,18 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An <code>mp_estimate_summary</code> object</p>
+    <p>An <code>mp_estimate_summary</code> list object with elements</p><dl>
+<dt>beta</dt><dd><p>Summary information about the \(B\) coefficient estimates
+(see <code><a href='mp_model.html'>mp_model()</a></code> for model definition).
+The elements of the matrix \(B\) are listed row-wise, so that the
+estimates for all Y-dimensions are grouped together, for each covariate.</p></dd>
+<dt>u</dt><dd><p>Summary information about the \(u\) estimates (see <code><a href='mp_model.html'>mp_model()</a></code>
+for model definition). This is the internal scale representation of the
+probit correlation matrix \(\Sigma\).</p></dd>
+<dt>Sigma</dt><dd><p>Summary of the the \(\Sigma\) estimate.</p></dd>
+
+</dl>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {

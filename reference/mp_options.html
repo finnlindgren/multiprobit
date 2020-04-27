@@ -169,9 +169,10 @@ Default: NULL</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>mp_options()</code> returns an <code>mp_options</code> object.</p>
-<p>For <code>as.mp_options()</code>, <code>NULL</code> or no input returns an empty <code>mp_options</code>
-object, a <code>list</code> is converted via <code>mp_options(...)</code>, and <code>mp_options</code> input
-is passed through. Other types of input generates an error.</p>
+<p>For <code>as.mp_options()</code>, <code>NULL</code> or no input returns an empty
+<code>mp_options</code> object, a <code>list</code> is converted via <code>mp_options(...)</code>,
+and <code>mp_options</code> input is passed through. Other types of input generates
+an error.</p>
 <p><code>mp_options_default()</code> returns an <code>mp_options</code> object containing
 default options.</p>
 <p><code>mp_options_check()</code> returns a <code>logical</code>; <code>TRUE</code> if the object
@@ -205,7 +206,8 @@ Options: "alternating", "joint", "stepwise". Default: "stepwise"</p></dd>
 
 </dl>
 
-<p><code>mp_options_check</code> checks for valid contents of an `mp_options`` object</p>
+<p><code>mp_options_check</code> checks for valid contents of an <code>mp_options</code>
+object</p>
 <p><code>mp_options_check()</code> produces warnings for invalid options.</p>
 <p><code>mp_options_set()</code> is used to set global package options.</p>
 <p>After its first run, <code>mp_options_reset()</code> is equivalent to
