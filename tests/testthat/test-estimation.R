@@ -10,7 +10,10 @@ test_that("multiprobit", {
   df <- d + 1
   prec_beta <- 0.1
 
-  model <- mp_model(response = Y, X = X, df = df, prec_beta = prec_beta)
+  model <- mp_model(response = Y, formula = ~ -1 + x1 + x2,
+                    data = data.frame(x1 = X[,1], x2 = X[,2]),
+                    df = df, prec_beta = prec_beta)
+#  model <- mp_model(response = Y, X = X, df = df, prec_beta = prec_beta)
   options <-
     mp_options(
       max_iter = 1,

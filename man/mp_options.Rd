@@ -39,9 +39,10 @@ Default: NULL}
 \value{
 \code{mp_options()} returns an \code{mp_options} object.
 
-For \code{as.mp_options()}, \code{NULL} or no input returns an empty \code{mp_options}
-object, a \code{list} is converted via \code{mp_options(...)}, and \code{mp_options} input
-is passed through. Other types of input generates an error.
+For \code{as.mp_options()}, \code{NULL} or no input returns an empty
+\code{mp_options} object, a \code{list} is converted via \code{mp_options(...)},
+and \code{mp_options} input is passed through. Other types of input generates
+an error.
 
 \code{mp_options_default()} returns an \code{mp_options} object containing
 default options.
@@ -89,7 +90,8 @@ Options: "alternating", "joint", "stepwise". Default: "stepwise"}
 "block", and "full". Default: "full"}
 }
 
-\code{mp_options_check} checks for valid contents of an `mp_options`` object
+\code{mp_options_check} checks for valid contents of an \code{mp_options}
+object
 
 \code{mp_options_check()} produces warnings for invalid options.
 

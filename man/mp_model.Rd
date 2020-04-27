@@ -63,7 +63,8 @@ so alternative data representations such as \eqn{-1/+1} will also work as
 expected.
 
 The degrees of freedom for the normalised Wishart prior are linked to the
-LKJ prior by \code{df = ...}, which makes the two models equivalent.
+concentration pararameter \eqn{\eta} of the LKJ prior by the relation
+\code{df = 2 * eta + d - 1}, which makes the two models equivalent.
 }
 \examples{
 \dontrun{

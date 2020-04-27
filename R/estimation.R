@@ -252,7 +252,8 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 #' expected.
 #'
 #' The degrees of freedom for the normalised Wishart prior are linked to the
-#' LKJ prior by `df = ...`, which makes the two models equivalent.
+#' concentration pararameter \eqn{\eta} of the LKJ prior by the relation
+#' `df = 2 * eta + d - 1`, which makes the two models equivalent.
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
@@ -814,7 +815,17 @@ latent_to_Sigma <- function(fun, ..., lower_chol) {
 #' @description Organise information about multiprobit parameter estimates
 #' @param object An [`mp_estimate`] object
 #' @param ... Additional parameters, currently unused.
-#' @return An `mp_estimate_summary` object
+#' @return An `mp_estimate_summary` list object with elements
+#' \describe{
+#' \item{beta}{Summary information about the \eqn{B} coefficient estimates
+#' (see [mp_model()] for model definition).
+#' The elements of the matrix \eqn{B} are listed row-wise, so that the
+#' estimates for all Y-dimensions are grouped together, for each covariate.}
+#' \item{u}{Summary information about the \eqn{u} estimates (see [mp_model()]
+#' for model definition). This is the internal scale representation of the
+#' probit correlation matrix \eqn{\Sigma}.}
+#' \item{Sigma}{Summary of the the \eqn{\Sigma} estimate.}
+#' }
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
@@ -834,8 +845,8 @@ summary.mp_estimate <- function(object, ...) {
   N_u <- d * (d - 1) / 2
   S <- solve(-object$hessian)
   out$beta <- data.frame(
-    name = rep(object$model$names, times = d),
-    component = rep(seq_len(d), each = J),
+    name = rep(object$model$names, each = d),
+    y_dim = rep(seq_len(d), times = J),
     estimate = object$result$latent[seq_len(N_beta)],
     sd = diag(S)[seq_len(N_beta)]^0.5
   )

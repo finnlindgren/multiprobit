@@ -12,7 +12,17 @@
 \item{...}{Additional parameters, currently unused.}
 }
 \value{
-An \code{mp_estimate_summary} object
+An \code{mp_estimate_summary} list object with elements
+\describe{
+\item{beta}{Summary information about the \eqn{B} coefficient estimates
+(see \code{\link[=mp_model]{mp_model()}} for model definition).
+The elements of the matrix \eqn{B} are listed row-wise, so that the
+estimates for all Y-dimensions are grouped together, for each covariate.}
+\item{u}{Summary information about the \eqn{u} estimates (see \code{\link[=mp_model]{mp_model()}}
+for model definition). This is the internal scale representation of the
+probit correlation matrix \eqn{\Sigma}.}
+\item{Sigma}{Summary of the the \eqn{\Sigma} estimate.}
+}
 }
 \description{
 Organise information about multiprobit parameter estimates
