@@ -811,21 +811,27 @@ latent_to_Sigma <- function(fun, ..., lower_chol) {
   Sigma
 }
 
-#' @title Multiprobit Estimate Summary Information
-#' @description Organise information about multiprobit parameter estimates
-#' @param object An [`mp_estimate`] object
+#' @title Multiprobit Summary Information
+#' @description Organise information about multiprobit parameter estimates and models
+#' @param object An [`mp_estimate`] or [`mp_model`]object
 #' @param ... Additional parameters, currently unused.
-#' @return An `mp_estimate_summary` list object with elements
+#' @return An `mp_estimate_summary` or `mp_model_summary` list object with
+#' elements
 #' \describe{
-#' \item{beta}{Summary information about the \eqn{B} coefficient estimates
+#' \item{beta}{Summary information about the \eqn{B} coefficients
 #' (see [mp_model()] for model definition).
 #' The elements of the matrix \eqn{B} are listed row-wise, so that the
-#' estimates for all Y-dimensions are grouped together, for each covariate.}
-#' \item{u}{Summary information about the \eqn{u} estimates (see [mp_model()]
-#' for model definition). This is the internal scale representation of the
-#' probit correlation matrix \eqn{\Sigma}.}
-#' \item{Sigma}{Summary of the the \eqn{\Sigma} estimate.}
+#' values for each covariate are grouped together, for all Y-dimensions.}
+#' \item{u}{Summary information about the latent \eqn{u} parameters (see
+#' [mp_model()] for model definition). This is the internal scale
+#' representation of the probit correlation matrix parameter \eqn{\Sigma}.}
+#' \item{Sigma}{Summary information for \eqn{\Sigma}.}
 #' }
+#' For model summaries, the prior mean and standard deviations are provided.
+#' For estimate summaries, the available quantities depend on what was computed
+#' and stored in the input object. Currently, the latent MAP estimates and
+#' their Hessian-based uncertainties are provided, and the corresponding point
+#' estimate of the probit correlation matrix parameter \eqn{\Sigma}.
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
@@ -870,5 +876,39 @@ summary.mp_estimate <- function(object, ...) {
   out$Sigma <- list(estimate = Sigma)
 
   class(out) <- "mp_estimate_summary"
+  out
+}
+
+
+
+#' @method summary mp_model
+#' @export
+#' @rdname summary.mp_estimate
+
+summary.mp_model <- function(object, ...) {
+  out <- list()
+  J <- ncol(object$X)
+  d <- ncol(object$Y)
+  N_beta <- J * d
+  N_u <- d * (d - 1) / 2
+  out$beta <- data.frame(
+    name = rep(object$names, each = d),
+    y_dim = rep(seq_len(d), times = J),
+    prior_mean = rep(0, N_beta),
+    prior_sd = rep(object$prec_beta^(-0.5), N_beta)
+  )
+  out$u <- data.frame(
+    name = paste0("u", seq_len(N_u)),
+    prior_mean = rep(0, N_u),
+    prior_sd = rep(1, N_u)
+  )
+
+  Sigma_mean <- diag(x = 1, nrow = d, ncol = d)
+  Sigma_sd <- matrix(1 / object$df^0.5, d, d)
+  diag(Sigma_sd) <- 0
+  out$Sigma <- list(prior_mean = Sigma_mean,
+                    prior_sd = Sigma_sd)
+
+  class(out) <- "mp_model_summary"
   out
 }
