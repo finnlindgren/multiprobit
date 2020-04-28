@@ -91,6 +91,10 @@ Options: "alternating", "joint", "stepwise". Default: "stepwise"}
 \code{strategy == "alternating"}}
 \item{hessian}{The hessian computation style. Options: "none", "diagonal",
 "block", and "full". Default: "full"}
+\item{x_name_prefix}{The name prefix to use for covariate names if the
+model matrix doesn't have column names. Default: "x_name_"}
+\item{y_name_prefix}{The name prefix to use for covariate names if the
+response matrix doesn't have column names. Default: "y_name_"}
 }
 
 \code{mp_options_check} checks for valid contents of an \code{mp_options}

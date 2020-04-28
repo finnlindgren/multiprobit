@@ -5,9 +5,14 @@
 \alias{print.mp_model_summary}
 \title{Print multiprobit objects}
 \usage{
-\method{print}{mp_estimate_summary}(object, ...)
+\method{print}{mp_estimate_summary}(x, ...)
 
-\method{print}{mp_model_summary}(object, ...)
+\method{print}{mp_model_summary}(x, ...)
+}
+\arguments{
+\item{x}{an \code{\link{mp_model}} or \code{\link{mp_estimate_summary}} object to be printed.}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \description{
 Print multiprobit objects

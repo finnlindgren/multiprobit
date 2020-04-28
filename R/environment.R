@@ -131,7 +131,11 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 #'   `strategy == "alternating"`}
 #' \item{hessian}{The hessian computation style. Options: "none", "diagonal",
 #'   "block", and "full". Default: "full"}
-#'   }
+#' \item{x_name_prefix}{The name prefix to use for covariate names if the
+#'   model matrix doesn't have column names. Default: "x_name_"}
+#' \item{y_name_prefix}{The name prefix to use for covariate names if the
+#'   response matrix doesn't have column names. Default: "y_name_"}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -246,7 +250,9 @@ mp_options_default <- function() {
     gaussint = list(),
     max_iter = 5,
     strategy = "stepwise",
-    hessian = "full"
+    hessian = "full",
+    x_name_prefix = "x_name_",
+    y_name_prefix = "y_name_"
   )
 }
 
@@ -390,7 +396,7 @@ mp_options_reset <- function() {
 
 
 #' @title Print multiprobit options
-#' @param options An [`mp_object`] object to be printed
+#' @param x An [`mp_options`] object to be printed
 #' @param legend logical; If `TRUE`, include explanatory text, Default: `TRUE`
 #' @param include_global logical; If `TRUE`, include global override options
 #' @param include_default logical; If `TRUE`, include default options
@@ -411,7 +417,7 @@ mp_options_reset <- function() {
 #' @export
 #' @rdname print.mp_options
 
-print.mp_options <- function(options,
+print.mp_options <- function(x,
                              legend = TRUE,
                              include_global = TRUE,
                              include_default = TRUE,
@@ -445,14 +451,14 @@ print.mp_options <- function(options,
   if (include_default) {
     default <- mp_options_default()
   } else {
-    default <-mp_options()
+    default <- mp_options()
   }
   if (include_global) {
     global <- mp_options_get()
   } else {
     global <- mp_options()
   }
-  combined <- mp_options(default, global, options)
+  combined <- mp_options(default, global, x)
 
   if (legend) {
     cat("Legend:\n")
@@ -465,5 +471,5 @@ print.mp_options <- function(options,
     }
   }
   cat("Options for multiprobit:\n")
-  traverse(combined, default, global, options, prefix = "  ")
+  traverse(combined, default, global, x, prefix = "  ")
 }

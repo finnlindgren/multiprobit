@@ -4,16 +4,10 @@
 \alias{print.mp_options}
 \title{Print multiprobit options}
 \usage{
-\method{print}{mp_options}(
-  options,
-  legend = TRUE,
-  include_global = TRUE,
-  include_default = TRUE,
-  ...
-)
+\method{print}{mp_options}(x, legend = TRUE, include_global = TRUE, include_default = TRUE, ...)
 }
 \arguments{
-\item{options}{An \code{\link{mp_object}} object to be printed}
+\item{x}{An \code{\link{mp_options}} object to be printed}
 
 \item{legend}{logical; If \code{TRUE}, include explanatory text, Default: \code{TRUE}}
 

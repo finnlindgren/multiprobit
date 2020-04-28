@@ -6,8 +6,6 @@
 \alias{qnorm_pchisq}
 \alias{qbeta_pchisq}
 \alias{qchisq_pbeta}
-\alias{cvec}
-\alias{rvec}
 \alias{sparse_identity}
 \title{Internal multiprobit utilities}
 \usage{
@@ -20,10 +18,6 @@ qnorm_pchisq(x, df)
 qbeta_pchisq(x, df, shape1, shape2, ncp)
 
 qchisq_pbeta(x, shape1, shape2, df, ncp)
-
-cvec(A, d = NULL)
-
-rvec(A, d = NULL)
 
 sparse_identity(d)
 }

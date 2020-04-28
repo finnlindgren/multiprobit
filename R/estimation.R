@@ -321,7 +321,9 @@ mp_model <- function(model = NULL,
   } else {
     model$x_names <- colnames(model$X)
     if (is.null(model$x_names)) {
-      model$x_names <- paste0("x_name_", seq_len(ncol(model$X)))
+      model$x_names <- paste0(mp_options_get("x_name_prefix",
+                                             include_default = TRUE),
+                              seq_len(ncol(model$X)))
       colnames(model$X) <- model$x_names
     }
   }
@@ -360,7 +362,9 @@ mp_model <- function(model = NULL,
   } else {
     model$y_names <- colnames(model$Y)
     if (is.null(model$y_names)) {
-      model$y_names <- paste0("y_name_", seq_len(ncol(model$Y)))
+      model$y_names <- paste0(mp_options_get("y_name_prefix",
+                                             include_default = TRUE),
+                              seq_len(ncol(model$Y)))
       colnames(model$Y) <- model$y_names
     }
   }
@@ -850,6 +854,7 @@ latent_to_Sigma <- function(fun, ..., lower_chol) {
 #' }
 #' }
 #'
+#' @aliases mp_estimate_summary
 #' @method summary mp_estimate
 #' @export
 #' @rdname summary.mp_estimate
@@ -892,6 +897,7 @@ summary.mp_estimate <- function(object, ...) {
 
 
 
+#' @aliases mp_model_summary
 #' @method summary mp_model
 #' @export
 #' @rdname summary.mp_estimate
@@ -927,17 +933,19 @@ summary.mp_model <- function(object, ...) {
 
 
 #' @title Print multiprobit objects
+#' @param x an [`mp_model`] or [`mp_estimate_summary`] object to be printed.
+#' @param ... further arguments passed to or from other methods.
 #' @method print mp_estimate_summary
 #' @export
 #' @rdname print_mp_objects
 
-print.mp_estimate_summary <- function(object, ...) {
+print.mp_estimate_summary <- function(x, ...) {
   cat("beta:\n")
-  print(object$beta)
+  print(x$beta)
   cat("u:\n")
-  print(object$u)
+  print(x$u)
   cat("Sigma:\n")
-  print(object$Sigma)
+  print(x$Sigma)
 }
 
 
@@ -945,13 +953,13 @@ print.mp_estimate_summary <- function(object, ...) {
 #' @export
 #' @rdname print_mp_objects
 
-print.mp_model_summary <- function(object, ...) {
+print.mp_model_summary <- function(x, ...) {
   cat("beta:\n")
-  print(object$beta)
+  print(x$beta)
   cat("u:\n")
-  print(object$u)
+  print(x$u)
   cat("Sigma:\n")
-  print(object$Sigma)
+  print(x$Sigma)
 }
 
 

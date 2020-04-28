@@ -2,7 +2,9 @@
 % Please edit documentation in R/estimation.R
 \name{summary.mp_estimate}
 \alias{summary.mp_estimate}
+\alias{mp_estimate_summary}
 \alias{summary.mp_model}
+\alias{mp_model_summary}
 \title{Multiprobit Summary Information}
 \usage{
 \method{summary}{mp_estimate}(object, ...)

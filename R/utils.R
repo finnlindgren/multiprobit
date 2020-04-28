@@ -69,7 +69,24 @@ qchisq_pbeta <- function(x,
 }
 
 
-#' @rdname multiprobit_utils
+#' @title Vectorisation utitilies
+#' @description Convert between matrix and vector representations
+#' @param A A matrix or a vector
+#' @param d The number of matrix columns
+#' @return
+#'   If `A` is a matrix, `cvec` returns the columnwise vectorisation of `A`.
+#'   and `rvec` returns the rowwise vectorisation of `A`.
+#'   If `A` is a vector, `cvec` and `rvec` return a matrix with `d` columns,
+#'   filled columnwise for `cvec` and rowwise for `rvec`.
+#' @examples
+#' if (interactive()) {
+#'   Ac <- cvec(1:6, 2) # As matrix(1:6, 3, 2, byrow = FALSE)
+#'   Ar <- rvec(1:6, 2) # As matrix(1:6, 3, 2, byrow = TRUE)
+#'   cvec(Ac) # As as.vector(Ac)
+#'   rvec(Ar) # As as.vector(t(Ar))
+#' }
+#' @export
+#' @rdname vectorisation
 
 cvec <- function(A, d = NULL) {
   if (is.matrix(A)) {
@@ -79,7 +96,8 @@ cvec <- function(A, d = NULL) {
   }
 }
 
-#' @rdname multiprobit_utils
+#' @export
+#' @rdname vectorisation
 
 rvec <- function(A, d = NULL) {
   if (is.matrix(A)) {
