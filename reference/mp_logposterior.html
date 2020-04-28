@@ -123,13 +123,11 @@
     <pre class="usage"><span class='fu'>mp_logposterior</span>(
   <span class='no'>Y</span>,
   <span class='no'>X</span>,
-  <span class='no'>V_chol</span>,
-  <span class='no'>df</span>,
+  <span class='no'>Sigma_model</span>,
   <span class='no'>prec_beta</span>,
   <span class='no'>beta</span>,
   <span class='no'>u</span>,
   <span class='no'>...</span>,
-  <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>what</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"loglike"</span>, <span class='st'>"grad"</span>, <span class='st'>"grad_beta"</span>, <span class='st'>"grad_u"</span>)
 )
 
@@ -137,11 +135,9 @@
   <span class='no'>latent</span>,
   <span class='no'>Y</span>,
   <span class='no'>X</span>,
-  <span class='no'>V_chol</span>,
-  <span class='no'>df</span>,
+  <span class='no'>Sigma_model</span>,
   <span class='no'>prec_beta</span>,
   <span class='no'>...</span>,
-  <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>what</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"loglike"</span>, <span class='st'>"grad"</span>)
 )
 
@@ -149,12 +145,10 @@
   <span class='no'>latent</span>,
   <span class='no'>Y</span>,
   <span class='no'>X</span>,
-  <span class='no'>V_chol</span>,
-  <span class='no'>df</span>,
+  <span class='no'>Sigma_model</span>,
   <span class='no'>prec_beta</span>,
   <span class='no'>beta</span>,
   <span class='no'>...</span>,
-  <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>what</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"loglike"</span>, <span class='st'>"grad"</span>)
 )
 
@@ -162,12 +156,10 @@
   <span class='no'>latent</span>,
   <span class='no'>Y</span>,
   <span class='no'>X</span>,
-  <span class='no'>V_chol</span>,
-  <span class='no'>df</span>,
+  <span class='no'>Sigma_model</span>,
   <span class='no'>prec_beta</span>,
   <span class='no'>u</span>,
   <span class='no'>...</span>,
-  <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>what</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"loglike"</span>, <span class='st'>"grad"</span>)
 )</pre>
 
@@ -183,11 +175,7 @@
       <td><p>PARAM_DESCRIPTION</p></td>
     </tr>
     <tr>
-      <th>V_chol</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>df</th>
+      <th>Sigma_model</th>
       <td><p>PARAM_DESCRIPTION</p></td>
     </tr>
     <tr>
@@ -204,10 +192,6 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>lower_chol</th>
       <td><p>PARAM_DESCRIPTION</p></td>
     </tr>
     <tr>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Multivariate Probit Event Probability Derivatives — mpp_gradient_mu • multiprobit</title>
+<title>Wishart model wrapper — wm_model • multiprobit</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Multivariate Probit Event Probability Derivatives — mpp_gradient_mu" />
+<meta property="og:title" content="Wishart model wrapper — wm_model" />
 <meta property="og:description" content="FUNCTION_DESCRIPTION" />
 
 
@@ -111,126 +111,89 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Multivariate Probit Event Probability Derivatives</h1>
-    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/probabilities.R'><code>R/probabilities.R</code></a></small>
-    <div class="hidden name"><code>mpp_derivatives.Rd</code></div>
+    <h1>Wishart model wrapper</h1>
+    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/transform.R'><code>R/transform.R</code></a></small>
+    <div class="hidden name"><code>wishart_model.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>FUNCTION_DESCRIPTION</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mpp_gradient_mu</span>(
-  <span class='no'>y</span>,
-  <span class='no'>mu</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>gaussint_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>h</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>,
-  <span class='kw'>symmetric</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)
+    <pre class="usage"><span class='fu'>wm_model</span>(<span class='no'>type</span>, <span class='kw'>V</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>df</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>V_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>mpp_hessian_mu</span>(
-  <span class='no'>y</span>,
-  <span class='no'>mu</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>gaussint_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>h</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>diagonal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)
+<span class='fu'>wm_latent</span>(<span class='no'>model</span>, <span class='no'>...</span>)
 
-<span class='fu'>mpp_gradient_u</span>(
-  <span class='no'>y</span>,
-  <span class='no'>mu</span>,
-  <span class='no'>u</span>,
-  <span class='no'>Sigma_model</span>,
-  <span class='kw'>gaussint_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>h</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>,
-  <span class='kw'>symmetric</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)</pre>
+<span class='fu'>wm_chol</span>(<span class='no'>model</span>, <span class='no'>...</span>)
+
+<span class='fu'>wm_matrix</span>(<span class='no'>model</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for wm_model</span>
+<span class='fu'>wm_latent</span>(<span class='no'>model</span>, <span class='kw'>W</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>W_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for wm_model</span>
+<span class='fu'>wm_chol</span>(<span class='no'>model</span>, <span class='no'>x</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for wm_model</span>
+<span class='fu'>wm_matrix</span>(<span class='no'>model</span>, <span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>y</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
+      <th>type</th>
+      <td><p>DOC</p></td>
     </tr>
     <tr>
-      <th>mu</th>
+      <th>V</th>
+      <td><p>DOC</p></td>
+    </tr>
+    <tr>
+      <th>df</th>
+      <td><p>DOC</p></td>
+    </tr>
+    <tr>
+      <th>V_chol</th>
+      <td><p>DOC</p></td>
+    </tr>
+    <tr>
+      <th>lower_chol</th>
+      <td><p>DOC</p></td>
+    </tr>
+    <tr>
+      <th>model</th>
       <td><p>PARAM_DESCRIPTION</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Further parameters passed on to
-<code><a href='mpp.html'>mpp()</a></code></p></td>
+      <td><p>PARAM_DESCRIPTION</p></td>
     </tr>
     <tr>
-      <th>gaussint_options</th>
-      <td><p>list of options for <code><a href='https://rdrr.io/pkg/excursions/man/gaussint.html'>excursions::gaussint</a></code>.
-By default sets <code>seed = 1L</code> to ensure consistent approximation error.</p></td>
+      <th>W</th>
+      <td><p>DOC</p></td>
     </tr>
     <tr>
-      <th>h</th>
-      <td><p>Step size for finite differences, Default: 1e-06 (for gradients)
-or 1e-04 (for hessian)</p></td>
+      <th>W_chol</th>
+      <td><p>DOC</p></td>
     </tr>
     <tr>
-      <th>symmetric</th>
-      <td><p>For gradients, whether to use symmetric finite differences,
-Default: FALSE</p></td>
-    </tr>
-    <tr>
-      <th>diagonal</th>
-      <td><p>Logical; if <code>TRUE</code>, only the diagonal of the hessian
-is evaluated, Default: FALSE</p></td>
-    </tr>
-    <tr>
-      <th>u</th>
-      <td><p>A vector of latent variables identifying the Normalised Wishart
-matrix, length \(d(d-1)/2\)</p></td>
-    </tr>
-    <tr>
-      <th>Sigma_model</th>
-      <td><p>A <code><a href='wishart_model.html'>wm_model</a></code> object</p></td>
-    </tr>
-    <tr>
-      <th>log</th>
-      <td><p>Whether to compute gradient of the log-probability,
-Default: <code>FALSE</code></p></td>
+      <th>x</th>
+      <td><p>DOC</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>OUTPUT_DESCRIPTION gradient</p>
-<p>OUTPUT_DESCRIPTION hessian</p>
-<p>OUTPUT_DESCRIPTION</p>
+    <p>OUTPUT_DESCRIPTION</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>DETAILS gradient</p>
-<p>DETAILS hessain</p>
-<p>DETAILS</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='mpp.html'>mpp()</a></code></p></div>
+    <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='co'># EXAMPLE1 gradient</span>
-}
-}
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='co'># EXAMPLE1 hessian</span>
-}
-}
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='co'># EXAMPLE1</span>
-}
+<span class='kw'>if</span>(<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()){
+ <span class='co'>#EXAMPLE1</span>
+ }
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
