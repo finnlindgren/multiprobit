@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">multiprobit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -87,14 +87,16 @@ You can install the released version of `multiprobit` from [CRAN](https://CRAN.R
 install.packages("multiprobit")
 ```
 -->
-<p>To install the development version of <code>multiprobit</code> from github, use</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"finnlindgren/multiprobit"</span>, <span class="kw">ref</span> <span class="kw">=</span> <span class="st">"devel"</span>)</pre></div>
+<p>To install the latest stable release version of <code>multiprobit</code> from <a href="https://github.com/finnlindgren/multiprobit/">github</a>, use</p>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"finnlindgren/multiprobit"</span>, <span class="kw">ref</span> <span class="kw">=</span> <span class="st">"master"</span>)</pre></div>
+<p>To install the development version of <code>multiprobit</code> from <a href="https://github.com/finnlindgren/multiprobit/">github</a>, use</p>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"finnlindgren/multiprobit"</span>, <span class="kw">ref</span> <span class="kw">=</span> <span class="st">"devel"</span>)</pre></div>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/interactive.html">interactive</a></span>()) {
+<div class="sourceCode" id="cb3"><pre class="r"><span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/interactive.html">interactive</a></span>()) {
   <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">multiprobit</span>)
 
   <span class="no">N</span> <span class="kw">&lt;-</span> <span class="fl">6</span>
