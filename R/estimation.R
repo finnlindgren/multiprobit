@@ -321,9 +321,13 @@ mp_model <- function(model = NULL,
   } else {
     model$x_names <- colnames(model$X)
     if (is.null(model$x_names)) {
-      model$x_names <- paste0(mp_options_get("x_name_prefix",
-                                             include_default = TRUE),
-                              seq_len(ncol(model$X)))
+      model$x_names <- paste0(
+        mp_options_get(
+          "x_name_prefix",
+          include_default = TRUE
+        ),
+        seq_len(ncol(model$X))
+      )
       colnames(model$X) <- model$x_names
     }
   }
@@ -362,9 +366,12 @@ mp_model <- function(model = NULL,
   } else {
     model$y_names <- colnames(model$Y)
     if (is.null(model$y_names)) {
-      model$y_names <- paste0(mp_options_get("y_name_prefix",
-                                             include_default = TRUE),
-                              seq_len(ncol(model$Y)))
+      model$y_names <- paste0(
+        mp_options_get("y_name_prefix",
+          include_default = TRUE
+        ),
+        seq_len(ncol(model$Y))
+      )
       colnames(model$Y) <- model$y_names
     }
   }
@@ -923,8 +930,10 @@ summary.mp_model <- function(object, ...) {
   Sigma_mean <- diag(x = 1, nrow = d, ncol = d)
   Sigma_sd <- matrix(1 / object$df^0.5, d, d)
   diag(Sigma_sd) <- 0
-  out$Sigma <- list(prior_mean = Sigma_mean,
-                    prior_sd = Sigma_sd)
+  out$Sigma <- list(
+    prior_mean = Sigma_mean,
+    prior_sd = Sigma_sd
+  )
 
   class(out) <- "mp_model_summary"
   out
@@ -961,5 +970,3 @@ print.mp_model_summary <- function(x, ...) {
   cat("Sigma:\n")
   print(x$Sigma)
 }
-
-

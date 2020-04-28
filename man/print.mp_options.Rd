@@ -30,5 +30,4 @@ if (interactive()) {
   # Only include options set in the object:
   print(options, include_default = FALSE, include_global = FALSE)
 }
-
 }
