@@ -59,3 +59,18 @@ test_that("Quantile transformations", {
     qchisq(0.5, df, ncp)
   )
 })
+
+
+test_that("vectorisation utilities", {
+  v <- seq_len(6)
+  d <- 2
+  Ac <- cvec(v, d)
+  Ar <- rvec(v, d)
+  Ac_v <- cvec(Ac)
+  Ar_v <- rvec(Ar)
+  expect_equal(Ac_v, v)
+  expect_equal(Ac_v, v)
+  expect_equal(Ar_v, v)
+  expect_equal(cvec(Ac_v, d), Ac)
+  expect_equal(rvec(Ar_v, d), Ar)
+})

@@ -1,0 +1,5 @@
+> print(mp_options(), include_global = FALSE, include_default = FALSE)
+Legend:
+  user = set in the object
+Options for multiprobit:
+

@@ -51,3 +51,17 @@ test_that("setting/getting options", {
     FALSE
   )
 })
+
+
+verify_output(test_path("verify_output", "print.mp_options-FF.txt"), {
+  print(mp_options(), include_global = FALSE, include_default = FALSE)
+})
+verify_output(test_path("verify_output", "print.mp_options-TF.txt"), {
+  print(mp_options(), include_global = TRUE, include_default = FALSE)
+})
+verify_output(test_path("verify_output", "print.mp_options-FT.txt"), {
+  print(mp_options(), include_global = FALSE, include_default = TRUE)
+})
+verify_output(test_path("verify_output", "print.mp_options-TT.txt"), {
+  print(mp_options(), include_global = TRUE, include_default = TRUE)
+})
