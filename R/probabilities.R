@@ -308,10 +308,7 @@ mpp_hessian_mu <- function(y, mu, ...,
 
 #' @param u A vector of latent variables identifying the Normalised Wishart
 #' matrix, length \eqn{d(d-1)/2}
-#' @param V_chol The Cholesky factor of the Wishart \eqn{V} parameter
-#' @param df The Wishart degrees of freedom
-#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used,
-#'   Default: `FALSE`)
+#' @param Sigma_model A [`wm_model`] object
 #' @param log Whether to compute gradient of the log-probability,
 #'   Default: `FALSE`
 #' @return OUTPUT_DESCRIPTION
@@ -328,9 +325,7 @@ mpp_hessian_mu <- function(y, mu, ...,
 mpp_gradient_u <- function(y,
                            mu,
                            u,
-                           V_chol,
-                           df,
-                           lower_chol = FALSE,
+                           Sigma_model,
                            gaussint_options = NULL,
                            h = 1e-6,
                            symmetric = FALSE,
@@ -344,26 +339,20 @@ mpp_gradient_u <- function(y,
   d <- (1 + sqrt(1 + 8 * dof)) / 2
   g <- numeric(dof)
   if (!symmetric) {
-    C0 <- latent_to_nwishart(
-      x = u,
-      V_chol = V_chol,
-      df = df,
-      lower_chol = FALSE
-    )
+    C0 <- wm_chol(Sigma_model, x = u)
     prob0 <- sum(mpp(
-      y = y, mu = mu, Sigma_chol = C0$W_chol, log = TRUE,
+      y = y, mu = mu,
+      Sigma_chol = C0, lower_chol = Sigma_model$lower_chol,
+      log = TRUE,
       gaussint_options = gaussint_options, ...
     )$P)
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
-      C <- latent_to_nwishart(
-        x = u + H,
-        V_chol = V_chol,
-        df = df,
-        lower_chol = FALSE
-      )
+      C <- wm_chol(Sigma_model, x = u + H)
       prob <- sum(mpp(
-        y = y, mu = mu, Sigma_chol = C$W_chol, log = TRUE,
+        y = y, mu = mu,
+        Sigma_chol = C, lower_chol = Sigma_model$lower_chol,
+        log = TRUE,
         gaussint_options = gaussint_options, ...
       )$P)
       if (log) {
@@ -375,24 +364,18 @@ mpp_gradient_u <- function(y,
   } else {
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
-      C_p <- latent_to_nwishart(
-        x = u + H,
-        V_chol = V_chol,
-        df = df,
-        lower_chol = FALSE
-      )
-      C_m <- latent_to_nwishart(
-        x = u - H,
-        V_chol = V_chol,
-        df = df,
-        lower_chol = FALSE
-      )
+      C_p <- wm_chol(Sigma_model, x = u + H)
+      C_m <- wm_chol(Sigma_model, x = u - H)
       prob_p <- sum(mpp(
-        y = y, mu = mu, Sigma_chol = C_p$W_chol, log = TRUE,
+        y = y, mu = mu,
+        Sigma_chol = C_p, lower_chol = Sigma_model$lower_chol,
+        log = TRUE,
         gaussint_options = gaussint_options, ...
       )$P)
       prob_m <- sum(mpp(
-        y = y, mu = mu, Sigma_chol = C_m$W_chol, log = TRUE,
+        y = y, mu = mu,
+        Sigma_chol = C_m, lower_chol = Sigma_model$lower_chol,
+        log = TRUE,
         gaussint_options = gaussint_options, ...
       )$P)
       if (log) {

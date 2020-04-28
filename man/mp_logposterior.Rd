@@ -10,13 +10,11 @@
 mp_logposterior(
   Y,
   X,
-  V_chol,
-  df,
+  Sigma_model,
   prec_beta,
   beta,
   u,
   ...,
-  lower_chol = FALSE,
   what = c("loglike", "grad", "grad_beta", "grad_u")
 )
 
@@ -24,11 +22,9 @@ mp_logposterior_joint(
   latent,
   Y,
   X,
-  V_chol,
-  df,
+  Sigma_model,
   prec_beta,
   ...,
-  lower_chol = FALSE,
   what = c("loglike", "grad")
 )
 
@@ -36,12 +32,10 @@ mp_logposterior_fixed_beta(
   latent,
   Y,
   X,
-  V_chol,
-  df,
+  Sigma_model,
   prec_beta,
   beta,
   ...,
-  lower_chol = FALSE,
   what = c("loglike", "grad")
 )
 
@@ -49,12 +43,10 @@ mp_logposterior_fixed_u(
   latent,
   Y,
   X,
-  V_chol,
-  df,
+  Sigma_model,
   prec_beta,
   u,
   ...,
-  lower_chol = FALSE,
   what = c("loglike", "grad")
 )
 }
@@ -63,9 +55,7 @@ mp_logposterior_fixed_u(
 
 \item{X}{PARAM_DESCRIPTION}
 
-\item{V_chol}{PARAM_DESCRIPTION}
-
-\item{df}{PARAM_DESCRIPTION}
+\item{Sigma_model}{PARAM_DESCRIPTION}
 
 \item{prec_beta}{PARAM_DESCRIPTION}
 
@@ -74,8 +64,6 @@ mp_logposterior_fixed_u(
 \item{u}{PARAM_DESCRIPTION}
 
 \item{...}{PARAM_DESCRIPTION}
-
-\item{lower_chol}{PARAM_DESCRIPTION}
 
 \item{what}{PARAM_DESCRIPTION, Options: "loglike", "grad", with additional
 options "grad_beta", "grad_u" for \code{mp_logposterior} only}

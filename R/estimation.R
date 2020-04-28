@@ -1,14 +1,13 @@
 # Loglikelihood, logposterior, and derivatives ####
 
-mp_loglike <- function(Y, mu, Sigma_chol,
-                       lower_chol = FALSE, ...) {
+mp_loglike <- function(Y, mu, Sigma_chol, lower_chol, ...) {
   sum(mpp(Y,
     mu = mu, Sigma_chol = Sigma_chol,
     lower_chol = lower_chol,
     ..., log = TRUE
   )$P)
 }
-mp_loglike_gradient_beta <- function(Y, X, mu, Sigma_chol, lower_chol = FALSE,
+mp_loglike_gradient_beta <- function(Y, X, mu, Sigma_chol, lower_chol,
                                      ...) {
   Q_chol <- inverse_chol_reverse(Sigma_chol, lower_chol = lower_chol)
   d <- ncol(Y)
@@ -27,11 +26,8 @@ mp_loglike_gradient_beta <- function(Y, X, mu, Sigma_chol, lower_chol = FALSE,
   }
   L
 }
-mp_loglike_gradient_u <- function(Y, u, mu, V_chol, df, ...) {
-  mpp_gradient_u(Y,
-    u = u, mu = mu,
-    V_chol = V_chol, df = df, ..., log = TRUE
-  )
+mp_loglike_gradient_u <- function(Y, u, mu, Sigma_model, ...) {
+  mpp_gradient_u(Y, u = u, mu = mu, Sigma_model, ..., log = TRUE)
 }
 
 
@@ -39,13 +35,11 @@ mp_loglike_gradient_u <- function(Y, u, mu, V_chol, df, ...) {
 #' @description FUNCTION_DESCRIPTION
 #' @param Y PARAM_DESCRIPTION
 #' @param X PARAM_DESCRIPTION
-#' @param V_chol PARAM_DESCRIPTION
-#' @param df PARAM_DESCRIPTION
+#' @param Sigma_model PARAM_DESCRIPTION
 #' @param prec_beta PARAM_DESCRIPTION
 #' @param beta PARAM_DESCRIPTION
 #' @param u PARAM_DESCRIPTION
 #' @param ... PARAM_DESCRIPTION
-#' @param lower_chol PARAM_DESCRIPTION
 #' @param what PARAM_DESCRIPTION, Options: "loglike", "grad", with additional
 #'   options "grad_beta", "grad_u" for `mp_logposterior` only
 #' @return OUTPUT_DESCRIPTION
@@ -60,9 +54,8 @@ mp_loglike_gradient_u <- function(Y, u, mu, V_chol, df, ...) {
 #' @rdname mp_logposterior
 
 mp_logposterior <-
-  function(Y, X, V_chol, df, prec_beta,
+  function(Y, X, Sigma_model, prec_beta,
            beta, u, ...,
-           lower_chol = FALSE,
            what = c("loglike", "grad", "grad_beta", "grad_u")) {
     what <- match.arg(what)
     d <- ncol(Y)
@@ -73,16 +66,13 @@ mp_logposterior <-
 
     mu <- X %*% rvec(beta, d)
     if (what != "grad_u") {
-      Sigma_chol <- latent_to_nwishart(
-        x = u, V_chol = V_chol, df = df,
-        lower_chol = lower_chol
-      )$W_chol
+      Sigma_chol <- wm_chol(Sigma_model, x = u)
     }
     if (what == "loglike") {
       L <- -sum(u)^2 / 2 - prec_beta / 2 * sum(beta^2) +
         mp_loglike(
           Y = Y, mu = mu, Sigma_chol = Sigma_chol,
-          lower_chol = lower_chol,
+          lower_chol = Sigma_model$lower_chol,
           ...
         )
     } else {
@@ -91,15 +81,14 @@ mp_logposterior <-
           mp_loglike_gradient_beta(
             Y = Y, X = X, mu = mu,
             Sigma_chol = Sigma_chol,
-            lower_chol = lower_chol,
+            lower_chol = Sigma_model$lower_chol,
             ...
           )
       }
       if (what %in% c("grad", "grad_u")) {
         dL_du <- -u + mp_loglike_gradient_u(
           Y = Y, u = u, mu = mu,
-          V_chol = V_chol, df = df,
-          lower_chol = lower_chol,
+          Sigma_model = Sigma_model,
           ...
         )
       }
@@ -124,8 +113,7 @@ mp_logposterior <-
 #' @export
 #' @rdname mp_logposterior
 
-mp_logposterior_joint <- function(latent, Y, X, V_chol, df, prec_beta, ...,
-                                  lower_chol = FALSE,
+mp_logposterior_joint <- function(latent, Y, X, Sigma_model, prec_beta, ...,
                                   what = c("loglike", "grad")) {
   what <- match.arg(what)
 
@@ -138,10 +126,9 @@ mp_logposterior_joint <- function(latent, Y, X, V_chol, df, prec_beta, ...,
   index_beta <- seq_len(J * d)
   index_u <- J * d + seq_len(dd)
 
-  mp_logposterior(Y, X, V_chol, df, prec_beta,
+  mp_logposterior(Y, X, Sigma_model, prec_beta,
     beta = latent[index_beta],
     u = latent[index_u],
-    lower_chol = lower_chol,
     what = what,
     ...
   )
@@ -158,9 +145,8 @@ mp_logposterior_joint <- function(latent, Y, X, V_chol, df, prec_beta, ...,
 #' @export
 #' @rdname mp_logposterior
 
-mp_logposterior_fixed_beta <- function(latent, Y, X, V_chol, df, prec_beta,
+mp_logposterior_fixed_beta <- function(latent, Y, X, Sigma_model, prec_beta,
                                        beta, ...,
-                                       lower_chol = FALSE,
                                        what = c("loglike", "grad")) {
   what <- match.arg(what)
 
@@ -169,10 +155,9 @@ mp_logposterior_fixed_beta <- function(latent, Y, X, V_chol, df, prec_beta,
 
   stopifnot(length(latent) == (dd))
 
-  mp_logposterior(Y, X, V_chol, df, prec_beta,
+  mp_logposterior(Y, X, Sigma_model, prec_beta,
     beta = beta,
     u = latent,
-    lower_chol = lower_chol,
     what = ifelse(what == "loglike", "loglike", "grad_u"),
     ...
   )
@@ -189,9 +174,8 @@ mp_logposterior_fixed_beta <- function(latent, Y, X, V_chol, df, prec_beta,
 #' @export
 #' @rdname mp_logposterior
 
-mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
+mp_logposterior_fixed_u <- function(latent, Y, X, Sigma_model, prec_beta,
                                     u, ...,
-                                    lower_chol = FALSE,
                                     what = c("loglike", "grad")) {
   what <- match.arg(what)
 
@@ -200,10 +184,10 @@ mp_logposterior_fixed_u <- function(latent, Y, X, V_chol, df, prec_beta,
 
   stopifnot(length(latent) == (J * d))
 
-  mp_logposterior(Y, X, V_chol, df, prec_beta,
+  mp_logposterior(Y, X, Sigma_model, prec_beta,
     beta = latent,
     u = u,
-    lower_chol = lower_chol,
+    ...,
     what = ifelse(what == "loglike", "loglike", "grad_beta")
   )
 }
@@ -279,11 +263,14 @@ mp_model <- function(model = NULL,
       X = NULL,
       formula = NULL,
       data = NULL,
-      V_chol = NULL,
-      df = NULL,
-      prec_beta = NULL,
-      lower_chol = FALSE
+      Sigma_model = NULL,
+      prec_beta = NULL
     )
+  }
+  if (!is.null(df)) {
+    # Placeholder until model dimension is known
+    model$Sigma_model <-
+      wm_model(type = "nwishart", V_chol = 1, df = df)
   }
   if (!is.null(response)) {
     model$Y <- as.matrix(response) > 0
@@ -332,10 +319,6 @@ mp_model <- function(model = NULL,
     }
   }
 
-  if (!is.null(df)) {
-    model$df <- df
-  }
-
   if (!is.null(prec_beta)) {
     model$prec_beta <- prec_beta
   }
@@ -345,18 +328,16 @@ mp_model <- function(model = NULL,
 
   if (!is.null(model$Y)) {
     stopifnot(nrow(model$X) == nrow(model$Y))
-    model$V_chol <- sparse_identity(ncol(model$Y))
 
-    if (is.null(model$df)) {
+    if (is.null(model$Sigma_model)) {
       warning("Model degrees of freedom parameter 'df' is not set.")
-    } else if (model$df <= ncol(model$Y)) {
-      warning(paste0(
-        "df model parameter (",
-        df,
-        ") should be larger than model dimensionminus one (",
-        ncol(model$Y),
-        " - 1)"
-      ))
+    } else {
+      model$Sigma_model <-
+        wm_model(
+          type = "nwishart",
+          V_chol = sparse_identity(ncol(model$Y)),
+          df = model$Sigma_model$df
+        )
     }
   }
 
@@ -823,15 +804,6 @@ optim_stepwise <- function(model, options = NULL) {
 
 # Summary output ####
 
-latent_to_Sigma <- function(fun, ..., lower_chol) {
-  Sigma_chol <- fun(..., lower_chol = lower_chol)$W_chol
-  if (lower_chol) {
-    Sigma <- Sigma_chol %*% t(Sigma_chol)
-  } else {
-    Sigma <- t(Sigma_chol) %*% Sigma_chol
-  }
-  Sigma
-}
 
 #' @title Multiprobit Summary Information
 #' @description Organise information about multiprobit parameter estimates and models
@@ -885,17 +857,7 @@ summary.mp_estimate <- function(object, ...) {
     sd = diag(S)[N_beta + seq_len(N_u)]^0.5
   )
 
-  Sigma <-
-    do.call(
-      latent_to_Sigma,
-      c(
-        list(
-          fun = latent_to_nwishart,
-          x = out$u$estimate
-        ),
-        object$model[c("V_chol", "df", "lower_chol")]
-      )
-    )
+  Sigma <- wm_matrix(object$model$Sigma_model, x = out$u$estimate)
   out$Sigma <- list(estimate = Sigma)
 
   class(out) <- "mp_estimate_summary"
@@ -927,8 +889,8 @@ summary.mp_model <- function(object, ...) {
     prior_sd = rep(1, N_u)
   )
 
-  Sigma_mean <- diag(x = 1, nrow = d, ncol = d)
-  Sigma_sd <- matrix(1 / object$df^0.5, d, d)
+  Sigma_mean <- wm_matrix(object$Sigma_model, x = out$u$prior_mean)
+  Sigma_sd <- matrix(1 / object$Sigma_model$df^0.5, d, d)
   diag(Sigma_sd) <- 0
   out$Sigma <- list(
     prior_mean = Sigma_mean,

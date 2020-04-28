@@ -495,3 +495,166 @@ dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
     exp(log_p)
   }
 }
+
+
+
+
+# Generalised Wishart model object ####
+
+
+#' @title Wishart model wrapper
+#' @param type DOC
+#' @param V DOC
+#' @param df DOC
+#' @param V_chol DOC
+#' @param lower_chol DOC
+#' @export
+#' @rdname wishart_model
+
+wm_model <- function(type,
+                     V = NULL, df = NULL,
+                     V_chol = NULL, lower_chol = FALSE) {
+  type <- match.arg(type, c("wishart", "nwishart", "iwishart", "niwishart"))
+  if (!is.null(V)) {
+    V <- as.matrix(V)
+    stopifnot(is.null(V_chol))
+    V_chol <- chol(V)
+    if (lower_chol) {
+      V_chol <- t(V_chol)
+    }
+  } else {
+    V_chol <- as.matrix(V_chol)
+    stopifnot(!is.null(V_chol))
+    if (lower_chol) {
+      V <- V_chol %*% t(V_chol)
+    } else {
+      V <- t(V_chol) %*% V_chol
+    }
+  }
+  d <- nrow(V)
+  stopifnot("df most not be NULL" = !is.null(df),
+            "df should be > dimension - 1" = df > d - 1)
+  if (type %in% c("wishart", "iwishart")) {
+    N_latent <- d * (d + 1) / 2
+  } else {
+    N_latent <- d * (d - 1) / 2
+  }
+N_latent
+  model <- list(type = type,
+                d = d, N_latent = N_latent, V = V, df = df,
+                V_chol = V_chol, lower_chol = lower_chol)
+  class(model) <-
+    c(paste0("wm_model_", type), "wm_model")
+  model
+}
+
+
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param model PARAM_DESCRIPTION
+#' @param ... PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @export
+#' @rdname wishart_model
+
+wm_latent <- function(model, ...) {
+  UseMethod("wm_latent")
+}
+
+#' @export
+#' @rdname wishart_model
+
+wm_chol <- function(model, ...) {
+  UseMethod("wm_chol")
+}
+
+#' @export
+#' @rdname wishart_model
+
+wm_matrix <- function(model, ...) {
+  UseMethod("wm_matrix")
+}
+
+#' @param W DOC
+#' @param W_chol DOC
+#' @param lower_chol DOC
+#' @export
+#' @rdname wishart_model
+
+wm_latent.wm_model <-
+  function(model, W = NULL, W_chol = NULL, lower_chol = NULL, ...) {
+    if (is.null(lower_chol)) {
+      lower_chol <- model$lower_chol
+    }
+    if (!is.null(W)) {
+      W_chol <- chol(W)
+      if (model$lower_chol) {
+        W_chol <- t(W_chol)
+      }
+    } else {
+      stopifnot(!is.null(W_chol))
+      if (lower_chol != model$lower_chol) {
+        W_chol <- t(W_chol)
+      }
+    }
+    switch(model$type,
+           "wishart" = latent_from_wishart(
+             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+             lower_chol = model$lower_chol),
+           "nwishart" = latent_from_nwishart(
+             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+             lower_chol = model$lower_chol),
+           "iwishart" = latent_from_iwishart(
+             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+             lower_chol = model$lower_chol),
+           "niwishart" = latent_from_niwishart(
+             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+             lower_chol = model$lower_chol)
+    )$x
+  }
+
+#' @param x DOC
+#' @export
+#' @rdname wishart_model
+
+wm_chol.wm_model <-
+  function(model, x, lower_chol = NULL, ...) {
+    if (is.null(lower_chol)) {
+      lower_chol <- model$lower_chol
+    }
+    W_chol <-
+      switch(model$type,
+             "wishart" = latent_to_wishart(
+               x = x, df = model$df, V_chol = model$V_chol,
+               lower_chol = model$lower_chol),
+             "nwishart" = latent_to_nwishart(
+               x = x, df = model$df, V_chol = model$V_chol,
+               lower_chol = model$lower_chol),
+             "iwishart" = latent_to_iwishart(
+               x = x, df = model$df, V_chol = model$V_chol,
+               lower_chol = model$lower_chol),
+             "niwishart" = latent_to_niwishart(
+               x = x, df = model$df, V_chol = model$V_chol,
+               lower_chol = model$lower_chol)
+      )$W_chol
+    if (lower_chol != model$lower_chol) {
+      W_chol <- t(W_chol)
+    }
+    W_chol
+  }
+
+#' @export
+#' @rdname wishart_model
+
+wm_matrix.wm_model <-
+  function(model, x, ...) {
+    W_chol <- wm_chol(model, x = x, lower_chol = FALSE)
+    t(W_chol) %*% W_chol
+  }

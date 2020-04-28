@@ -28,9 +28,7 @@ mpp_gradient_u(
   y,
   mu,
   u,
-  V_chol,
-  df,
-  lower_chol = FALSE,
+  Sigma_model,
   gaussint_options = NULL,
   h = 1e-06,
   symmetric = FALSE,
@@ -61,12 +59,7 @@ is evaluated, Default: FALSE}
 \item{u}{A vector of latent variables identifying the Normalised Wishart
 matrix, length \eqn{d(d-1)/2}}
 
-\item{V_chol}{The Cholesky factor of the Wishart \eqn{V} parameter}
-
-\item{df}{The Wishart degrees of freedom}
-
-\item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used,
-Default: \code{FALSE})}
+\item{Sigma_model}{A \code{\link{wm_model}} object}
 
 \item{log}{Whether to compute gradient of the log-probability,
 Default: \code{FALSE}}
