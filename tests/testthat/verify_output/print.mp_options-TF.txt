@@ -1,0 +1,6 @@
+> print(mp_options(), include_global = TRUE, include_default = FALSE)
+Legend:
+  user = set in the object
+  global = set in the global override object
+Options for multiprobit:
+

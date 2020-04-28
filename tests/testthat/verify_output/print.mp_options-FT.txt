@@ -1,0 +1,17 @@
+> print(mp_options(), include_global = FALSE, include_default = TRUE)
+Legend:
+  user = set in the object
+  user = set in the default options
+Options for multiprobit:
+  gaussint =
+  hessian = full (default)
+  max_iter = 5 (default)
+  optim =
+    control =
+      fnscale = -1 (default)
+    method = BFGS (default)
+  strategy = stepwise (default)
+  verbose = FALSE (default)
+  x_name_prefix = x_name_ (default)
+  y_name_prefix = y_name_ (default)
+
