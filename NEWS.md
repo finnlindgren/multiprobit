@@ -1,6 +1,6 @@
 # multiprobit (development version)
 
-# multiprobit 0.2.0
+# multiprobit 0.2.1
 
 * First stable release
 * Implements MAP estimation of a multivariate probit model
