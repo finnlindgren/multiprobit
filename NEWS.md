@@ -1,3 +1,6 @@
-# multiprobit 0.1.0.9000
+# multiprobit (development version)
 
-* Added a `NEWS.md` file to track changes to the package.
+# multiprobit 0.2.0
+
+* First stable release
+* Implements MAP estimation of a multivariate probit model
