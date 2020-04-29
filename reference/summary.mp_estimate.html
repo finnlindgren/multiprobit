@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Multiprobit Summary Information — summary.mp_estimate" />
-<meta property="og:description" content="Organise information about multiprobit parameter estimates and models" />
+<meta property="og:description" content="Organise information about multiprobit parameter estimates
+and models" />
 
 
 
@@ -117,7 +118,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Organise information about multiprobit parameter estimates and models</p>
+    <p>Organise information about multiprobit parameter estimates
+and models</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for mp_estimate</span>
@@ -150,7 +152,11 @@ values for each covariate are grouped together, for all Y-dimensions.</p></dd>
 <dt>u</dt><dd><p>Summary information about the latent \(u\) parameters (see
 <code><a href='mp_model.html'>mp_model()</a></code> for model definition). This is the internal scale
 representation of the probit correlation matrix parameter \(\Sigma\).</p></dd>
-<dt>Sigma</dt><dd><p>Summary information for \(\Sigma\).</p></dd>
+<dt>Sigma</dt><dd><p>Summary information for \(\Sigma\). Includes a basic linear
+error propagation estimate of the elementwise standard deviations, as
+<code>[prior_]sd_linear</code>; the calculation for the prior in <code>mp_model</code>
+indicates that this is an overestimate of the actual standard deviations
+of the \(\Sigma\) elements.</p></dd>
 
 </dl><p>For model summaries, the prior mean and standard deviations are provided.
 For estimate summaries, the available quantities depend on what was computed
