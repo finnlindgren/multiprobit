@@ -211,9 +211,11 @@ test_that("mpp_hessian_mu", {
 test_that("mpp_gradient_u", {
   test_grad <- function(symmetric) {
     d <- 3
-    Sigma_model <- wm_model(type = "nwishart",
-                            V_chol = multiprobit:::sparse_identity(d),
-                            df = 10)
+    Sigma_model <- wm_model(
+      type = "nwishart",
+      V_chol = multiprobit:::sparse_identity(d),
+      df = 10
+    )
     y <- cbind(
       rep(c(0, 1), times = c(15, 5)),
       rep(c(0, 1), times = c(10, 10)),

@@ -12,11 +12,10 @@ Description: Perform fast Bayesian inference for multivariate
 License: GPL-3
 URL: https://github.com/finnlindgren/multiprobit
 BugReports: https://github.com/finnlindgren/multiprobit/issues
-Depends: 
-    Matrix
 Imports: 
     excursions,
-    stats
+    stats,
+    Matrix
 Suggests: 
     CholWishart,
     covr,

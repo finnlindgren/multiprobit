@@ -27,7 +27,11 @@ values for each covariate are grouped together, for all Y-dimensions.}
 \item{u}{Summary information about the latent \eqn{u} parameters (see
 \code{\link[=mp_model]{mp_model()}} for model definition). This is the internal scale
 representation of the probit correlation matrix parameter \eqn{\Sigma}.}
-\item{Sigma}{Summary information for \eqn{\Sigma}.}
+\item{Sigma}{Summary information for \eqn{\Sigma}. Includes a basic linear
+error propagation estimate of the elementwise standard deviations, as
+\verb{[prior_]sd_linear}; the calculation for the prior in \code{mp_model}
+indicates that this is an overestimate of the actual standard deviations
+of the \eqn{\Sigma} elements.}
 }
 For model summaries, the prior mean and standard deviations are provided.
 For estimate summaries, the available quantities depend on what was computed
@@ -36,7 +40,8 @@ their Hessian-based uncertainties are provided, and the corresponding point
 estimate of the probit correlation matrix parameter \eqn{\Sigma}.
 }
 \description{
-Organise information about multiprobit parameter estimates and models
+Organise information about multiprobit parameter estimates
+and models
 }
 \examples{
 \dontrun{

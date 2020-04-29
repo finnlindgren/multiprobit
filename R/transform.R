@@ -27,11 +27,14 @@
 
 latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
   d <- nrow(V_chol)
-  R <- diag(sqrt(qchisq_pnorm(x[seq_len(d)], df = df - seq_len(d) + 1)), d, d)
+  R <- Matrix::diag(sqrt(qchisq_pnorm(
+    x[seq_len(d)],
+    df = df - seq_len(d) + 1
+  )), d, d)
   R[upper.tri(R)] <- x[d + seq_len(d * (d - 1) / 2)]
   if (lower_chol) {
-    W_chol <- V_chol %*% t(R)
-    list(W_chol = W_chol, B_chol = t(R))
+    W_chol <- V_chol %*% Matrix::t(R)
+    list(W_chol = W_chol, B_chol = Matrix::t(R))
   } else {
     W_chol <- R %*% V_chol
     list(W_chol = W_chol, B_chol = R)
@@ -63,17 +66,19 @@ latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
   d <- nrow(V_chol)
   if (!lower_chol) {
     # Convert input to lower Cholesky format
-    W_chol <- t(W_chol)
-    V_chol <- t(V_chol)
+    W_chol <- Matrix::t(W_chol)
+    V_chol <- Matrix::t(V_chol)
   }
   B_chol <- tri_solve(V_chol, W_chol, lower_tri = TRUE)
   x <- numeric(d * (d + 1) / 2)
-  x[seq_len(d)] <- qnorm_pchisq(diag(B_chol)^2, df = df - seq_len(d) + 1)
-  x[d + seq_len(d * (d - 1) / 2)] <- t(B_chol)[upper.tri(B_chol)]
+  x[seq_len(d)] <- qnorm_pchisq(Matrix::diag(B_chol)^2,
+    df = df - seq_len(d) + 1
+  )
+  x[d + seq_len(d * (d - 1) / 2)] <- Matrix::t(B_chol)[upper.tri(B_chol)]
   if (lower_chol) {
     list(x = x, B_chol = B_chol)
   } else {
-    list(x = x, B_chol = t(B_chol))
+    list(x = x, B_chol = Matrix::t(B_chol))
   }
 }
 
@@ -110,7 +115,7 @@ latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
   d <- nrow(V_chol)
   if (!lower_chol) {
-    V_chol <- t(V_chol)
+    V_chol <- Matrix::t(V_chol)
   }
   s_vec <- c(1 / V_chol[1, 1], numeric(d - 1))
   B_chol <- W_chol <- matrix(0, d, d)
@@ -145,7 +150,7 @@ latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
   if (lower_chol) {
     list(W_chol = W_chol, s = s_vec, B_chol = B_chol)
   } else {
-    list(W_chol = t(W_chol), s = s_vec, B_chol = t(B_chol))
+    list(W_chol = Matrix::t(W_chol), s = s_vec, B_chol = Matrix::t(B_chol))
   }
 }
 
@@ -181,8 +186,8 @@ latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
   d <- nrow(W_chol)
   if (!lower_chol) {
-    W_chol <- t(W_chol)
-    V_chol <- t(V_chol)
+    W_chol <- Matrix::t(W_chol)
+    V_chol <- Matrix::t(V_chol)
   }
   # Make sure the rows are normalised:
   W_chol <- (1 / rowSums(W_chol^2)^0.5) * W_chol
@@ -217,7 +222,7 @@ latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
   if (lower_chol) {
     list(x = x, s = s_vec, B_chol = B_chol)
   } else {
-    list(x = x, s = s_vec, B_chol = t(B_chol))
+    list(x = x, s = s_vec, B_chol = Matrix::t(B_chol))
   }
 }
 
@@ -259,13 +264,13 @@ latent_to_iwishart <- function(x, V_chol, df, lower_chol = FALSE) {
   # Compute Wishart matrix, in reverse ordering
   W <- latent_to_wishart(
     x = x,
-    V_chol = t(tri_solve(V_chol, lower_tri = lower_chol))[rd, rd],
+    V_chol = Matrix::t(tri_solve(V_chol, lower_tri = lower_chol))[rd, rd],
     df = df,
     lower_chol = lower_chol
   )
   # Invert, and go back to original ordering
-  W$W_chol <- t(tri_solve(W$W_chol, lower_tri = lower_chol))[rd, rd]
-  W$B_chol <- t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
+  W$W_chol <- Matrix::t(tri_solve(W$W_chol, lower_tri = lower_chol))[rd, rd]
+  W$B_chol <- Matrix::t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   W
 }
 
@@ -298,14 +303,14 @@ latent_from_iwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
   # Pre-normalise V_chol for numerical stability; renormalisation afterwards
   # means we don't need to store this rescaling
   W <- latent_from_wishart(
-    t(tri_solve(W_chol, lower_tri = lower_chol))[rd, rd],
-    t(tri_solve(V_chol, lower_tri = lower_chol))[rd, rd],
+    Matrix::t(tri_solve(W_chol, lower_tri = lower_chol))[rd, rd],
+    Matrix::t(tri_solve(V_chol, lower_tri = lower_chol))[rd, rd],
     df = df,
     lower_chol = lower_chol
   )
   list(
     x = W$x,
-    B_chol = t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
+    B_chol = Matrix::t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   )
 }
 
@@ -316,7 +321,8 @@ normalise_ti_V_chol_rd <- function(V_chol, rd, lower_chol) {
   if (lower_chol) {
     ti_V_chol_rd <- (1 / rowSums(ti_V_chol_rd^2)^0.5) * ti_V_chol_rd
   } else {
-    ti_V_chol_rd <- ti_V_chol_rd %*% diag(1 / colSums(ti_V_chol_rd^2)^0.5)
+    ti_V_chol_rd <-
+      ti_V_chol_rd %*% Matrix::diag(1 / colSums(ti_V_chol_rd^2)^0.5)
   }
   ti_V_chol_rd
 }
@@ -364,7 +370,7 @@ latent_to_niwishart <- function(x, V_chol, df, lower_chol = FALSE) {
     lower_chol = lower_chol
   )
   # Invert, and go back to original ordering
-  W$B_chol <- t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
+  W$B_chol <- Matrix::t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   # Renormalise
   if (lower_chol) {
     # Need to construct W_chol here, since V_chol was renormalised
@@ -375,7 +381,7 @@ latent_to_niwishart <- function(x, V_chol, df, lower_chol = FALSE) {
     # Need to construct W_chol here, since V_chol was renormalised
     W$W_chol <- W$B_chol %*% V_chol
     scale <- 1 / colSums(W$W_chol^2)^0.5
-    W$W_chol <- W$W_chol %*% diag(scale)
+    W$W_chol <- W$W_chol %*% Matrix::diag(scale)
   }
   W$s <- scale
   W
@@ -406,7 +412,7 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
   rd <- rev(seq_len(d))
   # Reverse order and invert
   W <- latent_from_nwishart(
-    t(tri_solve(W_chol, lower_tri = lower_chol))[rd, rd],
+    Matrix::t(tri_solve(W_chol, lower_tri = lower_chol))[rd, rd],
     V_chol = normalise_ti_V_chol_rd(
       V_chol = V_chol,
       rd = rd,
@@ -415,7 +421,7 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
     df = df,
     lower_chol = lower_chol
   )
-  W$B_chol <- t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
+  W$B_chol <- Matrix::t(tri_solve(W$B_chol, lower_tri = lower_chol))[rd, rd]
   if (lower_chol) {
     W$s <- 1 / rowSums((V_chol %*% W$B_chol)^2)^0.5
   } else {
@@ -469,7 +475,7 @@ dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
   if (!is.null(W)) {
     W_chol <- chol(W)
     if (lower_chol) {
-      W_chol <- t(W_chol)
+      W_chol <- Matrix::t(W_chol)
     }
   } else if (!is.null(x)) {
     W_chol <- latent_to_wishart(x,
@@ -481,13 +487,14 @@ dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
   if (lower_chol) {
     LVi_LW <- tri_solve(V_chol, W_chol, lower_tri = TRUE)
   } else {
-    LVi_LW <- tri_solve(t(V_chol), t(W_chol), lower_tri = TRUE)
+    LVi_LW <- tri_solve(Matrix::t(V_chol), Matrix::t(W_chol), lower_tri = TRUE)
   }
   log_p <-
     as.vector(
       -df * d / 2 * log(2) - CholWishart::lmvgamma(df / 2, d) -
-        df * sum(log(diag(V_chol))) +
-        (df - d - 1) * sum(log(diag(W_chol))) - 0.5 * sum(LVi_LW * LVi_LW)
+        df * sum(log(Matrix::diag(V_chol))) +
+        (df - d - 1) * sum(log(Matrix::diag(W_chol))) -
+        0.5 * sum(LVi_LW * LVi_LW)
     )
   if (log) {
     log_p
@@ -520,29 +527,33 @@ wm_model <- function(type,
     stopifnot(is.null(V_chol))
     V_chol <- chol(V)
     if (lower_chol) {
-      V_chol <- t(V_chol)
+      V_chol <- Matrix::t(V_chol)
     }
   } else {
     V_chol <- as.matrix(V_chol)
     stopifnot(!is.null(V_chol))
     if (lower_chol) {
-      V <- V_chol %*% t(V_chol)
+      V <- V_chol %*% Matrix::t(V_chol)
     } else {
-      V <- t(V_chol) %*% V_chol
+      V <- Matrix::t(V_chol) %*% V_chol
     }
   }
   d <- nrow(V)
-  stopifnot("df most not be NULL" = !is.null(df),
-            "df should be > dimension - 1" = df > d - 1)
+  stopifnot(
+    "df most not be NULL" = !is.null(df),
+    "df should be > dimension - 1" = df > d - 1
+  )
   if (type %in% c("wishart", "iwishart")) {
-    N_latent <- d * (d + 1) / 2
+    N_u <- d * (d + 1) / 2
   } else {
-    N_latent <- d * (d - 1) / 2
+    N_u <- d * (d - 1) / 2
   }
-N_latent
-  model <- list(type = type,
-                d = d, N_latent = N_latent, V = V, df = df,
-                V_chol = V_chol, lower_chol = lower_chol)
+
+  model <- list(
+    type = type,
+    d = d, N_u = N_u, V = V, df = df,
+    V_chol = V_chol, lower_chol = lower_chol
+  )
   class(model) <-
     c(paste0("wm_model_", type), "wm_model")
   model
@@ -557,9 +568,9 @@ N_latent
 #' @details DETAILS
 #' @examples
 #' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#' if (interactive()) {
+#'   # EXAMPLE1
+#' }
 #' }
 #' @export
 #' @rdname wishart_model
@@ -582,6 +593,13 @@ wm_matrix <- function(model, ...) {
   UseMethod("wm_matrix")
 }
 
+#' @export
+#' @rdname wishart_model
+
+wm_matrix_jacobian <- function(model, ...) {
+  UseMethod("wm_matrix_jacobian")
+}
+
 #' @param W DOC
 #' @param W_chol DOC
 #' @param lower_chol DOC
@@ -596,27 +614,31 @@ wm_latent.wm_model <-
     if (!is.null(W)) {
       W_chol <- chol(W)
       if (model$lower_chol) {
-        W_chol <- t(W_chol)
+        W_chol <- Matrix::t(W_chol)
       }
     } else {
       stopifnot(!is.null(W_chol))
       if (lower_chol != model$lower_chol) {
-        W_chol <- t(W_chol)
+        W_chol <- Matrix::t(W_chol)
       }
     }
     switch(model$type,
-           "wishart" = latent_from_wishart(
-             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
-             lower_chol = model$lower_chol),
-           "nwishart" = latent_from_nwishart(
-             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
-             lower_chol = model$lower_chol),
-           "iwishart" = latent_from_iwishart(
-             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
-             lower_chol = model$lower_chol),
-           "niwishart" = latent_from_niwishart(
-             W_chol = W_chol, df = model$df, V_chol = model$V_chol,
-             lower_chol = model$lower_chol)
+      "wishart" = latent_from_wishart(
+        W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+        lower_chol = model$lower_chol
+      ),
+      "nwishart" = latent_from_nwishart(
+        W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+        lower_chol = model$lower_chol
+      ),
+      "iwishart" = latent_from_iwishart(
+        W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+        lower_chol = model$lower_chol
+      ),
+      "niwishart" = latent_from_niwishart(
+        W_chol = W_chol, df = model$df, V_chol = model$V_chol,
+        lower_chol = model$lower_chol
+      )
     )$x
   }
 
@@ -631,21 +653,25 @@ wm_chol.wm_model <-
     }
     W_chol <-
       switch(model$type,
-             "wishart" = latent_to_wishart(
-               x = x, df = model$df, V_chol = model$V_chol,
-               lower_chol = model$lower_chol),
-             "nwishart" = latent_to_nwishart(
-               x = x, df = model$df, V_chol = model$V_chol,
-               lower_chol = model$lower_chol),
-             "iwishart" = latent_to_iwishart(
-               x = x, df = model$df, V_chol = model$V_chol,
-               lower_chol = model$lower_chol),
-             "niwishart" = latent_to_niwishart(
-               x = x, df = model$df, V_chol = model$V_chol,
-               lower_chol = model$lower_chol)
+        "wishart" = latent_to_wishart(
+          x = x, df = model$df, V_chol = model$V_chol,
+          lower_chol = model$lower_chol
+        ),
+        "nwishart" = latent_to_nwishart(
+          x = x, df = model$df, V_chol = model$V_chol,
+          lower_chol = model$lower_chol
+        ),
+        "iwishart" = latent_to_iwishart(
+          x = x, df = model$df, V_chol = model$V_chol,
+          lower_chol = model$lower_chol
+        ),
+        "niwishart" = latent_to_niwishart(
+          x = x, df = model$df, V_chol = model$V_chol,
+          lower_chol = model$lower_chol
+        )
       )$W_chol
     if (lower_chol != model$lower_chol) {
-      W_chol <- t(W_chol)
+      W_chol <- Matrix::t(W_chol)
     }
     W_chol
   }
@@ -656,5 +682,71 @@ wm_chol.wm_model <-
 wm_matrix.wm_model <-
   function(model, x, ...) {
     W_chol <- wm_chol(model, x = x, lower_chol = FALSE)
-    t(W_chol) %*% W_chol
+    Matrix::t(W_chol) %*% W_chol
+  }
+
+
+#' @param symmetric logical; If `TRUE`, use symmetric finite differences to
+#' compute derivatives
+#' @param h positive delta for finite differences
+#' @return `wm_matrix_jacobian` returns the Jacobian for the (column-)vectorised
+#' (see [cvec()]) matrix with respect to the latent variables.
+#'
+#' @export
+#' @rdname wishart_model
+
+wm_matrix_jacobian.wm_model <-
+  function(model, x, symmetric = TRUE, h = 1e-4, ...) {
+    jacobian <- Matrix::Matrix(0, model$d * model$d, model$N_u)
+    if (symmetric) {
+      for (loop in seq_len(model$N_u)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
+        W_p <- wm_matrix(model, x + H)
+        W_m <- wm_matrix(model, x - H)
+        jacobian[, loop] <- cvec(W_p - W_m) / (2 * h)
+      }
+    } else {
+      W <- wm_matrix(model, x)
+      for (loop in seq_len(model$N_u)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
+        W_p <- wm_matrix(model, x + H)
+        jacobian[, loop] <- cvec(W_p - W) / h
+      }
+    }
+    jacobian
+  }
+
+
+
+#' @param symmetric logical; If `TRUE`, use symmetric finite differences to
+#' compute derivatives
+#' @param h positive delta for finite differences
+#' @return `wm_chol_jacobian` returns the Jacobian for the column-vectorised
+#' (see [cvec()]) Cholesky matrix (lower Cholesky if `lower_chol` is `TRUE`,
+#' upper if `lower_chol` is `FALSE`, and for the model internal version if
+#' `lower_chol` is `NULL`) with respect to the latent
+#'  variables.
+#'
+#' @export
+#' @rdname wishart_model
+
+wm_chol_jacobian.wm_model <-
+  function(model, x, symmetric = TRUE, h = 1e-4, lower_chol = NULL, ...) {
+    jacobian <- Matrix::Matrix(0, model$d * model$d, model$N_u)
+    if (symmetric) {
+      for (loop in seq_len(model$N_u)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
+        W_p <- wm_chol(model, x + H, lower_chol = lower_chol)
+        W_m <- wm_chol(model, x - H)
+        jacobian[, loop] <- cvec(W_p - W_m) / (2 * h)
+      }
+    } else {
+      W <- wm_chol(model, x, lower_chol = lower_chol)
+      for (loop in seq_len(model$N_u)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
+        W_p <- wm_chol(model, x + H, lower_chol = lower_chol)
+        jacobian[, loop] <- cvec(W_p - W) / h
+      }
+    }
+    jacobian
   }

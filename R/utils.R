@@ -73,6 +73,8 @@ qchisq_pbeta <- function(x,
 #' @description Convert between matrix and vector representations
 #' @param A A matrix or a vector
 #' @param d The number of matrix columns
+#' @param sparse logical; If `TRUE`, use `Matrix::Matrix` to construct matrix
+#' output, that detects sparsity. Default: `FALSE`
 #' @return
 #'   If `A` is a matrix, `cvec` returns the columnwise vectorisation of `A`.
 #'   and `rvec` returns the rowwise vectorisation of `A`.
@@ -88,9 +90,11 @@ qchisq_pbeta <- function(x,
 #' @export
 #' @rdname vectorisation
 
-cvec <- function(A, d = NULL) {
+cvec <- function(A, d = NULL, sparse = FALSE) {
   if (is.matrix(A)) {
     as.vector(A)
+  } else if (sparse) {
+    Matrix::Matrix(A, length(A) / d, d, byrow = FALSE)
   } else {
     matrix(A, length(A) / d, d, byrow = FALSE)
   }
@@ -99,9 +103,11 @@ cvec <- function(A, d = NULL) {
 #' @export
 #' @rdname vectorisation
 
-rvec <- function(A, d = NULL) {
+rvec <- function(A, d = NULL, sparse = FALSE) {
   if (is.matrix(A)) {
     as.vector(t(A))
+  } else if (sparse) {
+    Matrix::Matrix(A, length(A) / d, d, byrow = TRUE)
   } else {
     matrix(A, length(A) / d, d, byrow = TRUE)
   }

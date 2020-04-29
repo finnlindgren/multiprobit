@@ -5,7 +5,7 @@ inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
   if (lower_chol) {
     Q_chol <- Q_chol[perm, perm]
   } else {
-    Q_chol <- t(Q_chol)[perm, perm]
+    Q_chol <- Matrix::t(Q_chol)[perm, perm]
   }
   Q_chol
 }
@@ -65,9 +65,6 @@ inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
 #' }
 #' @export
 #' @rdname mpp
-#'
-#' @import Matrix
-# (importFrom excursions gaussint)
 
 mpp <- function(y, mu,
                 Sigma_chol = NULL,
@@ -110,7 +107,7 @@ mpp <- function(y, mu,
         dims = c(d, d)
       )
     } else if (lower_chol) {
-      Q_chol <- t(Q_chol)
+      Q_chol <- Matrix::t(Q_chol)
     }
   } else {
     if (!is.null(Q_chol)) {
@@ -204,7 +201,7 @@ mpp_gradient_mu <- function(y, mu, ...,
 
   d <- length(mu)
   mu_ <- matrix(mu, d, d, byrow = TRUE)
-  H <- diag(x = h, nrow = d, ncol = d)
+  H <- Matrix::diag(x = h, nrow = d, ncol = d)
   if (symmetric) {
     prob <- mpp(
       y = y,

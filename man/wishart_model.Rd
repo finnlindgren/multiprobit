@@ -5,9 +5,12 @@
 \alias{wm_latent}
 \alias{wm_chol}
 \alias{wm_matrix}
+\alias{wm_matrix_jacobian}
 \alias{wm_latent.wm_model}
 \alias{wm_chol.wm_model}
 \alias{wm_matrix.wm_model}
+\alias{wm_matrix_jacobian.wm_model}
+\alias{wm_chol_jacobian.wm_model}
 \title{Wishart model wrapper}
 \usage{
 wm_model(type, V = NULL, df = NULL, V_chol = NULL, lower_chol = FALSE)
@@ -18,11 +21,24 @@ wm_chol(model, ...)
 
 wm_matrix(model, ...)
 
+wm_matrix_jacobian(model, ...)
+
 \method{wm_latent}{wm_model}(model, W = NULL, W_chol = NULL, lower_chol = NULL, ...)
 
 \method{wm_chol}{wm_model}(model, x, lower_chol = NULL, ...)
 
 \method{wm_matrix}{wm_model}(model, x, ...)
+
+\method{wm_matrix_jacobian}{wm_model}(model, x, symmetric = TRUE, h = 1e-04, ...)
+
+wm_chol_jacobian.wm_model(
+  model,
+  x,
+  symmetric = TRUE,
+  h = 1e-04,
+  lower_chol = NULL,
+  ...
+)
 }
 \arguments{
 \item{type}{DOC}
@@ -44,9 +60,23 @@ wm_matrix(model, ...)
 \item{W_chol}{DOC}
 
 \item{x}{DOC}
+
+\item{symmetric}{logical; If \code{TRUE}, use symmetric finite differences to
+compute derivatives}
+
+\item{h}{positive delta for finite differences}
 }
 \value{
 OUTPUT_DESCRIPTION
+
+\code{wm_matrix_jacobian} returns the Jacobian for the (column-)vectorised
+(see \code{\link[=cvec]{cvec()}}) matrix with respect to the latent variables.
+
+\code{wm_chol_jacobian} returns the Jacobian for the column-vectorised
+(see \code{\link[=cvec]{cvec()}}) Cholesky matrix (lower Cholesky if \code{lower_chol} is \code{TRUE},
+upper if \code{lower_chol} is \code{FALSE}, and for the model internal version if
+\code{lower_chol} is \code{NULL}) with respect to the latent
+variables.
 }
 \description{
 FUNCTION_DESCRIPTION
@@ -56,8 +86,8 @@ DETAILS
 }
 \examples{
 \dontrun{
-if(interactive()){
- #EXAMPLE1
- }
+if (interactive()) {
+  # EXAMPLE1
+}
 }
 }

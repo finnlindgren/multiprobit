@@ -15,7 +15,7 @@ mp_loglike_gradient_beta <- function(Y, X, mu, Sigma_chol, lower_chol,
   L <- 0
   for (i in seq_len(nrow(Y))) {
     L <- L + kronecker(
-      t(X[i, , drop = FALSE]),
+      Matrix::t(X[i, , drop = FALSE]),
       mpp_gradient_mu(Y[i, perm, drop = FALSE],
         mu = mu[i, perm, drop = FALSE],
         Q_chol = Q_chol,
@@ -806,7 +806,8 @@ optim_stepwise <- function(model, options = NULL) {
 
 
 #' @title Multiprobit Summary Information
-#' @description Organise information about multiprobit parameter estimates and models
+#' @description Organise information about multiprobit parameter estimates
+#' and models
 #' @param object An [`mp_estimate`] or [`mp_model`]object
 #' @param ... Additional parameters, currently unused.
 #' @return An `mp_estimate_summary` or `mp_model_summary` list object with
@@ -819,7 +820,11 @@ optim_stepwise <- function(model, options = NULL) {
 #' \item{u}{Summary information about the latent \eqn{u} parameters (see
 #' [mp_model()] for model definition). This is the internal scale
 #' representation of the probit correlation matrix parameter \eqn{\Sigma}.}
-#' \item{Sigma}{Summary information for \eqn{\Sigma}.}
+#' \item{Sigma}{Summary information for \eqn{\Sigma}. Includes a basic linear
+#' error propagation estimate of the elementwise standard deviations, as
+#' `[prior_]sd_linear`; the calculation for the prior in `mp_model`
+#' indicates that this is an overestimate of the actual standard deviations
+#' of the \eqn{\Sigma} elements.}
 #' }
 #' For model summaries, the prior mean and standard deviations are provided.
 #' For estimate summaries, the available quantities depend on what was computed
@@ -849,16 +854,33 @@ summary.mp_estimate <- function(object, ...) {
     x_name = rep(object$model$x_names, each = d),
     y_name = rep(object$model$y_names, times = J),
     estimate = object$result$latent[seq_len(N_beta)],
-    sd = diag(S)[seq_len(N_beta)]^0.5
+    sd = Matrix::diag(S)[seq_len(N_beta)]^0.5
   )
   out$u <- data.frame(
     name = paste0("u", seq_len(N_u)),
     estimate = object$result$latent[N_beta + seq_len(N_u)],
-    sd = diag(S)[N_beta + seq_len(N_u)]^0.5
+    sd = Matrix::diag(S)[N_beta + seq_len(N_u)]^0.5
   )
 
-  Sigma <- wm_matrix(object$model$Sigma_model, x = out$u$estimate)
-  out$Sigma <- list(estimate = Sigma)
+  Sigma <-
+    wm_matrix(object$model$Sigma_model, x = out$u$estimate)
+  Sigma_jacobian <-
+    wm_matrix_jacobian(object$model$Sigma_model, x = out$u$estimate)
+  Sigma_sd_linear <-
+    cvec(
+      Matrix::rowSums(
+        Sigma_jacobian * (
+          Sigma_jacobian %*%
+            S[N_beta + seq_len(N_u), N_beta + seq_len(N_u), drop = FALSE]
+        )
+      )^0.5,
+      d = object$model$Sigma_model$d,
+      sparse = TRUE
+    )
+  out$Sigma <- list(
+    estimate = Sigma,
+    sd_linear = Sigma_sd_linear
+  )
 
   class(out) <- "mp_estimate_summary"
   out
@@ -891,10 +913,19 @@ summary.mp_model <- function(object, ...) {
 
   Sigma_mean <- wm_matrix(object$Sigma_model, x = out$u$prior_mean)
   Sigma_sd <- matrix(1 / object$Sigma_model$df^0.5, d, d)
-  diag(Sigma_sd) <- 0
+  Matrix::diag(Sigma_sd) <- 0
+  Sigma_jacobian <-
+    wm_matrix_jacobian(object$Sigma_model, x = out$u$prior_mean)
+  Sigma_sd_linear <-
+    cvec(
+      Matrix::rowSums(Sigma_jacobian^2)^0.5,
+      d = object$Sigma_model$d,
+      sparse = TRUE
+    )
   out$Sigma <- list(
     prior_mean = Sigma_mean,
-    prior_sd = Sigma_sd
+    prior_sd = Sigma_sd,
+    prior_sd_linear = Sigma_sd_linear
   )
 
   class(out) <- "mp_model_summary"

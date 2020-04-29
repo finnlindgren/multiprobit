@@ -218,11 +218,16 @@ test_that("self consistent latent/wishart transformation", {
           if (lower_chol) {
             V_chol <- t(V_chol)
           }
-          model <- wm_model(type, V_chol = V_chol, df = df, lower_chol = lower_chol)
+          model <- wm_model(
+            type,
+            V_chol = V_chol,
+            df = df,
+            lower_chol = lower_chol
+          )
         } else {
           model <- wm_model(type, V = V, df = df, lower_chol = lower_chol)
         }
-        x <- seq_len(model$N_latent) / model$N_latent
+        x <- seq_len(model$N_u) / model$N_u
 
         W_from_x <- wm_matrix(model, x = x)
         x_from_W <- wm_latent(model, W = W_from_x)
@@ -235,10 +240,14 @@ test_that("self consistent latent/wishart transformation", {
         W_chol_from_x_t <- wm_chol(model, x = x, lower_chol = !lower_chol)
         expect_equal(t(W_chol_from_x_t), W_chol_from_x)
 
-        x_from_W_chol <- wm_latent(model, W_chol = W_chol_from_x,
-                                   lower_chol = lower_chol)
-        x_from_W_chol_t <- wm_latent(model, W_chol = t(W_chol_from_x),
-                                   lower_chol = !lower_chol)
+        x_from_W_chol <- wm_latent(model,
+          W_chol = W_chol_from_x,
+          lower_chol = lower_chol
+        )
+        x_from_W_chol_t <- wm_latent(model,
+          W_chol = t(W_chol_from_x),
+          lower_chol = !lower_chol
+        )
         expect_equal(x_from_W_chol, x)
         expect_equal(x_from_W_chol_t, x)
       }
