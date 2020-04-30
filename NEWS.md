@@ -1,3 +1,5 @@
+# multiprobit (development version)
+
 # multiprobit 0.2.5
 
 * Improved verbose output control. Can now set it per estimation call as
