@@ -124,7 +124,15 @@
 
 <span class='fu'>mp_log_get</span>()
 
-<span class='fu'>mp_log_message</span>(<span class='no'>...</span>, <span class='kw'>domain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>appendLF</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>allow_verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>mp_log_message</span>(
+  <span class='no'>...</span>,
+  <span class='kw'>domain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>appendLF</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbosity</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>allow_verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>verbose_store</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,9 +151,26 @@
 used for verbose output.</p></td>
     </tr>
     <tr>
+      <th>verbosity</th>
+      <td><p>numeric value descibing the verbosity level of the message</p></td>
+    </tr>
+    <tr>
       <th>allow_verbose</th>
       <td><p>Whether to allow verbose output. Must be set to FALSE
 until the options object has been initialised.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>logical, numeric, or <code>NULL</code>; local override for verbose
+output. If <code>NULL</code>, the global option or default value is used. If <code>FALSE</code>,
+no messages are printed. If <code>TRUE</code>, messages with <code>verbosity</code> \(\leq 1\)
+are printed. If numeric, messages with <code>verbosity</code> \(\leq\) <code>verbose</code> are
+printed.</p></td>
+    </tr>
+    <tr>
+      <th>verbose_store</th>
+      <td><p>Same as <code>verbose</code>, but controlling what messages are
+stored in the global log object.</p></td>
     </tr>
     </table>
 
