@@ -426,7 +426,9 @@ multiprobit <- function(model = NULL,
   options <- mp_options(mp_options_default(), mp_options_get(), options)
   mp_options_check(options)
 
-  mp_log_message("Starting estimation with strategy '", options$strategy, "'")
+  mp_log_message("Starting estimation with strategy '", options$strategy, "'",
+                 verbosity = 1,
+                 verbose = options[["verbose"]])
 
   if (options$strategy == "alternating") {
     opt <- optim_alternating(model, options = options)
@@ -438,8 +440,20 @@ multiprobit <- function(model = NULL,
     stop("Unknown strategy; This cannot happen.")
   }
 
-  mp_log_message("Finished estimation with strategy '", options$strategy, "'")
-  est <- c(list(model = model, options = options), opt)
+  mp_log_message("Finished estimation with strategy '", options$strategy, "'",
+                 verbosity = 1,
+                 verbose = options[["verbose"]])
+
+  if (!is.null(options[["hessian"]])) {
+    mp_log_message("Calculating hessian",
+                   verbosity = 1,
+                   verbose = options[["verbose"]])
+    hessian <- calc_hessian(opt$estimate, model, options)
+  } else {
+    hessian <- NULL
+  }
+
+  est <- c(list(model = model, options = options, hessian = hessian), opt)
   class(est) <- "mp_estimate"
   est
 }
@@ -449,10 +463,13 @@ multiprobit <- function(model = NULL,
 # Optimisation methods ####
 
 
-fn <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
+fn <- function(x, model, ..., opt_type = c("joint", "beta", "u"),
+               options = NULL) {
   opt_type <- match.arg(opt_type)
   mp_log_message(
-    paste0("f,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")")
+    paste0("f,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")"),
+    verbosity = 3,
+    verbose = options[["verbose"]]
   )
   what <- "loglike"
   f <- tryCatch(
@@ -485,14 +502,19 @@ fn <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
     }
   )
   mp_log_message(
-    paste0("f(", opt_type, ") = ", paste0(f, collapse = ", "), "")
+    paste0("f(", opt_type, ") = ", paste0(f, collapse = ", "), ""),
+    verbosity = 3,
+    verbose = options[["verbose"]]
   )
   f
 }
-gr <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
+gr <- function(x, model, ..., opt_type = c("joint", "beta", "u"),
+               options = NULL) {
   opt_type <- match.arg(opt_type)
   mp_log_message(
-    paste0("g,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")")
+    paste0("g,latent(", opt_type, ") = (", paste0(x, collapse = ", "), ")"),
+    verbosity = 3,
+    verbose = options[["verbose"]]
   )
   what <- "grad"
   g <- switch(opt_type,
@@ -519,7 +541,9 @@ gr <- function(x, model, ..., opt_type = c("joint", "beta", "u")) {
     )
   )
   mp_log_message(
-    paste0("g(", opt_type, ") = (", paste0(g, collapse = ", "), ")")
+    paste0("g(", opt_type, ") = (", paste0(g, collapse = ", "), ")"),
+    verbosity = 3,
+    verbose = options[["verbose"]]
   )
   g
 }
@@ -540,7 +564,8 @@ calc_hessian <- function(latent, model, options) {
               fn = fn, gr = gr,
               opt_type = "joint",
               model = model,
-              gaussint_options = options$gaussint
+              gaussint_options = options$gaussint,
+              options = options
             ),
             options$optim
           )
@@ -560,7 +585,8 @@ calc_hessian <- function(latent, model, options) {
                 opt_type = "beta",
                 u = latent[N_beta + seq_len(N_u)],
                 model = model,
-                gaussint_options = options$gaussint
+                gaussint_options = options$gaussint,
+                options = options
               ),
               options$optim
             )
@@ -574,7 +600,8 @@ calc_hessian <- function(latent, model, options) {
                 opt_type = "u",
                 beta = latent[seq_len(N_beta)],
                 model = model,
-                gaussint_options = options$gaussint
+                gaussint_options = options$gaussint,
+                options = options
               ),
               options$optim
             )
@@ -640,7 +667,8 @@ optim_alternating <- function(model, options = NULL) {
             opt_type = "beta",
             model = model,
             u = u,
-            gaussint_options = options$gaussint
+            gaussint_options = options$gaussint,
+            options = options
           ),
           options$optim
         )
@@ -660,7 +688,8 @@ optim_alternating <- function(model, options = NULL) {
             opt_type = "u",
             model = model,
             beta = beta,
-            gaussint_options = options$gaussint
+            gaussint_options = options$gaussint,
+            options = options
           ),
           options$optim
         )
@@ -672,13 +701,9 @@ optim_alternating <- function(model, options = NULL) {
     result$latent[(loop - 1) * N_latent + seq_len(N_latent)] <- c(beta, u)
   }
   loop <- options$max_iter
-  hessian <- calc_hessian(
-    result$latent[(options$max_iter - 1) * N_latent + seq_len(N_latent)],
-    model, options
-  )
   list(
-    result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u,
-    hessian = hessian
+    estimate = result$latent[(options$max_iter - 1) * N_latent + seq_len(N_latent)],
+    result = result, counts = counts, opt_beta = opt_beta, opt_u = opt_u
   )
 }
 
@@ -708,7 +733,8 @@ optim_joint <- function(model, options = NULL) {
           fn = fn, gr = gr,
           opt_type = "joint",
           model = model,
-          gaussint_options = options$gaussin
+          gaussint_options = options$gaussint,
+          options = options
         ),
         options$optim
       )
@@ -726,8 +752,8 @@ optim_joint <- function(model, options = NULL) {
     gr_u = opt_joint$counts["gradient"]
   )
   list(
-    result = result, counts = counts, opt_joint = opt_joint,
-    hessian = calc_hessian(result$latent, model, options)
+    estimate = result$latent,
+    result = result, counts = counts, opt_joint = opt_joint
   )
 }
 
@@ -759,7 +785,8 @@ optim_stepwise <- function(model, options = NULL) {
           opt_type = "beta",
           model = model,
           u = u,
-          gaussint_options = options$gaussint
+          gaussint_options = options$gaussint,
+          options = options
         ),
         options$optim
       )
@@ -774,7 +801,8 @@ optim_stepwise <- function(model, options = NULL) {
           fn = fn, gr = gr,
           opt_type = "joint",
           model = model,
-          gaussint_options = options$gaussint
+          gaussint_options = options$gaussint,
+          options = options
         ),
         options$optim
       )
@@ -794,9 +822,9 @@ optim_stepwise <- function(model, options = NULL) {
     gr_u = opt_joint$counts["gradient"]
   )
   list(
+    estimate = result$latent,
     result = result, counts = counts,
-    opt_beta = opt_beta, opt_joint = opt_joint,
-    hessian = calc_hessian(result$latent, model, options)
+    opt_beta = opt_beta, opt_joint = opt_joint
   )
 }
 
@@ -853,12 +881,12 @@ summary.mp_estimate <- function(object, ...) {
   out$beta <- data.frame(
     x_name = rep(object$model$x_names, each = d),
     y_name = rep(object$model$y_names, times = J),
-    estimate = object$result$latent[seq_len(N_beta)],
+    estimate = object$estimate[seq_len(N_beta)],
     sd = Matrix::diag(S)[seq_len(N_beta)]^0.5
   )
   out$u <- data.frame(
     name = paste0("u", seq_len(N_u)),
-    estimate = object$result$latent[N_beta + seq_len(N_u)],
+    estimate = object$estimate[N_beta + seq_len(N_u)],
     sd = Matrix::diag(S)[N_beta + seq_len(N_u)]^0.5
   )
 
