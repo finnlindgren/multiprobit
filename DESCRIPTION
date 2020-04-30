@@ -29,7 +29,6 @@ Collate:
     'environment.R'
     'estimation.R'
     'multiprobit-package.R'
-    'posterior.R'
     'probabilities.R'
     'transform.R'
     'utils.R'
