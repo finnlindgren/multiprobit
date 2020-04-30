@@ -64,8 +64,16 @@ mp_log_get <- function() {
 #' @param domain Domain for translations, passed on to [`base::.makeMessage()`]
 #' @param appendLF logical; whether to add a newline to the message. Only
 #'   used for verbose output.
+#' @param verbosity numeric value descibing the verbosity level of the message
 #' @param allow_verbose Whether to allow verbose output. Must be set to FALSE
 #' until the options object has been initialised.
+#' @param verbose logical, numeric, or `NULL`; local override for verbose
+#' output. If `NULL`, the global option or default value is used. If `FALSE`,
+#' no messages are printed. If `TRUE`, messages with `verbosity` \eqn{\leq 1}
+#' are printed. If numeric, messages with `verbosity` \eqn{\leq} `verbose` are
+#' printed.
+#' @param verbose_store Same as `verbose`, but controlling what messages are
+#' stored in the global log object.
 #' @return `mp_log_message` OUTPUT_DESCRIPTION
 #' @details `mp_log_message` DETAILS
 #' @examples
@@ -78,20 +86,27 @@ mp_log_get <- function() {
 #' @rdname mp_log
 
 mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
-                           allow_verbose = TRUE) {
+                           verbosity = 1,
+                           allow_verbose = TRUE, verbose = NULL,
+                           verbose_store = NULL) {
   if (allow_verbose) {
-    if (mp_options_get("verbose", include_default = TRUE)) {
+    if ((!is.null(verbose) && (verbose >= verbosity)) ||
+        mp_options_get("verbose", include_default = TRUE) >= verbosity) {
       message(..., domain = domain, appendLF = appendLF)
     }
   }
-  envir <- multiprobit_env_get()
-  envir$log <- c(
-    envir$log,
-    .makeMessage(Sys.time(), ": ", ...,
-      domain = domain,
-      appendLF = FALSE
+  if ((!is.null(verbose_store) && (verbose_store >= verbosity)) ||
+      !allow_verbose ||
+      mp_options_get("verbose_store", include_default = TRUE) >= verbosity) {
+    envir <- multiprobit_env_get()
+    envir$log <- c(
+      envir$log,
+      .makeMessage(Sys.time(), ": ", ...,
+                   domain = domain,
+                   appendLF = FALSE
+      )
     )
-  )
+  }
   invisible()
 }
 
@@ -111,7 +126,13 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 #' @return `mp_options()` returns an `mp_options` object.
 #' @details For `mp_options` and `mp_options_set`, recognised options are:
 #' \describe{
-#' \item{verbose}{logical; if `TRUE`, log messages are printed with `message()`}
+#' \item{verbose}{logical or numeric; if `TRUE`, log messages of `verbosity`
+#' \eqn{\leq 1} are printed by [mp_log_message()]. If numeric, log messages
+#' of
+#' verbosity \eqn{\leq} are printed. Default `FALSE`}
+#' \item{verbose_stored}{logical or numeric; if `TRUE`, log messages of
+#' `verbosity` \eqn{\leq 1} are stored by [mp_log_message()]. If numeric,
+#' log messages of verbosity \eqn{\leq} are stored. Default: 1}
 #' \item{gaussint}{List of options for
 #'   `excursions::gaussint`.
 #'   Specific relevant options:
@@ -124,7 +145,7 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 #' }
 #' \item{optim}{List of options for `optim()`. Relevant options are `method`
 #'   for choosing the optimisation method, and `control` for setting
-#'   convergence criteria and verbose output.}
+#'   convergence criteria and verbose `optim()` output.}
 #' \item{strategy}{The estimation optimisation strategy.
 #'   Options: "alternating", "joint", "stepwise". Default: "stepwise"}
 #' \item{max_iter}{The maximum number of steps for
@@ -241,6 +262,7 @@ as.mp_options <- function(x = NULL) {
 mp_options_default <- function() {
   mp_options(
     verbose = FALSE,
+    verbose_store = 1,
     optim = list(
       method = "BFGS",
       control = list(

@@ -1,3 +1,8 @@
+# multiprobit 0.2.5
+
+* Improved verbose output control. Can now set it per estimation call as
+  well as globally, and with different verbosity levels.
+
 # multiprobit 0.2.4
 
 * Wrapper class `wp_model` for common methods interface for all

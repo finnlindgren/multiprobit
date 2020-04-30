@@ -13,6 +13,7 @@ Options for multiprobit:
     method = BFGS (default)
   strategy = stepwise (default)
   verbose = FALSE (default)
+  verbose_store = 1 (default)
   x_name_prefix = x_name_ (default)
   y_name_prefix = y_name_ (default)
 

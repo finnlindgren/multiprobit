@@ -1,10 +1,11 @@
 test_that("multiprobit", {
   N <- 6
   d <- 2
-  J <- 1
+  J <- 2
 
   set.seed(1L)
-  X <- cbind(1, matrix(rnorm(N * (J - 1)), N, J - 1))
+  X <- cbind("(Intercept)" = 1, matrix(rnorm(N * (J - 1)), N, J - 1))
+  colnames(X)[colnames(X) == ""] <- paste0("x", seq_len(J)[colnames(X) == ""])
   B <- matrix(0.5, J, d)
   Y <- matrix(rnorm(N * d, mean = as.vector(X %*% B)) > 0, N, d)
   df <- d + 1
@@ -16,10 +17,12 @@ test_that("multiprobit", {
         model <- mp_model(response = Y, X = X, df = df, prec_beta = prec_beta)
       } else {
         model <- mp_model(
-          response = Y, formula = ~ -1 + x1,
-          data = data.frame(x1 = X[, 1]),
+          response = Y, formula = ~ 1 + x2,
+          data = data.frame(x2 = X[, 2]),
           df = df, prec_beta = prec_beta
         )
+        expect_equal(colnames(model$X), colnames(X))
+        expect_equal(model$X, X, check.attributes = FALSE)
       }
 
       expect_equal(inherits(model, "mp_model"), TRUE)

@@ -71,7 +71,13 @@ specific calls to \code{\link[=multiprobit]{multiprobit()}} is recommended inste
 \details{
 For \code{mp_options} and \code{mp_options_set}, recognised options are:
 \describe{
-\item{verbose}{logical; if \code{TRUE}, log messages are printed with \code{message()}}
+\item{verbose}{logical or numeric; if \code{TRUE}, log messages of \code{verbosity}
+\eqn{\leq 1} are printed by \code{\link[=mp_log_message]{mp_log_message()}}. If numeric, log messages
+of
+verbosity \eqn{\leq} are printed. Default \code{FALSE}}
+\item{verbose_stored}{logical or numeric; if \code{TRUE}, log messages of
+\code{verbosity} \eqn{\leq 1} are stored by \code{\link[=mp_log_message]{mp_log_message()}}. If numeric,
+log messages of verbosity \eqn{\leq} are stored. Default: 1}
 \item{gaussint}{List of options for
 \code{excursions::gaussint}.
 Specific relevant options:
@@ -84,7 +90,7 @@ computing by \code{excursions::gaussint}, Default: 0, meaning no limit.}
 }
 \item{optim}{List of options for \code{optim()}. Relevant options are \code{method}
 for choosing the optimisation method, and \code{control} for setting
-convergence criteria and verbose output.}
+convergence criteria and verbose \code{optim()} output.}
 \item{strategy}{The estimation optimisation strategy.
 Options: "alternating", "joint", "stepwise". Default: "stepwise"}
 \item{max_iter}{The maximum number of steps for
