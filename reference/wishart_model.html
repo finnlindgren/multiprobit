@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Wishart model wrapper — wm_model • multiprobit</title>
+<title>Wishart-related Models — wm_model • multiprobit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Wishart model wrapper — wm_model" />
-<meta property="og:description" content="FUNCTION_DESCRIPTION" />
+<meta property="og:title" content="Wishart-related Models — wm_model" />
+<meta property="og:description" content="Defining a wrapper object class wm_model that can represent
+Wishart, Normalised Wishart, Inverse Wishart, and Normalised Inverse Wishart" />
 
 
 
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiprobit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4.9000</span>
       </span>
     </div>
 
@@ -111,43 +112,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Wishart model wrapper</h1>
+    <h1>Wishart-related Models</h1>
     <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/transform.R'><code>R/transform.R</code></a></small>
     <div class="hidden name"><code>wishart_model.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>FUNCTION_DESCRIPTION</p>
+    <p>Defining a wrapper object class <code>wm_model</code> that can represent
+Wishart, Normalised Wishart, Inverse Wishart, and Normalised Inverse Wishart</p>
     </div>
 
     <pre class="usage"><span class='fu'>wm_model</span>(<span class='no'>type</span>, <span class='kw'>V</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>df</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>V_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>wm_latent</span>(<span class='no'>model</span>, <span class='no'>...</span>)
-
-<span class='fu'>wm_chol</span>(<span class='no'>model</span>, <span class='no'>...</span>)
-
-<span class='fu'>wm_matrix</span>(<span class='no'>model</span>, <span class='no'>...</span>)
-
-<span class='fu'>wm_matrix_jacobian</span>(<span class='no'>model</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for wm_model</span>
 <span class='fu'>wm_latent</span>(<span class='no'>model</span>, <span class='kw'>W</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>W_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for wm_model</span>
-<span class='fu'>wm_chol</span>(<span class='no'>model</span>, <span class='no'>x</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>wm_chol</span>(<span class='no'>model</span>, <span class='no'>latent</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for wm_model</span>
-<span class='fu'>wm_matrix</span>(<span class='no'>model</span>, <span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>wm_matrix</span>(<span class='no'>model</span>, <span class='no'>latent</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for wm_model</span>
-<span class='fu'>wm_matrix_jacobian</span>(<span class='no'>model</span>, <span class='no'>x</span>, <span class='kw'>symmetric</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>h</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='no'>...</span>)
+<span class='fu'>wm_matrix_jacobian</span>(<span class='no'>model</span>, <span class='no'>latent</span>, <span class='kw'>symmetric</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>h</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='no'>...</span>)
 
-<span class='fu'>wm_chol_jacobian.wm_model</span>(
+<span class='fu'>wm_chol_jacobian</span>(
   <span class='no'>model</span>,
-  <span class='no'>x</span>,
+  <span class='no'>latent</span>,
   <span class='kw'>symmetric</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>h</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
   <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)
+
+<span class='fu'>wm_moments_linear</span>(
+  <span class='no'>model</span>,
+  <span class='kw'>mean_latent</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='no'>model</span>$<span class='no'>N_latent</span>),
+  <span class='kw'>cov_latent</span> <span class='kw'>=</span> <span class='fu'><a href='multiprobit_utils.html'>sparse_identity</a></span>(<span class='no'>model</span>$<span class='no'>N_latent</span>),
+  <span class='kw'>order</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>1</span>),
+  <span class='kw'>h</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -156,43 +155,50 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>type</th>
-      <td><p>DOC</p></td>
+      <td><p>Either <code>'wishart'</code>,  <code>'nwishart'</code>,  <code>'iwishart'</code>,  <code>'niwishart'</code></p></td>
     </tr>
     <tr>
       <th>V</th>
-      <td><p>DOC</p></td>
+      <td><p>The matrix parameter for the distribution</p></td>
     </tr>
     <tr>
       <th>df</th>
-      <td><p>DOC</p></td>
+      <td><p>The degrees-of-freedom parameter for the distribution</p></td>
     </tr>
     <tr>
       <th>V_chol</th>
-      <td><p>DOC</p></td>
+      <td><p>The Cholesky factor of <code>V</code>. Type must match the <code>lower_chol</code>
+parameter</p></td>
     </tr>
     <tr>
       <th>lower_chol</th>
-      <td><p>DOC</p></td>
+      <td><p>logical; For <code>wm_model</code>, whether the internal
+representation should use lower triangular Cholesky factors. For other methods, determines what
+Cholesky type input is or output should be returned as, with <code>NULL</code>
+inheriting the internal <code>model</code> setting.
+Default for <code>wm_model</code> is <code>FALSE</code>, for other methods default is <code>NULL</code>.</p></td>
     </tr>
     <tr>
       <th>model</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
+      <td><p>A <code>wm_model</code> object</p></td>
     </tr>
     <tr>
       <th>W</th>
-      <td><p>DOC</p></td>
+      <td><p>A symmetric matrix valid for the value space of the <code>model</code> type</p></td>
     </tr>
     <tr>
       <th>W_chol</th>
-      <td><p>DOC</p></td>
+      <td><p>The Cholesky factor of a matrix valid for the value space of
+the <code>model</code> type. Only one of <code>W</code> and <code>W_chol</code> may be given.</p></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>DOC</p></td>
+      <th>...</th>
+      <td><p>Further parameters passed on to other methods</p></td>
+    </tr>
+    <tr>
+      <th>latent</th>
+      <td><p>A numeric vector of length <code>model$N_latent</code> for the latent
+representation of a model outcome</p></td>
     </tr>
     <tr>
       <th>symmetric</th>
@@ -203,28 +209,45 @@ compute derivatives</p></td>
       <th>h</th>
       <td><p>positive delta for finite differences</p></td>
     </tr>
+    <tr>
+      <th>mean_latent</th>
+      <td><p>Expectation vector for the latent variables</p></td>
+    </tr>
+    <tr>
+      <th>cov_latent</th>
+      <td><p>Covariance matrix for the latent variables</p></td>
+    </tr>
+    <tr>
+      <th>order</th>
+      <td><p>A vector of two integers defining the Taylor expansion orders
+used for linearised moment calculations for expectation and variance,
+respectively. Can be either \(1\) or \(2\). Default: <code><a href='https://rdrr.io/r/base/c.html'>c(2, 1)</a></code></p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>OUTPUT_DESCRIPTION</p>
-<p><code>wm_matrix_jacobian</code> returns the Jacobian for the (column-)vectorised
-(see <code><a href='vectorisation.html'>cvec()</a></code>) matrix with respect to the latent variables.</p>
-<p><code>wm_chol_jacobian</code> returns the Jacobian for the column-vectorised
-(see <code><a href='vectorisation.html'>cvec()</a></code>) Cholesky matrix (lower Cholesky if <code>lower_chol</code> is <code>TRUE</code>,
-upper if <code>lower_chol</code> is <code>FALSE</code>, and for the model internal version if
-<code>lower_chol</code> is <code>NULL</code>) with respect to the latent
+    <p><code>wm_model()</code> returns a <code>wm_model</code> object that encapsulates the
+parameters of one of the four Wishart model types, as defined by <code>type</code>.</p>
+<p><code>wm_latent()</code> returns the latent variables for the representation
+of a (W/NW/IW/NIW) matrix, given either the matrix itself in <code>W</code>, or its
+Cholesky factor in <code>W_chol</code>.</p>
+<p><code>wm_chol()</code> returns the Cholesky factor of a (W/NW/IW/NIW) matrix.</p>
+<p><code>wm_matrix()</code> returns a (W/NW/IW/NIW) matrix.</p>
+<p><code>wm_matrix_jacobian()</code> returns the Jacobian for the
+(column-)vectorised (see <code><a href='vectorisation.html'>cvec()</a></code>) matrix with respect to the latent
 variables.</p>
+<p><code>wm_chol_jacobian()</code> returns the Jacobian for the
+column-vectorised (see <code><a href='vectorisation.html'>cvec()</a></code>) Cholesky matrix with respect to the
+latent variables, with type determined by the <code>lower_chol</code> setting.</p>
+<p><code>wm_moments_linear()</code> returns linearised approximations of propagated
+mean and standard deviation of the Wishart matrix given mean and covariance
+of the latent variables.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>DETAILS</p>
+    <p>For <code>wm_moments_linear</code>, the further <code>...</code> parameters are passed
+on to <code>wm_matrix_jacobian</code>.</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='co'># EXAMPLE1</span>
-}
-}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
