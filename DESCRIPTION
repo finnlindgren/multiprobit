@@ -1,7 +1,7 @@
 Type: Package
 Package: multiprobit
 Title: Bayesian Multivariate Probit Regression
-Version: 0.2.4.9000
+Version: 0.2.5
 Authors@R: 
     person(given = "Finn",
            family = "Lindgren",
