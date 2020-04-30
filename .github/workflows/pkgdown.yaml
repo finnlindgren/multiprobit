@@ -6,7 +6,7 @@ name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: macOS-latest
+    runs-on: {os: macOS-latest, r: '3.6'}
     steps:
       - uses: actions/checkout@v2
 
