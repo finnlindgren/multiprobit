@@ -5,14 +5,17 @@
 \alias{rvec}
 \title{Vectorisation utitilies}
 \usage{
-cvec(A, d = NULL)
+cvec(A, d = NULL, sparse = FALSE)
 
-rvec(A, d = NULL)
+rvec(A, d = NULL, sparse = FALSE)
 }
 \arguments{
 \item{A}{A matrix or a vector}
 
 \item{d}{The number of matrix columns}
+
+\item{sparse}{logical; If \code{TRUE}, use \code{Matrix::Matrix} to construct matrix
+output, that detects sparsity. Default: \code{FALSE}}
 }
 \value{
 If \code{A} is a matrix, \code{cvec} returns the columnwise vectorisation of \code{A}.

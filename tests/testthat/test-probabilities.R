@@ -211,8 +211,11 @@ test_that("mpp_hessian_mu", {
 test_that("mpp_gradient_u", {
   test_grad <- function(symmetric) {
     d <- 3
-    V_chol <- sparse_identity(d)
-    df <- 10
+    Sigma_model <- wm_model(
+      type = "nwishart",
+      V_chol = multiprobit:::sparse_identity(d),
+      df = 10
+    )
     y <- cbind(
       rep(c(0, 1), times = c(15, 5)),
       rep(c(0, 1), times = c(10, 10)),
@@ -226,8 +229,7 @@ test_that("mpp_gradient_u", {
         y = y[i, ],
         mu = mu,
         u = u,
-        V_chol = V_chol,
-        df = df,
+        Sigma_model = Sigma_model,
         log = TRUE,
         symmetric = symmetric,
         gaussint_options = list(
@@ -238,7 +240,6 @@ test_that("mpp_gradient_u", {
     }
     D
   }
-  test_grad(TRUE)
   expect_equal(test_grad(TRUE),
     c(2.320333, 1.271182, 2.381367),
     tolerance = .Machine$double.eps^(1 / 3)

@@ -15,9 +15,11 @@ test_that("multiprobit", {
       if (direct_X) {
         model <- mp_model(response = Y, X = X, df = df, prec_beta = prec_beta)
       } else {
-        model <- mp_model(response = Y, formula = ~ -1 + x1,
-                          data = data.frame(x1 = X[,1]),
-                          df = df, prec_beta = prec_beta)
+        model <- mp_model(
+          response = Y, formula = ~ -1 + x1,
+          data = data.frame(x1 = X[, 1]),
+          df = df, prec_beta = prec_beta
+        )
       }
 
       expect_equal(inherits(model, "mp_model"), TRUE)

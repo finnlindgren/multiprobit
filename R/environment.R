@@ -412,7 +412,6 @@ mp_options_reset <- function() {
 #'   # Only include options set in the object:
 #'   print(options, include_default = FALSE, include_global = FALSE)
 #' }
-#'
 #' @method print mp_options
 #' @export
 #' @rdname print.mp_options
@@ -426,25 +425,41 @@ print.mp_options <- function(x,
     for (name in sort(names(combined))) {
       if (is.list(combined[[name]])) {
         cat(paste0(prefix, name, " =\n"))
-        traverse(combined[[name]], default[[name]],
-                 global[[name]], options[[name]],
-                 prefix = paste0(prefix, "  "))
+        traverse(
+          combined[[name]], default[[name]],
+          global[[name]], options[[name]],
+          prefix = paste0(prefix, "  ")
+        )
       } else {
-        cat(paste0(prefix,
-                   name, " = ",
-                   ifelse(is.null(combined[[name]]), "NULL", combined[[name]]),
-                   " (",
-                   ifelse(!is.null(options[[name]]) &&
-                            (options[[name]] == combined[[name]]),
-                          "user",
-                          ifelse(!is.null(global[[name]]) &&
-                                   (global[[name]] == combined[[name]]),
-                                 "global",
-                                 ifelse(!is.null(default[[name]]) &&
-                                          (default[[name]] == combined[[name]]),
-                                        "default",
-                                        "unknown"))),
-                   ")\n"))
+        cat(paste0(
+          prefix,
+          name, " = ",
+          if (is.null(combined[[name]])) {
+            "NULL"
+          } else {
+            combined[[name]]
+          },
+          " (",
+          if (
+            !is.null(options[[name]]) &&
+              (options[[name]] == combined[[name]])
+          ) {
+            "user"
+          } else if (
+            !is.null(global[[name]]) &&
+              (global[[name]] == combined[[name]])
+          ) {
+            "global"
+          } else if (
+            !is.null(default[[name]]) &&
+              (default[[name]] == combined[[name]])
+          ) {
+            "default"
+          } else {
+            "unknown"
+          },
+          ")\n"
+        ))
       }
     }
   }

@@ -1,7 +1,7 @@
 Type: Package
 Package: multiprobit
 Title: Bayesian Multivariate Probit Regression
-Version: 0.2.3
+Version: 0.2.4
 Authors@R: 
     person(given = "Finn",
            family = "Lindgren",
@@ -12,11 +12,10 @@ Description: Perform fast Bayesian inference for multivariate
 License: GPL-3
 URL: https://github.com/finnlindgren/multiprobit
 BugReports: https://github.com/finnlindgren/multiprobit/issues
-Depends: 
-    Matrix
 Imports: 
     excursions,
-    stats
+    stats,
+    Matrix
 Suggests: 
     CholWishart,
     covr,
