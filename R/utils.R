@@ -94,7 +94,7 @@ cvec <- function(A, d = NULL, sparse = FALSE) {
   if (is.matrix(A)) {
     as.vector(A)
   } else if (sparse) {
-    Matrix::Matrix(A, length(A) / d, d, byrow = FALSE)
+    Matrix::Matrix(as.vector(A), length(A) / d, d, byrow = FALSE)
   } else {
     matrix(A, length(A) / d, d, byrow = FALSE)
   }
@@ -107,7 +107,7 @@ rvec <- function(A, d = NULL, sparse = FALSE) {
   if (is.matrix(A)) {
     as.vector(t(A))
   } else if (sparse) {
-    Matrix::Matrix(A, length(A) / d, d, byrow = TRUE)
+    Matrix::Matrix(as.vector(A), length(A) / d, d, byrow = TRUE)
   } else {
     matrix(A, length(A) / d, d, byrow = TRUE)
   }

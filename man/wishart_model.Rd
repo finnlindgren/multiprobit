@@ -6,88 +6,108 @@
 \alias{wm_chol}
 \alias{wm_matrix}
 \alias{wm_matrix_jacobian}
-\alias{wm_latent.wm_model}
-\alias{wm_chol.wm_model}
-\alias{wm_matrix.wm_model}
-\alias{wm_matrix_jacobian.wm_model}
-\alias{wm_chol_jacobian.wm_model}
-\title{Wishart model wrapper}
+\alias{wm_chol_jacobian}
+\alias{wm_moments_linear}
+\title{Wishart-related Models}
 \usage{
 wm_model(type, V = NULL, df = NULL, V_chol = NULL, lower_chol = FALSE)
 
-wm_latent(model, ...)
+wm_latent(model, W = NULL, W_chol = NULL, lower_chol = NULL, ...)
 
-wm_chol(model, ...)
+wm_chol(model, latent, lower_chol = NULL, ...)
 
-wm_matrix(model, ...)
+wm_matrix(model, latent, ...)
 
-wm_matrix_jacobian(model, ...)
+wm_matrix_jacobian(model, latent, symmetric = TRUE, h = 1e-04, ...)
 
-\method{wm_latent}{wm_model}(model, W = NULL, W_chol = NULL, lower_chol = NULL, ...)
-
-\method{wm_chol}{wm_model}(model, x, lower_chol = NULL, ...)
-
-\method{wm_matrix}{wm_model}(model, x, ...)
-
-\method{wm_matrix_jacobian}{wm_model}(model, x, symmetric = TRUE, h = 1e-04, ...)
-
-wm_chol_jacobian.wm_model(
+wm_chol_jacobian(
   model,
-  x,
+  latent,
   symmetric = TRUE,
   h = 1e-04,
   lower_chol = NULL,
   ...
 )
+
+wm_moments_linear(
+  model,
+  mean_latent = rep(0, model$N_latent),
+  cov_latent = sparse_identity(model$N_latent),
+  order = c(2, 1),
+  h = 1e-04,
+  ...
+)
 }
 \arguments{
-\item{type}{DOC}
+\item{type}{Either \code{'wishart'},  \code{'nwishart'},  \code{'iwishart'},  \code{'niwishart'}}
 
-\item{V}{DOC}
+\item{V}{The matrix parameter for the distribution}
 
-\item{df}{DOC}
+\item{df}{The degrees-of-freedom parameter for the distribution}
 
-\item{V_chol}{DOC}
+\item{V_chol}{The Cholesky factor of \code{V}. Type must match the \code{lower_chol}
+parameter}
 
-\item{lower_chol}{DOC}
+\item{lower_chol}{logical; For \code{wm_model}, whether the internal
+representation should use lower triangular Cholesky factors. For other methods, determines what
+Cholesky type input is or output should be returned as, with \code{NULL}
+inheriting the internal \code{model} setting.
+Default for \code{wm_model} is \code{FALSE}, for other methods default is \code{NULL}.}
 
-\item{model}{PARAM_DESCRIPTION}
+\item{model}{A \code{wm_model} object}
 
-\item{...}{PARAM_DESCRIPTION}
+\item{W}{A symmetric matrix valid for the value space of the \code{model} type}
 
-\item{W}{DOC}
+\item{W_chol}{The Cholesky factor of a matrix valid for the value space of
+the \code{model} type. Only one of \code{W} and \code{W_chol} may be given.}
 
-\item{W_chol}{DOC}
+\item{...}{Further parameters passed on to other methods}
 
-\item{x}{DOC}
+\item{latent}{A numeric vector of length \code{model$N_latent} for the latent
+representation of a model outcome}
 
 \item{symmetric}{logical; If \code{TRUE}, use symmetric finite differences to
 compute derivatives}
 
 \item{h}{positive delta for finite differences}
+
+\item{mean_latent}{Expectation vector for the latent variables}
+
+\item{cov_latent}{Covariance matrix for the latent variables}
+
+\item{order}{A vector of two integers defining the Taylor expansion orders
+used for linearised moment calculations for expectation and variance,
+respectively. Can be either \eqn{1} or \eqn{2}. Default: \code{c(2, 1)}}
 }
 \value{
-OUTPUT_DESCRIPTION
+\code{\link[=wm_model]{wm_model()}} returns a \code{wm_model} object that encapsulates the
+parameters of one of the four Wishart model types, as defined by \code{type}.
 
-\code{wm_matrix_jacobian} returns the Jacobian for the (column-)vectorised
-(see \code{\link[=cvec]{cvec()}}) matrix with respect to the latent variables.
+\code{\link[=wm_latent]{wm_latent()}} returns the latent variables for the representation
+of a (W/NW/IW/NIW) matrix, given either the matrix itself in \code{W}, or its
+Cholesky factor in \code{W_chol}.
 
-\code{wm_chol_jacobian} returns the Jacobian for the column-vectorised
-(see \code{\link[=cvec]{cvec()}}) Cholesky matrix (lower Cholesky if \code{lower_chol} is \code{TRUE},
-upper if \code{lower_chol} is \code{FALSE}, and for the model internal version if
-\code{lower_chol} is \code{NULL}) with respect to the latent
+\code{\link[=wm_chol]{wm_chol()}} returns the Cholesky factor of a (W/NW/IW/NIW) matrix.
+
+\code{\link[=wm_matrix]{wm_matrix()}} returns a (W/NW/IW/NIW) matrix.
+
+\code{\link[=wm_matrix_jacobian]{wm_matrix_jacobian()}} returns the Jacobian for the
+(column-)vectorised (see \code{\link[=cvec]{cvec()}}) matrix with respect to the latent
 variables.
+
+\code{\link[=wm_chol_jacobian]{wm_chol_jacobian()}} returns the Jacobian for the
+column-vectorised (see \code{\link[=cvec]{cvec()}}) Cholesky matrix with respect to the
+latent variables, with type determined by the \code{lower_chol} setting.
+
+\code{\link[=wm_moments_linear]{wm_moments_linear()}} returns linearised approximations of propagated
+mean and standard deviation of the Wishart matrix given mean and covariance
+of the latent variables.
 }
 \description{
-FUNCTION_DESCRIPTION
+Defining a wrapper object class \code{wm_model} that can represent
+Wishart, Normalised Wishart, Inverse Wishart, and Normalised Inverse Wishart
 }
 \details{
-DETAILS
-}
-\examples{
-\dontrun{
-if (interactive()) {
-  # EXAMPLE1
-}
-}
+For \code{wm_moments_linear}, the further \code{...} parameters are passed
+on to \code{wm_matrix_jacobian}.
 }

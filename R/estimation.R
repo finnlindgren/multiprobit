@@ -66,7 +66,7 @@ mp_logposterior <-
 
     mu <- X %*% rvec(beta, d)
     if (what != "grad_u") {
-      Sigma_chol <- wm_chol(Sigma_model, x = u)
+      Sigma_chol <- wm_chol(Sigma_model, latent = u)
     }
     if (what == "loglike") {
       L <- -sum(u)^2 / 2 - prec_beta / 2 * sum(beta^2) +
@@ -548,7 +548,7 @@ calc_hessian <- function(latent, model, options) {
     } else if (options$hessian == "block") {
       d <- ncol(model$Y)
       N_beta <- ncol(model$X) * d
-      N_u <- d * (d - 1) / 2
+      N_u <- model$Sigma_model$N_latent
       hessian <-
         Matrix::bdiag(
           do.call(
@@ -603,7 +603,7 @@ optim_alternating <- function(model, options = NULL) {
   d <- ncol(model$Y)
   J <- ncol(model$X)
   N_beta <- J * d
-  N_u <- d * (d - 1) / 2
+  N_u <- model$Sigma_model$N_latent
   N_latent <- N_beta + N_u
   opt_beta <- list()
   opt_u <- list()
@@ -695,7 +695,7 @@ optim_joint <- function(model, options = NULL) {
   d <- ncol(model$Y)
   J <- ncol(model$X)
   N_beta <- J * d
-  N_u <- d * (d - 1) / 2
+  N_u <- model$Sigma_model$N_latent
   N_latent <- N_beta + N_u
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
@@ -745,7 +745,7 @@ optim_stepwise <- function(model, options = NULL) {
   d <- ncol(model$Y)
   J <- ncol(model$X)
   N_beta <- J * d
-  N_u <- d * (d - 1) / 2
+  N_u <- model$Sigma_model$N_latent
   N_latent <- N_beta + N_u
   beta <- rep(0, N_beta)
   u <- rep(0, N_u)
@@ -848,7 +848,7 @@ summary.mp_estimate <- function(object, ...) {
   J <- ncol(object$model$X)
   d <- ncol(object$model$Y)
   N_beta <- J * d
-  N_u <- d * (d - 1) / 2
+  N_u <- object$model$Sigma_model$N_latent
   S <- solve(-object$hessian)
   out$beta <- data.frame(
     x_name = rep(object$model$x_names, each = d),
@@ -863,23 +863,17 @@ summary.mp_estimate <- function(object, ...) {
   )
 
   Sigma <-
-    wm_matrix(object$model$Sigma_model, x = out$u$estimate)
-  Sigma_jacobian <-
-    wm_matrix_jacobian(object$model$Sigma_model, x = out$u$estimate)
-  Sigma_sd_linear <-
-    cvec(
-      Matrix::rowSums(
-        Sigma_jacobian * (
-          Sigma_jacobian %*%
-            S[N_beta + seq_len(N_u), N_beta + seq_len(N_u), drop = FALSE]
-        )
-      )^0.5,
-      d = object$model$Sigma_model$d,
-      sparse = TRUE
+    wm_matrix(object$model$Sigma_model, latent = out$u$estimate)
+  Sigma_moments_linear <-
+    wm_moments_linear(
+      object$model$Sigma_model,
+      mean_latent = out$u$estimate,
+      cov_latent = S[N_beta + seq_len(N_u), N_beta + seq_len(N_u), drop = FALSE]
     )
   out$Sigma <- list(
     estimate = Sigma,
-    sd_linear = Sigma_sd_linear
+    mean_linear = Sigma_moments_linear$mean,
+    sd_linear = Sigma_moments_linear$sd
   )
 
   class(out) <- "mp_estimate_summary"
@@ -898,7 +892,7 @@ summary.mp_model <- function(object, ...) {
   J <- ncol(object$X)
   d <- ncol(object$Y)
   N_beta <- J * d
-  N_u <- d * (d - 1) / 2
+  N_u <- object$Sigma_model$N_latent
   out$beta <- data.frame(
     x_name = rep(object$x_names, each = d),
     y_name = rep(object$y_names, times = J),
@@ -911,21 +905,20 @@ summary.mp_model <- function(object, ...) {
     prior_sd = rep(1, N_u)
   )
 
-  Sigma_mean <- wm_matrix(object$Sigma_model, x = out$u$prior_mean)
+  Sigma_mean <- wm_matrix(object$Sigma_model, latent = out$u$prior_mean)
   Sigma_sd <- matrix(1 / object$Sigma_model$df^0.5, d, d)
   Matrix::diag(Sigma_sd) <- 0
-  Sigma_jacobian <-
-    wm_matrix_jacobian(object$Sigma_model, x = out$u$prior_mean)
-  Sigma_sd_linear <-
-    cvec(
-      Matrix::rowSums(Sigma_jacobian^2)^0.5,
-      d = object$Sigma_model$d,
-      sparse = TRUE
+  Sigma_moments_linear <-
+    wm_moments_linear(
+      object$Sigma_model,
+      mean_latent = out$u$prior_mean,
+      cov_latent = sparse_identity(object$Sigma_model$N_latent),
     )
   out$Sigma <- list(
     prior_mean = Sigma_mean,
     prior_sd = Sigma_sd,
-    prior_sd_linear = Sigma_sd_linear
+    prior_mean_linear = Sigma_moments_linear$mean,
+    prior_sd_linear = Sigma_moments_linear$sd
   )
 
   class(out) <- "mp_model_summary"

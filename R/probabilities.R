@@ -336,7 +336,7 @@ mpp_gradient_u <- function(y,
   d <- (1 + sqrt(1 + 8 * dof)) / 2
   g <- numeric(dof)
   if (!symmetric) {
-    C0 <- wm_chol(Sigma_model, x = u)
+    C0 <- wm_chol(Sigma_model, latent = u)
     prob0 <- sum(mpp(
       y = y, mu = mu,
       Sigma_chol = C0, lower_chol = Sigma_model$lower_chol,
@@ -345,7 +345,7 @@ mpp_gradient_u <- function(y,
     )$P)
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
-      C <- wm_chol(Sigma_model, x = u + H)
+      C <- wm_chol(Sigma_model, latent = u + H)
       prob <- sum(mpp(
         y = y, mu = mu,
         Sigma_chol = C, lower_chol = Sigma_model$lower_chol,
@@ -361,8 +361,8 @@ mpp_gradient_u <- function(y,
   } else {
     for (loop in seq_len(dof)) {
       H <- rep(c(0, h, 0), times = c(loop - 1, 1, dof - loop))
-      C_p <- wm_chol(Sigma_model, x = u + H)
-      C_m <- wm_chol(Sigma_model, x = u - H)
+      C_p <- wm_chol(Sigma_model, latent = u + H)
+      C_m <- wm_chol(Sigma_model, latent = u - H)
       prob_p <- sum(mpp(
         y = y, mu = mu,
         Sigma_chol = C_p, lower_chol = Sigma_model$lower_chol,

@@ -22,7 +22,7 @@
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_wishart
 
 latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -59,7 +59,7 @@ latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_wishart
 
 latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -109,7 +109,7 @@ latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_nwishart
 
 latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -180,7 +180,7 @@ latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_nwishart
 
 latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -255,7 +255,7 @@ latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_iwishart
 
 latent_to_iwishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -293,7 +293,7 @@ latent_to_iwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_iwishart
 
 latent_from_iwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -352,7 +352,7 @@ normalise_ti_V_chol_rd <- function(V_chol, rd, lower_chol) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_niwishart
 
 latent_to_niwishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -404,7 +404,7 @@ latent_to_niwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname latent_to_niwishart
 
 latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -509,12 +509,21 @@ dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
 # Generalised Wishart model object ####
 
 
-#' @title Wishart model wrapper
-#' @param type DOC
-#' @param V DOC
-#' @param df DOC
-#' @param V_chol DOC
-#' @param lower_chol DOC
+#' @title Wishart-related Models
+#' @description Defining a wrapper object class `wm_model` that can represent
+#' Wishart, Normalised Wishart, Inverse Wishart, and Normalised Inverse Wishart
+#' @param type Either `'wishart'`,  `'nwishart'`,  `'iwishart'`,  `'niwishart'`
+#' @param V The matrix parameter for the distribution
+#' @param df The degrees-of-freedom parameter for the distribution
+#' @param V_chol The Cholesky factor of `V`. Type must match the `lower_chol`
+#' parameter
+#' @param lower_chol logical; For `wm_model`, whether the internal
+#' representation should use lower triangular Cholesky factors. For other methods, determines what
+#' Cholesky type input is or output should be returned as, with `NULL`
+#' inheriting the internal `model` setting.
+#' Default for `wm_model` is `FALSE`, for other methods default is `NULL`.
+#' @return [wm_model()] returns a `wm_model` object that encapsulates the
+#' parameters of one of the four Wishart model types, as defined by `type`.
 #' @export
 #' @rdname wishart_model
 
@@ -544,14 +553,14 @@ wm_model <- function(type,
     "df should be > dimension - 1" = df > d - 1
   )
   if (type %in% c("wishart", "iwishart")) {
-    N_u <- d * (d + 1) / 2
+    N_latent <- d * (d + 1) / 2
   } else {
-    N_u <- d * (d - 1) / 2
+    N_latent <- d * (d - 1) / 2
   }
 
   model <- list(
     type = type,
-    d = d, N_u = N_u, V = V, df = df,
+    d = d, N_latent = N_latent, V = V, df = df,
     V_chol = V_chol, lower_chol = lower_chol
   )
   class(model) <-
@@ -560,54 +569,20 @@ wm_model <- function(type,
 }
 
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param model PARAM_DESCRIPTION
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples
-#' \dontrun{
-#' if (interactive()) {
-#'   # EXAMPLE1
-#' }
-#' }
+#' @param model A `wm_model` object
+#' @param W A symmetric matrix valid for the value space of the `model` type
+#' @param W_chol The Cholesky factor of a matrix valid for the value space of
+#' the `model` type. Only one of `W` and `W_chol` may be given.
+#' @param ... Further parameters passed on to other methods
+#' @return [wm_latent()] returns the latent variables for the representation
+#' of a (W/NW/IW/NIW) matrix, given either the matrix itself in `W`, or its
+#' Cholesky factor in `W_chol`.
 #' @export
 #' @rdname wishart_model
 
-wm_latent <- function(model, ...) {
-  UseMethod("wm_latent")
-}
-
-#' @export
-#' @rdname wishart_model
-
-wm_chol <- function(model, ...) {
-  UseMethod("wm_chol")
-}
-
-#' @export
-#' @rdname wishart_model
-
-wm_matrix <- function(model, ...) {
-  UseMethod("wm_matrix")
-}
-
-#' @export
-#' @rdname wishart_model
-
-wm_matrix_jacobian <- function(model, ...) {
-  UseMethod("wm_matrix_jacobian")
-}
-
-#' @param W DOC
-#' @param W_chol DOC
-#' @param lower_chol DOC
-#' @export
-#' @rdname wishart_model
-
-wm_latent.wm_model <-
+wm_latent <-
   function(model, W = NULL, W_chol = NULL, lower_chol = NULL, ...) {
+    stopifnot(inherits(model, "wm_model"))
     if (is.null(lower_chol)) {
       lower_chol <- model$lower_chol
     }
@@ -642,31 +617,34 @@ wm_latent.wm_model <-
     )$x
   }
 
-#' @param x DOC
+#' @param latent A numeric vector of length `model$N_latent` for the latent
+#' representation of a model outcome
+#' @return [wm_chol()] returns the Cholesky factor of a (W/NW/IW/NIW) matrix.
 #' @export
 #' @rdname wishart_model
 
-wm_chol.wm_model <-
-  function(model, x, lower_chol = NULL, ...) {
+wm_chol <-
+  function(model, latent, lower_chol = NULL, ...) {
+    stopifnot(inherits(model, "wm_model"))
     if (is.null(lower_chol)) {
       lower_chol <- model$lower_chol
     }
     W_chol <-
       switch(model$type,
         "wishart" = latent_to_wishart(
-          x = x, df = model$df, V_chol = model$V_chol,
+          x = latent, df = model$df, V_chol = model$V_chol,
           lower_chol = model$lower_chol
         ),
         "nwishart" = latent_to_nwishart(
-          x = x, df = model$df, V_chol = model$V_chol,
+          x = latent, df = model$df, V_chol = model$V_chol,
           lower_chol = model$lower_chol
         ),
         "iwishart" = latent_to_iwishart(
-          x = x, df = model$df, V_chol = model$V_chol,
+          x = latent, df = model$df, V_chol = model$V_chol,
           lower_chol = model$lower_chol
         ),
         "niwishart" = latent_to_niwishart(
-          x = x, df = model$df, V_chol = model$V_chol,
+          x = latent, df = model$df, V_chol = model$V_chol,
           lower_chol = model$lower_chol
         )
       )$W_chol
@@ -676,12 +654,14 @@ wm_chol.wm_model <-
     W_chol
   }
 
+#' @return [wm_matrix()] returns a (W/NW/IW/NIW) matrix.
 #' @export
 #' @rdname wishart_model
 
-wm_matrix.wm_model <-
-  function(model, x, ...) {
-    W_chol <- wm_chol(model, x = x, lower_chol = FALSE)
+wm_matrix <-
+  function(model, latent, ...) {
+    stopifnot(inherits(model, "wm_model"))
+    W_chol <- wm_chol(model, latent = latent, lower_chol = FALSE)
     Matrix::t(W_chol) %*% W_chol
   }
 
@@ -689,27 +669,58 @@ wm_matrix.wm_model <-
 #' @param symmetric logical; If `TRUE`, use symmetric finite differences to
 #' compute derivatives
 #' @param h positive delta for finite differences
-#' @return `wm_matrix_jacobian` returns the Jacobian for the (column-)vectorised
-#' (see [cvec()]) matrix with respect to the latent variables.
+#' @return [wm_matrix_jacobian()] returns the Jacobian for the
+#' (column-)vectorised (see [cvec()]) matrix with respect to the latent
+#' variables.
 #'
 #' @export
 #' @rdname wishart_model
 
-wm_matrix_jacobian.wm_model <-
-  function(model, x, symmetric = TRUE, h = 1e-4, ...) {
-    jacobian <- Matrix::Matrix(0, model$d * model$d, model$N_u)
+wm_matrix_jacobian <-
+  function(model, latent, symmetric = TRUE, h = 1e-4, ...) {
+    stopifnot(inherits(model, "wm_model"))
+    jacobian <- Matrix::Matrix(0, model$d * model$d, model$N_latent)
     if (symmetric) {
-      for (loop in seq_len(model$N_u)) {
-        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
-        W_p <- wm_matrix(model, x + H)
-        W_m <- wm_matrix(model, x - H)
+      for (loop in seq_len(model$N_latent)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_latent - loop))
+        W_p <- wm_matrix(model, latent + H)
+        W_m <- wm_matrix(model, latent - H)
         jacobian[, loop] <- cvec(W_p - W_m) / (2 * h)
       }
     } else {
-      W <- wm_matrix(model, x)
-      for (loop in seq_len(model$N_u)) {
-        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
-        W_p <- wm_matrix(model, x + H)
+      W <- wm_matrix(model, latent)
+      for (loop in seq_len(model$N_latent)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_latent - loop))
+        W_p <- wm_matrix(model, latent + H)
+        jacobian[, loop] <- cvec(W_p - W) / h
+      }
+    }
+    jacobian
+  }
+
+
+#' @return [wm_chol_jacobian()] returns the Jacobian for the
+#' column-vectorised (see [cvec()]) Cholesky matrix with respect to the
+#' latent variables, with type determined by the `lower_chol` setting.
+#' @export
+#' @rdname wishart_model
+
+wm_chol_jacobian <-
+  function(model, latent, symmetric = TRUE, h = 1e-4, lower_chol = NULL, ...) {
+    stopifnot(inherits(model, "wm_model"))
+    jacobian <- Matrix::Matrix(0, model$d * model$d, model$N_latent)
+    if (symmetric) {
+      for (loop in seq_len(model$N_latent)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_latent - loop))
+        W_p <- wm_chol(model, latent + H, lower_chol = lower_chol)
+        W_m <- wm_chol(model, latent - H)
+        jacobian[, loop] <- cvec(W_p - W_m) / (2 * h)
+      }
+    } else {
+      W <- wm_chol(model, latent, lower_chol = lower_chol)
+      for (loop in seq_len(model$N_latent)) {
+        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_latent - loop))
+        W_p <- wm_chol(model, latent + H, lower_chol = lower_chol)
         jacobian[, loop] <- cvec(W_p - W) / h
       }
     }
@@ -718,35 +729,57 @@ wm_matrix_jacobian.wm_model <-
 
 
 
-#' @param symmetric logical; If `TRUE`, use symmetric finite differences to
-#' compute derivatives
-#' @param h positive delta for finite differences
-#' @return `wm_chol_jacobian` returns the Jacobian for the column-vectorised
-#' (see [cvec()]) Cholesky matrix (lower Cholesky if `lower_chol` is `TRUE`,
-#' upper if `lower_chol` is `FALSE`, and for the model internal version if
-#' `lower_chol` is `NULL`) with respect to the latent
-#'  variables.
+#' @param mean_latent Expectation vector for the latent variables
+#' @param cov_latent Covariance matrix for the latent variables
+#' @param order A vector of two integers defining the Taylor expansion orders
+#' used for linearised moment calculations for expectation and variance,
+#' respectively. Can be either \eqn{1} or \eqn{2}. Default: `c(2, 1)`
+#' @return [wm_moments_linear()] returns linearised approximations of propagated
+#' mean and standard deviation of the Wishart matrix given mean and covariance
+#' of the latent variables.
+#' @details For `wm_moments_linear`, the further `...` parameters are passed
+#' on to `wm_matrix_jacobian`.
 #'
 #' @export
 #' @rdname wishart_model
 
-wm_chol_jacobian.wm_model <-
-  function(model, x, symmetric = TRUE, h = 1e-4, lower_chol = NULL, ...) {
-    jacobian <- Matrix::Matrix(0, model$d * model$d, model$N_u)
-    if (symmetric) {
-      for (loop in seq_len(model$N_u)) {
-        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
-        W_p <- wm_chol(model, x + H, lower_chol = lower_chol)
-        W_m <- wm_chol(model, x - H)
-        jacobian[, loop] <- cvec(W_p - W_m) / (2 * h)
+wm_moments_linear <- function(model,
+                              mean_latent = rep(0, model$N_latent),
+                              cov_latent = sparse_identity(model$N_latent),
+                              order = c(2, 1),
+                              h = 1e-4,
+                              ...) {
+  stopifnot(inherits(model, "wm_model"))
+  m <- wm_matrix(model, latent = mean_latent)
+  jacobian <- wm_matrix_jacobian(model, latent = mean_latent, h = h, ...)
+  S <-
+    cvec(
+      Matrix::rowSums(
+        jacobian * (jacobian %*% cov_latent)
+      ),
+      d = model$d,
+      sparse = FALSE
+    )
+  if (any(order > 1)) {
+    for (k in seq_len(model$N_latent)) {
+      H <- rep(c(0, h, 0), times = c(k - 1, 1, model$N_latent - k))
+      jacobian_k <-
+        (wm_matrix_jacobian(model, latent = mean_latent + H, h = h, ...) -
+          wm_matrix_jacobian(model, latent = mean_latent - H, h = h, ...)) /
+        (2 * h)
+      if (order[1] > 1) {
+        m <- m + 0.5 * cvec(jacobian_k %*% cov_latent[, k],
+          d = model$d,
+          sparse = FALSE
+        )
       }
-    } else {
-      W <- wm_chol(model, x, lower_chol = lower_chol)
-      for (loop in seq_len(model$N_u)) {
-        H <- rep(c(0, h, 0), times = c(loop - 1, 1, model$N_u - loop))
-        W_p <- wm_chol(model, x + H, lower_chol = lower_chol)
-        jacobian[, loop] <- cvec(W_p - W) / h
+      if (order[2] > 1) {
+        S <- S + 0.5 * cvec(Matrix::rowSums((jacobian_k %*% cov_latent)^2),
+          d = model$d,
+          sparse = FALSE
+        )
       }
     }
-    jacobian
   }
+  list(mean = m, sd = sqrt(S))
+}
