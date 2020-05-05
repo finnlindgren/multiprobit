@@ -434,16 +434,18 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 
 # Wishart density ####
 
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param W PARAM_DESCRIPTION, Default: NULL
-#' @param x PARAM_DESCRIPTION, Default: NULL
-#' @param W_chol PARAM_DESCRIPTION, Default: NULL
-#' @param V_chol PARAM_DESCRIPTION
-#' @param df PARAM_DESCRIPTION
-#' @param lower_chol PARAM_DESCRIPTION, Default: FALSE
-#' @param log PARAM_DESCRIPTION, Default: FALSE
-#' @return OUTPUT_DESCRIPTION
+#' @title Wishart Density
+#' @description Calculate the density for a Wishart model
+#' @param W A Wishart matrix, Default: NULL
+#' @param x A latent parameter vector for Wishart model, Default: NULL
+#' @param W_chol The Cholesky factor of a Wishart matrix, Default: NULL
+#' @param V_chol The Cholesky factor of the V-parameter for a Wishart model
+#' @param df The Wishart degrees of freedom parametre
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used,
+#' Default: FALSE
+#' @param log If `TRUE`, return the log-density, Default: FALSE
+#' @return The density or log-density (if `log == TRUE`) for `W`, or the `W`
+#' matrix constructed from a Cholesky factor `W_chol`
 #' @details This function requires the `CholWishart::lmvgamma` function from
 #' the `CholWishart` package.
 #' @examples
@@ -452,7 +454,7 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #'   # EXAMPLE1
 #' }
 #' }
-#' @export
+#' @keywords internal
 #' @rdname dwishart
 
 dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,
@@ -782,4 +784,40 @@ wm_moments_linear <- function(model,
     }
   }
   list(mean = m, sd = sqrt(S))
+}
+
+
+
+
+
+#' @param log If `TRUE`, return the log-density, Default: FALSE
+#' @return `wm_density()` returns the density or log-density (if `log == TRUE`)
+#' for `W`, or the `W` matrix constructed from a Cholesky factor `W_chol`
+#' @details The `wm_density()` method requires the `CholWishart::lmvgamma`
+#' function from the `CholWishart` package.
+#' @examples
+#' \dontrun{
+#' if (interactive()) {
+#'   # EXAMPLE1
+#' }
+#' }
+#' @export
+#' @rdname wishart_model
+
+wm_density <- function(model,
+                       latent = NULL,
+                       W = NULL, W_chol = NULL,
+                       lower_chol = NULL, log = FALSE) {
+  stopifnot(inherits(model, "wm_model"))
+  stopifnot("Wishart density only implemented for plain Wishart models" =
+              (model[["type"]] == "wishart"))
+  if (is.null(lower_chol)) {
+    lower_chol <- model$lower_chol
+  }
+  if (!is.null(W_chol) && (lower_chol != model$lower_chol)) {
+    W_chol <- t(W_chol)
+  }
+  dwishart(W = W, x = latent, W_chol = W_chol,
+           V_chol = model$V_chol, V_chol$df,
+           lower_chol = model$lower_chol, log = log)
 }

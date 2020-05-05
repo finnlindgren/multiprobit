@@ -8,6 +8,7 @@
 \alias{wm_matrix_jacobian}
 \alias{wm_chol_jacobian}
 \alias{wm_moments_linear}
+\alias{wm_density}
 \title{Wishart-related Models}
 \usage{
 wm_model(type, V = NULL, df = NULL, V_chol = NULL, lower_chol = FALSE)
@@ -36,6 +37,15 @@ wm_moments_linear(
   order = c(2, 1),
   h = 1e-04,
   ...
+)
+
+wm_density(
+  model,
+  latent = NULL,
+  W = NULL,
+  W_chol = NULL,
+  lower_chol = NULL,
+  log = FALSE
 )
 }
 \arguments{
@@ -78,6 +88,8 @@ compute derivatives}
 \item{order}{A vector of two integers defining the Taylor expansion orders
 used for linearised moment calculations for expectation and variance,
 respectively. Can be either \eqn{1} or \eqn{2}. Default: \code{c(2, 1)}}
+
+\item{log}{If \code{TRUE}, return the log-density, Default: FALSE}
 }
 \value{
 \code{\link[=wm_model]{wm_model()}} returns a \code{wm_model} object that encapsulates the
@@ -102,6 +114,9 @@ latent variables, with type determined by the \code{lower_chol} setting.
 \code{\link[=wm_moments_linear]{wm_moments_linear()}} returns linearised approximations of propagated
 mean and standard deviation of the Wishart matrix given mean and covariance
 of the latent variables.
+
+\code{wm_density()} returns the density or log-density (if \code{log == TRUE})
+for \code{W}, or the \code{W} matrix constructed from a Cholesky factor \code{W_chol}
 }
 \description{
 Defining a wrapper object class \code{wm_model} that can represent
@@ -110,4 +125,14 @@ Wishart, Normalised Wishart, Inverse Wishart, and Normalised Inverse Wishart
 \details{
 For \code{wm_moments_linear}, the further \code{...} parameters are passed
 on to \code{wm_matrix_jacobian}.
+
+The \code{wm_density()} method requires the \code{CholWishart::lmvgamma}
+function from the \code{CholWishart} package.
+}
+\examples{
+\dontrun{
+if (interactive()) {
+  # EXAMPLE1
+}
+}
 }

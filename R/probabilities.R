@@ -1,16 +1,3 @@
-inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
-  d <- nrow(Sigma_chol)
-  Q_chol <- tri_solve(Sigma_chol, lower_tri = lower_chol)
-  perm <- rev(seq_len(d))
-  if (lower_chol) {
-    Q_chol <- Q_chol[perm, perm]
-  } else {
-    Q_chol <- Matrix::t(Q_chol)[perm, perm]
-  }
-  Q_chol
-}
-
-
 
 
 #' @title Multivariate Probit Event Probabilities
@@ -168,8 +155,9 @@ mpp <- function(y, mu,
 
 #' @title Multivariate Probit Event Probability Derivatives
 #' @description FUNCTION_DESCRIPTION
-#' @param y PARAM_DESCRIPTION
-#' @param mu PARAM_DESCRIPTION
+#' @param y A matrix of multivariate 0/1 observations
+#' @param mu A matrix of matrix of multivariate latent scale expectation
+#' parameters
 #' @param ... Further parameters passed on to
 #'   [mpp()]
 #' @param gaussint_options list of options for `excursions::gaussint`.
@@ -178,7 +166,7 @@ mpp <- function(y, mu,
 #'   or 1e-04 (for hessian)
 #' @param symmetric For gradients, whether to use symmetric finite differences,
 #'   Default: FALSE
-#' @return OUTPUT_DESCRIPTION gradient
+#' @return OUTPUT_DESCRIPTION gradient for mu
 #' @details DETAILS gradient
 #' @examples
 #' \dontrun{
@@ -225,7 +213,7 @@ mpp_gradient_mu <- function(y, mu, ...,
 
 #' @param diagonal Logical; if `TRUE`, only the diagonal of the hessian
 #'   is evaluated, Default: FALSE
-#' @return OUTPUT_DESCRIPTION hessian
+#' @return OUTPUT_DESCRIPTION hessian for mu
 #' @details DETAILS hessain
 #' @examples
 #' \dontrun{
@@ -308,7 +296,7 @@ mpp_hessian_mu <- function(y, mu, ...,
 #' @param Sigma_model A [`wm_model`] object
 #' @param log Whether to compute gradient of the log-probability,
 #'   Default: `FALSE`
-#' @return OUTPUT_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION gradient for u
 #' @details DETAILS
 #' @examples
 #' \dontrun{

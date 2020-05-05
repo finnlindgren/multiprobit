@@ -37,9 +37,10 @@ mpp_gradient_u(
 )
 }
 \arguments{
-\item{y}{PARAM_DESCRIPTION}
+\item{y}{A matrix of multivariate 0/1 observations}
 
-\item{mu}{PARAM_DESCRIPTION}
+\item{mu}{A matrix of matrix of multivariate latent scale expectation
+parameters}
 
 \item{...}{Further parameters passed on to
 \code{\link[=mpp]{mpp()}}}
@@ -65,11 +66,11 @@ matrix, length \eqn{d(d-1)/2}}
 Default: \code{FALSE}}
 }
 \value{
-OUTPUT_DESCRIPTION gradient
+OUTPUT_DESCRIPTION gradient for mu
 
-OUTPUT_DESCRIPTION hessian
+OUTPUT_DESCRIPTION hessian for mu
 
-OUTPUT_DESCRIPTION
+OUTPUT_DESCRIPTION gradient for u
 }
 \description{
 FUNCTION_DESCRIPTION

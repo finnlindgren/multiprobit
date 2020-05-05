@@ -2,7 +2,7 @@
 % Please edit documentation in R/transform.R
 \name{dwishart}
 \alias{dwishart}
-\title{FUNCTION_TITLE}
+\title{Wishart Density}
 \usage{
 dwishart(
   W = NULL,
@@ -15,25 +15,27 @@ dwishart(
 )
 }
 \arguments{
-\item{W}{PARAM_DESCRIPTION, Default: NULL}
+\item{W}{A Wishart matrix, Default: NULL}
 
-\item{x}{PARAM_DESCRIPTION, Default: NULL}
+\item{x}{A latent parameter vector for Wishart model, Default: NULL}
 
-\item{W_chol}{PARAM_DESCRIPTION, Default: NULL}
+\item{W_chol}{The Cholesky factor of a Wishart matrix, Default: NULL}
 
-\item{V_chol}{PARAM_DESCRIPTION}
+\item{V_chol}{The Cholesky factor of the V-parameter for a Wishart model}
 
-\item{df}{PARAM_DESCRIPTION}
+\item{df}{The Wishart degrees of freedom parametre}
 
-\item{lower_chol}{PARAM_DESCRIPTION, Default: FALSE}
+\item{lower_chol}{\code{TRUE} if lower triangular Cholesky factors are used,
+Default: FALSE}
 
-\item{log}{PARAM_DESCRIPTION, Default: FALSE}
+\item{log}{If \code{TRUE}, return the log-density, Default: FALSE}
 }
 \value{
-OUTPUT_DESCRIPTION
+The density or log-density (if \code{log == TRUE}) for \code{W}, or the \code{W}
+matrix constructed from a Cholesky factor \code{W_chol}
 }
 \description{
-FUNCTION_DESCRIPTION
+Calculate the density for a Wishart model
 }
 \details{
 This function requires the \code{CholWishart::lmvgamma} function from
@@ -46,3 +48,4 @@ if (interactive()) {
 }
 }
 }
+\keyword{internal}

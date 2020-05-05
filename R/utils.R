@@ -21,6 +21,43 @@ tri_solve <- function(A, b, lower_tri = FALSE) {
 }
 
 
+
+#' @title Inverse Reverse Cholesky
+#' @description Compute inverse of a Cholesky matrix,
+#' storing the result in reverse order, see Details.
+#' @param Sigma_chol Holesky factor of a covariance matrix
+#' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
+#'   Default: FALSE
+#' @return A Cholesky matrix of the same triangle orientation as the input,
+#'   with rows and columns in reverse order.
+#' @details For `lower_chol == FALSE`,
+#' the input `Sigma_chol` is the matrix \eqn{R} in the Cholesky factorisation
+#' \eqn{\Sigma=R^T R} with inverse \eqn{Q=R^{-1}R^{-T}}. Since \eqn{R^{-1}} has
+#' the opposite upper/lower triangular property to \eqn{R^T}, this \eqn{Q}
+#' factorisation isn't a regular Cholesky factorisation. Let \eqn{P} be the
+#' permutation matrix that reverses element order. Then
+#' \eqn{PQP=PR^{-1}PPR^{-T}P}, and \eqn{PR^{-T}P} is the Cholesky factor of
+#' \eqn{PQP} with the same upper/lower triangular property as \eqn{R}.
+#'
+#' For `lower_chol == TRUE`, the input is \eqn{L} in \eqn{\Sigma=LL^T} and the
+#' output is \eqn{PL^{-T}P}, with \eqn{PQP=PL^{-T}PPL^{-1}P}.
+#' @examples
+#' if(interactive()){
+#'   inverse_chol_reverse(matrix(c(1, 0, 2, 3), 2, 2))
+#' }
+#' @keywords internal
+#' @rdname inverse_chol_reverse
+
+inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
+  d <- nrow(Sigma_chol)
+  Q_chol <- tri_solve(Sigma_chol, lower_tri = lower_chol)
+  perm <- rev(seq_len(d))
+  Matrix::t(Q_chol)[perm, perm]
+}
+
+
+
+
 #' @details `qchisq_pnorm` evaluates `qchisq(pnorm(...))` with
 #' attempt at numerical stability.
 #' @keywords internal
