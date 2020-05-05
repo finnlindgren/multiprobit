@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Wishart Density — dwishart • multiprobit</title>
+<title>Inverse Reverse Cholesky — inverse_chol_reverse • multiprobit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Wishart Density — dwishart" />
-<meta property="og:description" content="Calculate the density for a Wishart model" />
+<meta property="og:title" content="Inverse Reverse Cholesky — inverse_chol_reverse" />
+<meta property="og:description" content="Compute inverse of a Cholesky matrix,
+storing the result in reverse order, see Details." />
 
 
 
@@ -111,73 +112,52 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Wishart Density</h1>
-    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/transform.R'><code>R/transform.R</code></a></small>
-    <div class="hidden name"><code>dwishart.Rd</code></div>
+    <h1>Inverse Reverse Cholesky</h1>
+    <small class="dont-index">Source: <a href='https://github.com/finnlindgren/multiprobit/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
+    <div class="hidden name"><code>inverse_chol_reverse.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate the density for a Wishart model</p>
+    <p>Compute inverse of a Cholesky matrix,
+storing the result in reverse order, see Details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dwishart</span>(
-  <span class='kw'>W</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>W_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>V_chol</span>,
-  <span class='no'>df</span>,
-  <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>inverse_chol_reverse</span>(<span class='no'>Sigma_chol</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>W</th>
-      <td><p>A Wishart matrix, Default: NULL</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>A latent parameter vector for Wishart model, Default: NULL</p></td>
-    </tr>
-    <tr>
-      <th>W_chol</th>
-      <td><p>The Cholesky factor of a Wishart matrix, Default: NULL</p></td>
-    </tr>
-    <tr>
-      <th>V_chol</th>
-      <td><p>The Cholesky factor of the V-parameter for a Wishart model</p></td>
-    </tr>
-    <tr>
-      <th>df</th>
-      <td><p>The Wishart degrees of freedom parametre</p></td>
+      <th>Sigma_chol</th>
+      <td><p>Holesky factor of a covariance matrix</p></td>
     </tr>
     <tr>
       <th>lower_chol</th>
-      <td><p><code>TRUE</code> if lower triangular Cholesky factors are used,
+      <td><p><code>TRUE</code> if lower triangular Cholesky factors are used
 Default: FALSE</p></td>
-    </tr>
-    <tr>
-      <th>log</th>
-      <td><p>If <code>TRUE</code>, return the log-density, Default: FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The density or log-density (if <code>log == TRUE</code>) for <code>W</code>, or the <code>W</code>
-matrix constructed from a Cholesky factor <code>W_chol</code></p>
+    <p>A Cholesky matrix of the same triangle orientation as the input,
+with rows and columns in reverse order.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function requires the <code><a href='https://rdrr.io/pkg/CholWishart/man/lmvgamma.html'>CholWishart::lmvgamma</a></code> function from
-the <code>CholWishart</code> package.</p>
+    <p>For <code>lower_chol == FALSE</code>,
+the input <code>Sigma_chol</code> is the matrix \(R\) in the Cholesky factorisation
+\(\Sigma=R^T R\) with inverse \(Q=R^{-1}R^{-T}\). Since \(R^{-1}\) has
+the opposite upper/lower triangular property to \(R^T\), this \(Q\)
+factorisation isn't a regular Cholesky factorisation. Let \(P\) be the
+permutation matrix that reverses element order. Then
+\(PQP=PR^{-1}PPR^{-T}P\), and \(PR^{-T}P\) is the Cholesky factor of
+\(PQP\) with the same upper/lower triangular property as \(R\).</p>
+<p>For <code>lower_chol == TRUE</code>, the input is \(L\) in \(\Sigma=LL^T\) and the
+output is \(PL^{-T}P\), with \(PQP=PL^{-T}PPL^{-1}P\).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='co'># EXAMPLE1</span>
-}
+    <pre class="examples"><div class='input'><span class='kw'>if</span>(<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()){
+  <span class='fu'>inverse_chol_reverse</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>2</span>, <span class='fl'>3</span>), <span class='fl'>2</span>, <span class='fl'>2</span>))
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
