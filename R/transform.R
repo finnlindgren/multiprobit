@@ -23,6 +23,7 @@
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_wishart
 
 latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -60,6 +61,7 @@ latent_to_wishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_wishart
 
 latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -110,6 +112,7 @@ latent_from_wishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_nwishart
 
 latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -181,6 +184,7 @@ latent_to_nwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_nwishart
 
 latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -256,6 +260,7 @@ latent_from_nwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_iwishart
 
 latent_to_iwishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -294,6 +299,7 @@ latent_to_iwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_iwishart
 
 latent_from_iwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -353,6 +359,7 @@ normalise_ti_V_chol_rd <- function(V_chol, rd, lower_chol) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_niwishart
 
 latent_to_niwishart <- function(x, V_chol, df, lower_chol = FALSE) {
@@ -405,6 +412,7 @@ latent_to_niwishart <- function(x, V_chol, df, lower_chol = FALSE) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname latent_to_niwishart
 
 latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
@@ -455,6 +463,7 @@ latent_from_niwishart <- function(W_chol, V_chol, df, lower_chol = FALSE) {
 #' }
 #' }
 #' @keywords internal
+#' @note This is an internal non-exported function
 #' @rdname dwishart
 
 dwishart <- function(W = NULL, x = NULL, W_chol = NULL, V_chol, df,

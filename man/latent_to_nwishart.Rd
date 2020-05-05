@@ -51,6 +51,11 @@ matrices
 Transform a Normalised Wishart matrix to latent iid
 \eqn{N(0,1)} variables
 }
+\note{
+This is an internal non-exported function
+
+This is an internal non-exported function
+}
 \examples{
 \dontrun{
 if (interactive()) {

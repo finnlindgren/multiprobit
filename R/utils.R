@@ -1,6 +1,11 @@
 #' @title Internal multiprobit utilities
-#' @details `tri_solve` solves triangular systems with back/forwardsolve
+#' @name multiprobit_utils
 #' @keywords internal
+#' @note These are internal non-exported function
+#' @rdname multiprobit_utils
+NULL
+
+#' @details `tri_solve()` solves triangular systems with back/forwardsolve
 #' @rdname multiprobit_utils
 
 tri_solve <- function(A, b, lower_tri = FALSE) {
@@ -25,12 +30,14 @@ tri_solve <- function(A, b, lower_tri = FALSE) {
 #' @title Inverse Reverse Cholesky
 #' @description Compute inverse of a Cholesky matrix,
 #' storing the result in reverse order, see Details.
-#' @param Sigma_chol Holesky factor of a covariance matrix
+#' @param Sigma_chol Cholesky factor of a covariance matrix
 #' @param lower_chol `TRUE` if lower triangular Cholesky factors are used
 #'   Default: FALSE
-#' @return A Cholesky matrix of the same triangle orientation as the input,
+#' @return `inverse_chol_reverse()` returns a Cholesky matrix of the same triangle orientation as the input,
 #'   with rows and columns in reverse order.
-#' @details For `lower_chol == FALSE`,
+#' @details `inverse_chol_reverse()` notes:
+#'
+#' For `lower_chol == FALSE`,
 #' the input `Sigma_chol` is the matrix \eqn{R} in the Cholesky factorisation
 #' \eqn{\Sigma=R^T R} with inverse \eqn{Q=R^{-1}R^{-T}}. Since \eqn{R^{-1}} has
 #' the opposite upper/lower triangular property to \eqn{R^T}, this \eqn{Q}
@@ -45,8 +52,7 @@ tri_solve <- function(A, b, lower_tri = FALSE) {
 #' if(interactive()){
 #'   inverse_chol_reverse(matrix(c(1, 0, 2, 3), 2, 2))
 #' }
-#' @keywords internal
-#' @rdname inverse_chol_reverse
+#' @rdname multiprobit_utils
 
 inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
   d <- nrow(Sigma_chol)
@@ -57,10 +63,10 @@ inverse_chol_reverse <- function(Sigma_chol, lower_chol = FALSE) {
 
 
 
-
-#' @details `qchisq_pnorm` evaluates `qchisq(pnorm(...))` with
+#' @param x Probability or quantile
+#' @param df Degrees of freedom parameter
+#' @details `qchisq_pnorm()` evaluates `qchisq(pnorm(...))` with
 #' attempt at numerical stability.
-#' @keywords internal
 #' @importFrom stats qchisq pnorm
 #' @rdname multiprobit_utils
 
@@ -70,7 +76,6 @@ qchisq_pnorm <- function(x, df) {
   )
 }
 
-#' @keywords internal
 #' @importFrom stats pchisq qnorm
 #' @rdname multiprobit_utils
 
@@ -78,7 +83,9 @@ qnorm_pchisq <- function(x, df) {
   qnorm(pchisq(x, df = df, log.p = TRUE), log.p = TRUE)
 }
 
-#' @keywords internal
+#' @param shape1 Shape parameter for a Beta distribution
+#' @param shape2 Shape parameter for a Beta distribution
+#' @param ncp Non-centrality parameter for Beta and \eqn{\chi^2} distributions
 #' @importFrom stats qbeta pchisq
 #' @rdname multiprobit_utils
 
@@ -91,7 +98,6 @@ qbeta_pchisq <- function(x,
   )
 }
 
-#' @keywords internal
 #' @importFrom stats pbeta qchisq
 #' @rdname multiprobit_utils
 
@@ -151,6 +157,7 @@ rvec <- function(A, d = NULL, sparse = FALSE) {
 }
 
 
+#' @param d Matrix dimension
 #' @importFrom Matrix sparseMatrix
 #' @rdname multiprobit_utils
 

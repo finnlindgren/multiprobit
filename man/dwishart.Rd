@@ -41,6 +41,9 @@ Calculate the density for a Wishart model
 This function requires the \code{CholWishart::lmvgamma} function from
 the \code{CholWishart} package.
 }
+\note{
+This is an internal non-exported function
+}
 \examples{
 \dontrun{
 if (interactive()) {
