@@ -15,7 +15,9 @@ BugReports: https://github.com/finnlindgren/multiprobit/issues
 Imports: 
     excursions,
     stats,
-    Matrix
+    Matrix,
+    loo,
+    matrixStats
 Suggests: 
     CholWishart,
     covr,

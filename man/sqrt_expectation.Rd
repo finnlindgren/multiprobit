@@ -14,7 +14,7 @@ sqrt_expectation(expectation, post_scaling = 1)
 the square root operation, Default: 1}
 }
 \value{
-The input \code{expectation} object with the \code{value} and \code{std_error}
+The input \code{expectation} object with the \code{value} and \code{std_err}
 elements modified to reflect a square root operation, see Details.
 }
 \description{

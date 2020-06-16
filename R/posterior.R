@@ -5,7 +5,7 @@
 #' `std_err`
 #' @param post_scaling An optional multiplicative scaling to be applied after
 #' the square root operation, Default: 1
-#' @return The input `expectation` object with the `value` and `std_error`
+#' @return The input `expectation` object with the `value` and `std_err`
 #' elements modified to reflect a square root operation, see Details.
 #' @details Matches the mean (the value) and standard deviation (for the
 #' standard error) of a positive random variable to those of a log-Normal
@@ -213,6 +213,111 @@ calc_expectation <- function(imp_weights, quantity) {
     R_eff =  sum(w * q2) / std_err^2 / N
   )
 }
+
+
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param integration A `list`, or `NULL`
+#' @param weight A scalar weight, either normalised or unnormalised
+#' @param quantity PARAM_DESCRIPTION
+#' @param weight_offset PARAM_DESCRIPTION
+#' @return OUTPUT_DESC
+#' \deqn{S_a = \sum (w^a-w_o^a)}
+#' \deqn{S_{a,1} = \sum (w^a-w_o^a) v_m / S_a}
+#' \deqn{S_{a,2} = \sum (w^a-w_o^a) (v_m - S_{a,1})^2 / S_a}
+#' \deqn{S_{a,3} = \sum (w^a-w_o^a) (v_m - S_{a,1})^3 / S_a}
+#' \deqn{S_{a,4} = \sum (w^a-w_o^a) (v_m - S_{a,1})^4 / S_a}
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'   w <- runif(10)
+#'   x <- matrix(rnorm(50), 5, 10)
+#'   int <- NULL
+#'   for (k in seq_along(w)) {
+#'     int <- update_integration(int, w[k], x[,k])
+#'   }
+#'
+#'   Alter some weights:
+#'   w2 <- w
+#'   w2[1:2] <- runif(2)
+#'   for (k in which(w2 != w)) {
+#'     int <- update_integration(int, w2[k], x[k], w[k])
+#'   }
+#' }
+#' }
+#' @rdname update_integration
+#' @export
+
+update_integration <- function(integration, weight, quantity,
+                               weight_offset = 0) {
+  if (is.null(integration)) {
+    stopifnot(weight_offset == 0)
+    N_q <- length(quantity)
+    integration <- list(S_w = c(weight, weight^2),
+                        S1_values = cbind(quantity, matrix(0.0, N_q, 3)),
+                        S2_values = cbind(quantity, matrix(0.0, N_q, 3)))
+    return(integration)
+  }
+  stopifnot(is.list(integration))
+  stopifnot(all(c("S_w", "S1_values", "S2_values") %in%
+                    names(integration)))
+  ww <- (weight - weight_offset) * c(1, weight + weight_offset)
+  S_w <- integration$S_w + ww
+  S_11 <- (integration$S_w[1] * integration$S1_values[, 1] +
+             ww[1] * quantity) / S_w[1]
+  S_21 <- (integration$S_w[2] * integration$S2_values[, 1] +
+             ww[2] * quantity) / S_w[2]
+  S_11_11 <- integration$S1_values[, 1] - S_11
+  S_21_11 <- integration$S2_values[, 1] - integration$S1_values[, 1]
+  # 1st moment
+  integration$S1_values[, 1] <- S_11
+  integration$S2_values[, 1] <- S_21
+  # 2nd moment
+  qq <- (quantity - S_11)^2
+  integration$S1_values[, 2] <-
+    (integration$S_w[1] * (integration$S1_values[, 2] + S_11_11^2) +
+       ww[1] * qq) / S_w[1]
+  integration$S2_values[, 2] <-
+    (integration$S_w[2] * (
+      integration$S2_values[, 2] +
+        S_11_11 * (2 * S_21_11 + S_11_11)) +
+       ww[2] * qq) / S_w[2]
+  # 3rd moment
+  qq <- qq * (quantity - S_11)
+  integration$S1_values[, 3] <-
+    (integration$S_w[1] * (
+      integration$S1_values[, 3] +
+        S_11_11 * (3 * integration$S1_values[, 2] +
+                     S_11_11^2)) +
+       ww[1] * qq) / S_w[1]
+  integration$S2_values[, 3] <-
+    (integration$S_w[2] * (
+      integration$S2_values[, 3] +
+        S_11_11 * (3 * integration$S2_values[, 2] +
+                     S_11_11 * (3 * S_21_11 + S_11_11))) +
+       ww[2] * qq) / S_w[2]
+  # 4th moment
+  qq <- qq * (quantity - S_11)
+  integration$S1_values[, 4] <-
+    (integration$S_w[1] * (
+      integration$S1_values[, 4] +
+        S_11_11 * (4 * integration$S1_values[, 3] +
+                     S_11_11 * (6 * integration$S1_values[, 2] +
+                                  S_11_11^2))) +
+       ww[1] * qq) / S_w[1]
+  integration$S2_values[, 4] <-
+    (integration$S_w[2] * (
+      integration$S2_values[, 4] +
+        S_11_11 * (4 * integration$S2_values[, 3] +
+                     S_11_11 * (6 * integration$S2_values[, 2] +
+                                  S_11_11 * (4 * S_21_11 + S_11_11)))) +
+       ww[2] * qq) / S_w[2]
+
+  integration$S_w <- S_w
+  integration
+}
+
 
 
 #' @title FUNCTION_TITLE
