@@ -36,7 +36,7 @@ To install the latest stable release version of `multiprobit` from
 [github](https://github.com/finnlindgren/multiprobit/), use
 
 ``` r
-remotes::install_github("finnlindgren/multiprobit", ref = "master")
+remotes::install_github("finnlindgren/multiprobit", ref = "stable")
 ```
 
 To install the development version of `multiprobit` from
