@@ -121,14 +121,14 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for mp_options</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='kw'>legend</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>include_global</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>include_default</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, legend = <span class='fl'>TRUE</span>, include_global = <span class='fl'>TRUE</span>, include_default = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>An <code><a href='mp_options.html'>mp_options</a></code> object to be printed</p></td>
+      <td><p>An <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></code> object to be printed</p></td>
     </tr>
     <tr>
       <th>legend</th>
@@ -150,14 +150,14 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='no'>options</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mp_options.html'>mp_options</a></span>(<span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='kw'>options</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></span>(verbose = <span class='fl'>TRUE</span>)
 
   <span class='co'># Don't print options only set in default:</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>options</span>, <span class='kw'>include_default</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>options</span>, include_default = <span class='fl'>FALSE</span>)
 
   <span class='co'># Only include options set in the object:</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>options</span>, <span class='kw'>include_default</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>include_global</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>options</span>, include_default = <span class='fl'>FALSE</span>, include_global = <span class='fl'>FALSE</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

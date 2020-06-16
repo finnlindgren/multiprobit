@@ -88,41 +88,47 @@ install.packages("multiprobit")
 ```
 -->
 <p>To install the latest stable release version of <code>multiprobit</code> from <a href="https://github.com/finnlindgren/multiprobit/">github</a>, use</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"finnlindgren/multiprobit"</span>, <span class="kw">ref</span> <span class="kw">=</span> <span class="st">"master"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"finnlindgren/multiprobit"</span>, ref = <span class="st">"stable"</span>)
+</pre></div>
 <p>To install the development version of <code>multiprobit</code> from <a href="https://github.com/finnlindgren/multiprobit/">github</a>, use</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"finnlindgren/multiprobit"</span>, <span class="kw">ref</span> <span class="kw">=</span> <span class="st">"devel"</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"finnlindgren/multiprobit"</span>, ref = <span class="st">"devel"</span>)
+</pre></div>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/interactive.html">interactive</a></span>()) {
-  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">multiprobit</span>)
-
-  <span class="no">N</span> <span class="kw">&lt;-</span> <span class="fl">6</span>
-  <span class="no">d</span> <span class="kw">&lt;-</span> <span class="fl">2</span>
-  <span class="no">J</span> <span class="kw">&lt;-</span> <span class="fl">2</span>
-
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/interactive.html">interactive</a></span>()) {
+  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/finnlindgren/multiprobit">multiprobit</a></span>)
+  
+  <span class="kw">N</span> <span class="op">&lt;-</span> <span class="fl">6</span>
+  <span class="kw">d</span> <span class="op">&lt;-</span> <span class="fl">2</span>
+  <span class="kw">J</span> <span class="op">&lt;-</span> <span class="fl">2</span>
+  
   <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1L</span>)
-  <span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="no">N</span> * (<span class="no">J</span> - <span class="fl">1</span>)), <span class="no">N</span>, <span class="no">J</span> - <span class="fl">1</span>))
-  <span class="no">B</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">0.5</span>, <span class="no">J</span>, <span class="no">d</span>)
-  <span class="no">Y</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="no">N</span> * <span class="no">d</span>, <span class="kw">mean</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span>(<span class="no">X</span> <span class="kw">%*%</span> <span class="no">B</span>)) <span class="kw">&gt;</span> <span class="fl">0</span>, <span class="no">N</span>, <span class="no">d</span>)
-  <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">d</span> + <span class="fl">1</span>
-  <span class="no">prec_beta</span> <span class="kw">&lt;-</span> <span class="fl">0.1</span>
-
-  <span class="no">model</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/mp_model.html">mp_model</a></span>(
-    <span class="kw">response</span> <span class="kw">=</span> <span class="no">Y</span>, <span class="kw">X</span> <span class="kw">=</span> <span class="no">X</span>,
-    <span class="kw">df</span> <span class="kw">=</span> <span class="no">df</span>, <span class="kw">prec_beta</span> <span class="kw">=</span> <span class="no">prec_beta</span>
+  <span class="kw">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="kw">N</span> <span class="op">*</span> (<span class="kw">J</span> <span class="op">-</span> <span class="fl">1</span>)), <span class="kw">N</span>, <span class="kw">J</span> <span class="op">-</span> <span class="fl">1</span>))
+  <span class="kw">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">0.5</span>, <span class="kw">J</span>, <span class="kw">d</span>)
+  <span class="kw">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="kw">N</span> <span class="op">*</span> <span class="kw">d</span>, mean = <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span>(<span class="kw">X</span> <span class="op">%*%</span> <span class="kw">B</span>)) <span class="op">&gt;</span> <span class="fl">0</span>, <span class="kw">N</span>, <span class="kw">d</span>)
+  <span class="kw">df</span> <span class="op">&lt;-</span> <span class="kw">d</span> <span class="op">+</span> <span class="fl">1</span>
+  <span class="kw">prec_beta</span> <span class="op">&lt;-</span> <span class="fl">0.1</span>
+  
+  <span class="kw">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mp_model.html">mp_model</a></span>(
+    response = <span class="kw">Y</span>, X = <span class="kw">X</span>,
+    df = <span class="kw">df</span>, prec_beta = <span class="kw">prec_beta</span>
   )
-  <span class="no">opt</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/multiprobit.html">multiprobit</a></span>(
-    <span class="kw">model</span> <span class="kw">=</span> <span class="no">model</span>,
-    <span class="kw">options</span> <span class="kw">=</span>
+  <span class="kw">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/multiprobit.html">multiprobit</a></span>(
+    model = <span class="kw">model</span>,
+    options =
       <span class="fu"><a href="reference/mp_options.html">mp_options</a></span>(
-        <span class="kw">gaussint</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">max.threads</span> <span class="kw">=</span> <span class="fl">1</span>),
-        <span class="kw">strategy</span> <span class="kw">=</span> <span class="st">"stepwise"</span>
+        gaussint = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(max.threads = <span class="fl">1</span>),
+        strategy = <span class="st">"stepwise"</span>
       )
   )
-}</pre></div>
+}
+</pre></div>
 </div>
 </div>
   </div>

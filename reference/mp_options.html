@@ -125,29 +125,29 @@ specific calls to multiprobit() is recommended instead." />
 objects.</p>
 <p>The <code>_get</code>, <code>_set</code>, and <code>_reset</code> functions operate on a global
 package options override object. In many cases, setting options in
-specific calls to <code><a href='multiprobit.html'>multiprobit()</a></code> is recommended instead.</p>
+specific calls to <code><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit.html'>multiprobit()</a></code> is recommended instead.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mp_options</span>(<span class='no'>...</span>)
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></span>(<span class='kw'>...</span>)
 
-<span class='fu'>as.mp_options</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>as.mp_options</a></span>(x = <span class='kw'>NULL</span>)
 
-<span class='fu'>mp_options_default</span>()
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_default</a></span>()
 
-<span class='fu'>mp_options_check</span>(<span class='no'>options</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_check</a></span>(<span class='kw'>options</span>)
 
-<span class='fu'>mp_options_get</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>include_default</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_get</a></span>(name = <span class='kw'>NULL</span>, include_default = <span class='fl'>FALSE</span>)
 
-<span class='fu'>mp_options_set</span>(<span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_set</a></span>(<span class='kw'>...</span>)
 
-<span class='fu'>mp_options_reset</span>()</pre>
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_reset</a></span>()</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>...</th>
-      <td><p>Named options, optionally started by one or more <code>mp_options</code>
+      <td><p>Named options, optionally started by one or more <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></code>
 objects. Options specified later override the previous options.</p></td>
     </tr>
     <tr>
@@ -173,29 +173,29 @@ together with the global override options. Default: <code>FALSE</code></p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>mp_options()</code> returns an <code>mp_options</code> object.</p>
-<p>For <code>as.mp_options()</code>, <code>NULL</code> or no input returns an empty
-<code>mp_options</code> object, a <code>list</code> is converted via <code>mp_options(...)</code>,
+    <p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options()</a></code> returns an <code>mp_options</code> object.</p>
+<p>For <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>as.mp_options()</a></code>, <code>NULL</code> or no input returns an empty
+<code>mp_options</code> object, a <code>list</code> is converted via <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options(...)</a></code>,
 and <code>mp_options</code> input is passed through. Other types of input generates
 an error.</p>
-<p><code>mp_options_default()</code> returns an <code>mp_options</code> object containing
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_default()</a></code> returns an <code>mp_options</code> object containing
 default options.</p>
-<p><code>mp_options_check()</code> returns a <code>logical</code>; <code>TRUE</code> if the object
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_check()</a></code> returns a <code>logical</code>; <code>TRUE</code> if the object
 contains valid options for use by other functions</p>
-<p><code>mp_options_get</code> returns either an <code>mp_options</code> object, for
+<p><code>mp_options_get</code> returns either an <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></code> object, for
 <code>name == NULL</code>, the contents of single option, if <code>name</code> is a options name
 string, or a named list of option contents, if <code>name</code> is a list of option
 name strings.</p>
-<p><code>mp_options_set()</code> returns a copy of the global options, invisibly.</p>
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_set()</a></code> returns a copy of the global options, invisibly.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>For <code>mp_options</code> and <code>mp_options_set</code>, recognised options are:</p><dl>
 <dt>verbose</dt><dd><p>logical or numeric; if <code>TRUE</code>, log messages of <code>verbosity</code>
-\(\leq 1\) are printed by <code><a href='mp_log.html'>mp_log_message()</a></code>. If numeric, log messages
+\(\leq 1\) are printed by <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_log.html'>mp_log_message()</a></code>. If numeric, log messages
 of
 verbosity \(\leq\) are printed. Default <code>FALSE</code></p></dd>
 <dt>verbose_stored</dt><dd><p>logical or numeric; if <code>TRUE</code>, log messages of
-<code>verbosity</code> \(\leq 1\) are stored by <code><a href='mp_log.html'>mp_log_message()</a></code>. If numeric,
+<code>verbosity</code> \(\leq 1\) are stored by <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_log.html'>mp_log_message()</a></code>. If numeric,
 log messages of verbosity \(\leq\) are stored. Default: 1</p></dd>
 <dt>gaussint</dt><dd><p>List of options for
 <code><a href='https://rdrr.io/pkg/excursions/man/gaussint.html'>excursions::gaussint</a></code>.
@@ -223,45 +223,45 @@ response matrix doesn't have column names. Default: "y_name_"</p></dd>
 
 <p><code>mp_options_check</code> checks for valid contents of an <code>mp_options</code>
 object</p>
-<p><code>mp_options_check()</code> produces warnings for invalid options.</p>
-<p><code>mp_options_set()</code> is used to set global package options.</p>
-<p><code>mp_options_reset()</code> clears the global opption overrides.</p>
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_check()</a></code> produces warnings for invalid options.</p>
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_set()</a></code> is used to set global package options.</p>
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_reset()</a></code> clears the global opption overrides.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>mp_options()</code>, <code>mp_options_default()</code>, <code>mp_options_get()</code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options()</a></code>, <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_default()</a></code>, <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_get()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
   <span class='co'># Compine global and user options:</span>
-  <span class='no'>options1</span> <span class='kw'>&lt;-</span> <span class='fu'>mp_options</span>(<span class='fu'>mp_options_get</span>(), <span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"block"</span>)
+  <span class='kw'>options1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_get</a></span>(), hessian = <span class='st'>"block"</span>)
   <span class='co'># Create a proto-options object in two equivalent ways:</span>
-  <span class='no'>options2</span> <span class='kw'>&lt;-</span> <span class='fu'>as.mp_options</span>(<span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"diagonal"</span>)
-  <span class='no'>options2</span> <span class='kw'>&lt;-</span> <span class='fu'>as.mp_options</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>hessian</span> <span class='kw'>=</span> <span class='st'>"diagonal"</span>))
+  <span class='kw'>options2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>as.mp_options</a></span>(hessian = <span class='st'>"diagonal"</span>)
+  <span class='kw'>options2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>as.mp_options</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(hessian = <span class='st'>"diagonal"</span>))
   <span class='co'># Combine options objects:</span>
-  <span class='no'>options3</span> <span class='kw'>&lt;-</span> <span class='fu'>mp_options</span>(<span class='no'>options1</span>, <span class='no'>options2</span>)
+  <span class='kw'>options3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></span>(<span class='kw'>options1</span>, <span class='kw'>options2</span>)
 }
 }
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
   <span class='co'># EXAMPLE1</span>
 }
 }
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>mp_options_check</span>(<span class='fu'>mp_options</span>(<span class='kw'>invalid</span> <span class='kw'>=</span> <span class='st'>"something"</span>))
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_check</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options</a></span>(invalid = <span class='st'>"something"</span>))
 }
 }
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
   <span class='co'># EXAMPLE1</span>
 }
 }
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>mp_options_set</span>(
-    <span class='kw'>gaussint</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>max.threads</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-    <span class='kw'>optim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>5</span>))
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mp_options.html'>mp_options_set</a></span>(
+    gaussint = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(max.threads = <span class='fl'>1</span>),
+    optim = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace = <span class='fl'>5</span>))
   )
 }
 }</div></pre>

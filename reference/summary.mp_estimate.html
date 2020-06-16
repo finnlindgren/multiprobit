@@ -123,17 +123,17 @@ and models</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for mp_estimate</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for mp_model</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>object</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>An <code><a href='multiprobit.html'>mp_estimate</a></code> or <code><a href='mp_model.html'>mp_model</a></code>object</p></td>
+      <td><p>An <code><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit.html'>mp_estimate</a></code> or <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_model.html'>mp_model</a></code>object</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -146,11 +146,11 @@ and models</p>
     <p>An <code>mp_estimate_summary</code> or <code>mp_model_summary</code> list object with
 elements</p><dl>
 <dt>beta</dt><dd><p>Summary information about the \(B\) coefficients
-(see <code><a href='mp_model.html'>mp_model()</a></code> for model definition).
+(see <code><a href='https://rdrr.io/pkg/multiprobit/man/mp_model.html'>mp_model()</a></code> for model definition).
 The elements of the matrix \(B\) are listed row-wise, so that the
 values for each covariate are grouped together, for all Y-dimensions.</p></dd>
 <dt>u</dt><dd><p>Summary information about the latent \(u\) parameters (see
-<code><a href='mp_model.html'>mp_model()</a></code> for model definition). This is the internal scale
+<code><a href='https://rdrr.io/pkg/multiprobit/man/mp_model.html'>mp_model()</a></code> for model definition). This is the internal scale
 representation of the probit correlation matrix parameter \(\Sigma\).</p></dd>
 <dt>Sigma</dt><dd><p>Summary information for \(\Sigma\). Includes a basic linear
 error propagation estimate of the elementwise standard deviations, as
@@ -165,11 +165,12 @@ their Hessian-based uncertainties are provided, and the corresponding point
 estimate of the probit correlation matrix parameter \(\Sigma\).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
   <span class='co'># EXAMPLE1</span>
 }
-}</div></pre>
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

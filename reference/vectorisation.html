@@ -120,9 +120,9 @@
     <p>Convert between matrix and vector representations</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cvec</span>(<span class='no'>A</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sparse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/vectorisation.html'>cvec</a></span>(<span class='kw'>A</span>, d = <span class='kw'>NULL</span>, sparse = <span class='fl'>FALSE</span>)
 
-<span class='fu'>rvec</span>(<span class='no'>A</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sparse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/vectorisation.html'>rvec</a></span>(<span class='kw'>A</span>, d = <span class='kw'>NULL</span>, sparse = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -150,11 +150,11 @@ If <code>A</code> is a vector, <code>cvec</code> and <code>rvec</code> return a 
 filled columnwise for <code>cvec</code> and rowwise for <code>rvec</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='no'>Ac</span> <span class='kw'>&lt;-</span> <span class='fu'>cvec</span>(<span class='fl'>1</span>:<span class='fl'>6</span>, <span class='fl'>2</span>) <span class='co'># As matrix(1:6, 3, 2, byrow = FALSE)</span>
-  <span class='no'>Ar</span> <span class='kw'>&lt;-</span> <span class='fu'>rvec</span>(<span class='fl'>1</span>:<span class='fl'>6</span>, <span class='fl'>2</span>) <span class='co'># As matrix(1:6, 3, 2, byrow = TRUE)</span>
-  <span class='fu'>cvec</span>(<span class='no'>Ac</span>) <span class='co'># As as.vector(Ac)</span>
-  <span class='fu'>rvec</span>(<span class='no'>Ar</span>) <span class='co'># As as.vector(t(Ar))</span>
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='kw'>Ac</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/vectorisation.html'>cvec</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fl'>2</span>) <span class='co'># As matrix(1:6, 3, 2, byrow = FALSE)</span>
+  <span class='kw'>Ar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/vectorisation.html'>rvec</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fl'>2</span>) <span class='co'># As matrix(1:6, 3, 2, byrow = TRUE)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/vectorisation.html'>cvec</a></span>(<span class='kw'>Ac</span>) <span class='co'># As as.vector(Ac)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/vectorisation.html'>rvec</a></span>(<span class='kw'>Ar</span>) <span class='co'># As as.vector(t(Ar))</span>
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -124,15 +124,15 @@ multivariate probit model, with given location and covariance scale
 parameteters.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mpp</span>(
-  <span class='no'>y</span>,
-  <span class='no'>mu</span>,
-  <span class='kw'>Sigma_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Q_chol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>gaussint_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mpp.html'>mpp</a></span>(
+  <span class='kw'>y</span>,
+  <span class='kw'>mu</span>,
+  Sigma_chol = <span class='kw'>NULL</span>,
+  Q_chol = <span class='kw'>NULL</span>,
+  log = <span class='fl'>FALSE</span>,
+  lower_chol = <span class='fl'>FALSE</span>,
+  gaussint_options = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -207,11 +207,11 @@ provided as an element of <code>gaussint_options</code>, which provides
 consistent approximation error when calculating numerical derivatives.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
-  <span class='fu'>mpp</span>(
-    <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>0</span>),
-    <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>),
-    <span class='kw'>Sigma_chol</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/chol.html'>chol</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>1</span>), <span class='fl'>2</span>, <span class='fl'>2</span>))
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/mpp.html'>mpp</a></span>(
+    y = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>0</span>),
+    mu = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>),
+    Sigma_chol = <span class='fu'><a href='https://rdrr.io/r/base/chol.html'>chol</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>1</span>), <span class='fl'>2</span>, <span class='fl'>2</span>))
   )
 }</div></pre>
   </div>

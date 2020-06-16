@@ -122,19 +122,19 @@ storing the result in reverse order, see Details." />
 storing the result in reverse order, see Details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>tri_solve</span>(<span class='no'>A</span>, <span class='no'>b</span>, <span class='kw'>lower_tri</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>tri_solve</a></span>(<span class='kw'>A</span>, <span class='kw'>b</span>, lower_tri = <span class='fl'>FALSE</span>)
 
-<span class='fu'>inverse_chol_reverse</span>(<span class='no'>Sigma_chol</span>, <span class='kw'>lower_chol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>inverse_chol_reverse</a></span>(<span class='kw'>Sigma_chol</span>, lower_chol = <span class='fl'>FALSE</span>)
 
-<span class='fu'>qchisq_pnorm</span>(<span class='no'>x</span>, <span class='no'>df</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>qchisq_pnorm</a></span>(<span class='kw'>x</span>, <span class='kw'>df</span>)
 
-<span class='fu'>qnorm_pchisq</span>(<span class='no'>x</span>, <span class='no'>df</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>qnorm_pchisq</a></span>(<span class='kw'>x</span>, <span class='kw'>df</span>)
 
-<span class='fu'>qbeta_pchisq</span>(<span class='no'>x</span>, <span class='no'>df</span>, <span class='no'>shape1</span>, <span class='no'>shape2</span>, <span class='no'>ncp</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>qbeta_pchisq</a></span>(<span class='kw'>x</span>, <span class='kw'>df</span>, <span class='kw'>shape1</span>, <span class='kw'>shape2</span>, <span class='kw'>ncp</span>)
 
-<span class='fu'>qchisq_pbeta</span>(<span class='no'>x</span>, <span class='no'>shape1</span>, <span class='no'>shape2</span>, <span class='no'>df</span>, <span class='no'>ncp</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>qchisq_pbeta</a></span>(<span class='kw'>x</span>, <span class='kw'>shape1</span>, <span class='kw'>shape2</span>, <span class='kw'>df</span>, <span class='kw'>ncp</span>)
 
-<span class='fu'>sparse_identity</span>(<span class='no'>d</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>sparse_identity</a></span>(<span class='kw'>d</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,12 +176,12 @@ Default: FALSE</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>inverse_chol_reverse()</code> returns a Cholesky matrix of the same triangle orientation as the input,
+    <p><code><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>inverse_chol_reverse()</a></code> returns a Cholesky matrix of the same triangle orientation as the input,
 with rows and columns in reverse order.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>tri_solve()</code> solves triangular systems with back/forwardsolve</p>
-<p><code>inverse_chol_reverse()</code> notes:</p>
+    <p><code><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>tri_solve()</a></code> solves triangular systems with back/forwardsolve</p>
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>inverse_chol_reverse()</a></code> notes:</p>
 <p>For <code>lower_chol == FALSE</code>,
 the input <code>Sigma_chol</code> is the matrix \(R\) in the Cholesky factorisation
 \(\Sigma=R^T R\) with inverse \(Q=R^{-1}R^{-T}\). Since \(R^{-1}\) has
@@ -192,15 +192,15 @@ permutation matrix that reverses element order. Then
 \(PQP\) with the same upper/lower triangular property as \(R\).</p>
 <p>For <code>lower_chol == TRUE</code>, the input is \(L\) in \(\Sigma=LL^T\) and the
 output is \(PL^{-T}P\), with \(PQP=PL^{-T}PPL^{-1}P\).</p>
-<p><code>qchisq_pnorm()</code> evaluates <code><a href='https://rdrr.io/r/stats/Chisquare.html'>qchisq(pnorm(...))</a></code> with
+<p><code><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>qchisq_pnorm()</a></code> evaluates <code><a href='https://rdrr.io/r/stats/Chisquare.html'>qchisq(pnorm(...))</a></code> with
 attempt at numerical stability.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>These are internal non-exported function</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span>(<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()){
-  <span class='fu'>inverse_chol_reverse</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>2</span>, <span class='fl'>3</span>), <span class='fl'>2</span>, <span class='fl'>2</span>))
+    <pre class="examples"><div class='input'><span class='co'>if</span>(<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()){
+  <span class='fu'><a href='https://rdrr.io/pkg/multiprobit/man/multiprobit_utils.html'>inverse_chol_reverse</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>2</span>, <span class='fl'>3</span>), <span class='fl'>2</span>, <span class='fl'>2</span>))
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
