@@ -21,9 +21,9 @@ mp_log_message(
 )
 }
 \arguments{
-\item{...}{Zero or more objects passed on to \code{\link[base:.makeMessage]{base::.makeMessage()}}}
+\item{...}{Zero or more objects passed on to \code{\link[base:message]{base::.makeMessage()}}}
 
-\item{domain}{Domain for translations, passed on to \code{\link[base:.makeMessage]{base::.makeMessage()}}}
+\item{domain}{Domain for translations, passed on to \code{\link[base:message]{base::.makeMessage()}}}
 
 \item{appendLF}{logical; whether to add a newline to the message. Only
 used for verbose output.}
