@@ -31,6 +31,7 @@ multiprobit_env_get <- function() {
 
 
 
+# Log methods ----
 
 
 #' @title multiprobit log message methods
@@ -64,7 +65,7 @@ mp_log_get <- function() {
 #' @param domain Domain for translations, passed on to [`base::.makeMessage()`]
 #' @param appendLF logical; whether to add a newline to the message. Only
 #'   used for verbose output.
-#' @param verbosity numeric value descibing the verbosity level of the message
+#' @param verbosity numeric value describing the verbosity level of the message
 #' @param allow_verbose Whether to allow verbose output. Must be set to FALSE
 #' until the options object has been initialised.
 #' @param verbose logical, numeric, or `NULL`; local override for verbose
@@ -112,7 +113,7 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 
 
 
-
+# Options methods ----
 
 #' @title Create or update an options objects
 #' @description Create a new options object, or merge information from several
@@ -161,7 +162,7 @@ mp_log_message <- function(..., domain = NULL, appendLF = TRUE,
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'   # Compine global and user options:
+#'   # Combine global and user options:
 #'   options1 <- mp_options(mp_options_get(), hessian = "block")
 #'   # Create a proto-options object in two equivalent ways:
 #'   options2 <- as.mp_options(hessian = "diagonal")

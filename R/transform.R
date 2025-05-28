@@ -827,6 +827,6 @@ wm_density <- function(model,
     W_chol <- t(W_chol)
   }
   dwishart(W = W, x = latent, W_chol = W_chol,
-           V_chol = model$V_chol, V_chol$df,
+           V_chol = model$V_chol, df = model$df,
            lower_chol = model$lower_chol, log = log)
 }
